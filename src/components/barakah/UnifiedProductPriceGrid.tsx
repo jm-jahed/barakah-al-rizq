@@ -202,6 +202,7 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
   return (
     <section id="live-prices" className="py-14 sm:py-20 bg-[#F4F7F4] text-[#111827] relative font-sans border-b border-emerald-200/80">
       {/* Target anchors for deep links */}
+      <span id="products" className="absolute -top-24" />
       <span id="container-prices" className="absolute -top-24" />
       <span id="market-prices" className="absolute -top-24" />
 

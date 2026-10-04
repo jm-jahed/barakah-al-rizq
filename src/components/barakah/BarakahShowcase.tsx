@@ -8,7 +8,6 @@ import { LivePriceTicker } from './LivePriceTicker';
 import { ContainerPriceItem } from './ContainerWholesaleDashboard';
 import { MarketPriceItem } from './MarketPriceDashboard';
 import { UnifiedProductPriceGrid } from './UnifiedProductPriceGrid';
-import { ProductsGrid } from './ProductsGrid';
 import { ProductDetailModal } from './ProductDetailModal';
 import { ImportExportSection } from './ImportExportSection';
 import { WhyChooseUs } from './WhyChooseUs';
@@ -218,13 +217,6 @@ export const BarakahShowcase: React.FC<BarakahShowcaseProps> = () => {
         onOpenQuoteModal={handleOpenQuoteModal}
         lastSyncUAE={lastSyncUAE}
         activeSession={activeSession}
-      />
-
-      {/* Product Catalog Grid (Preserved) */}
-      <ProductsGrid
-        products={products}
-        onSelectProduct={(p) => setSelectedProduct(p)}
-        onOpenQuoteModal={handleOpenQuoteModal}
       />
 
       {/* Global Food Supply Section (Preserved) */}

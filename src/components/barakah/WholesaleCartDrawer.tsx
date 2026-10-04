@@ -55,7 +55,7 @@ export const WholesaleCartDrawer: React.FC = () => {
     d.setDate(d.getDate() + 1);
     return d.toISOString().split('T')[0];
   });
-  const [pickupTime, setPickupTime] = useState('Morning Session (07:00 - 11:00)');
+  const [pickupTime, setPickupTime] = useState('24 Hours (Open 24/7 Store & Warehouse Pickup)');
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -529,11 +529,13 @@ export const WholesaleCartDrawer: React.FC = () => {
                         <select
                           value={pickupTime}
                           onChange={(e) => setPickupTime(e.target.value)}
-                          className="w-full px-3 py-2 text-xs rounded-xl border border-gray-300 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 focus:outline-none bg-white font-mono text-xs"
+                          className="w-full px-3 py-2 text-xs rounded-xl border border-gray-300 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 focus:outline-none bg-white font-mono text-xs font-semibold text-emerald-950"
                         >
+                          <option value="24 Hours (Open 24/7 Store & Warehouse Pickup)">24 Hours (Open 24/7 Store &amp; Warehouse Pickup)</option>
                           <option value="Morning Session (07:00 - 11:00)">Morning Session (07:00 - 11:00)</option>
                           <option value="Midday Session (12:00 - 16:00)">Midday Session (12:00 - 16:00)</option>
                           <option value="Evening Inbound (17:00 - 20:00)">Evening Inbound (17:00 - 20:00)</option>
+                          <option value="Night Inbound (21:00 - 06:00)">Night Inbound (21:00 - 06:00)</option>
                         </select>
                       </div>
                     </div>
