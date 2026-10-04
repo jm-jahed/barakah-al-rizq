@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { ContainerPriceItem } from './ContainerWholesaleDashboard';
 import { MarketPriceItem } from './MarketPriceDashboard';
+import { useWholesaleCart } from '@/context/WholesaleCartContext';
 
 export interface UnifiedProductCardItem {
   id: string;
@@ -74,6 +75,7 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [selectedSession, setSelectedSession] = useState('ALL');
   const [liveDateStr, setLiveDateStr] = useState<string>('');
+  const { addToCart } = useWholesaleCart();
 
   // Live UAE formatted date/time for active market session (LIVE ALWAYS)
   React.useEffect(() => {
@@ -402,6 +404,25 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
                           <div className="text-[8px] sm:text-[9px] font-mono text-slate-300 mt-0.5">
                             <span className="font-bold text-white">MOQ:</span> {product.container.moq}
                           </div>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              addToCart({
+                                productId: product.id,
+                                productName: product.name,
+                                productArabicName: product.arabicName,
+                                orderType: 'CONTAINER',
+                                packagingUnit: product.container.packagingUnit,
+                                pricePerCtn: product.container.priceAED!,
+                                quantityCtn: 100,
+                                image: product.image,
+                              })
+                            }
+                            className="w-full mt-2 py-1 px-2 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-mono font-bold text-[9px] sm:text-[10px] uppercase tracking-wider flex items-center justify-center gap-1 transition-colors shadow-xs"
+                          >
+                            <span>+ Add Container (100 CTN)</span>
+                          </button>
                         </div>
                       ) : (
                         <div className="py-0.5">
@@ -414,6 +435,13 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
                           <div className="text-[8px] sm:text-[9px] font-mono text-slate-400 mt-0.5">
                             <span className="font-bold text-slate-300">MOQ:</span> {product.container.moq}
                           </div>
+                          <button
+                            type="button"
+                            onClick={() => onOpenQuoteModal(product.name, 'Container Wholesale')}
+                            className="w-full mt-2 py-1 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 font-mono font-bold text-[9px] uppercase tracking-wider transition-colors"
+                          >
+                            Inquire Rate
+                          </button>
                         </div>
                       )}
                     </div>
@@ -453,6 +481,25 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
                           <div className="text-[8px] sm:text-[9px] font-mono text-emerald-900 mt-0.5">
                             <span className="font-bold">Minimum Order:</span> {product.market.minPurchaseQty}
                           </div>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              addToCart({
+                                productId: product.id,
+                                productName: product.name,
+                                productArabicName: product.arabicName,
+                                orderType: 'DUBAI_WHOLESALE',
+                                packagingUnit: product.market.packagingUnit,
+                                pricePerCtn: product.market.priceAED!,
+                                quantityCtn: 10,
+                                image: product.image,
+                              })
+                            }
+                            className="w-full mt-2 py-1 px-2 rounded-lg bg-[#063D24] hover:bg-emerald-900 text-white font-mono font-bold text-[9px] sm:text-[10px] uppercase tracking-wider flex items-center justify-center gap-1 transition-colors shadow-xs"
+                          >
+                            <span>+ Add Spot (10 CTN)</span>
+                          </button>
                         </div>
                       ) : (
                         <div className="py-0.5">
@@ -465,6 +512,13 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
                           <div className="text-[8px] sm:text-[9px] font-mono text-emerald-800 mt-0.5">
                             <span className="font-bold">Minimum Order:</span> {product.market.minPurchaseQty}
                           </div>
+                          <button
+                            type="button"
+                            onClick={() => onOpenQuoteModal(product.name, 'Dubai Market Spot')}
+                            className="w-full mt-2 py-1 px-2 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-mono font-bold text-[9px] uppercase tracking-wider transition-colors"
+                          >
+                            Inquire Rate
+                          </button>
                         </div>
                       )}
                     </div>
@@ -486,8 +540,34 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
                   <div>
                     <button
                       type="button"
-                      onClick={() => onOpenQuoteModal(product.name, 'Wholesale Order')}
-                      className="w-full py-2 sm:py-2.5 px-2 rounded-xl bg-[#063D24] text-white hover:bg-emerald-900 font-mono font-bold text-[10px] sm:text-xs uppercase tracking-wider transition-all shadow-sm hover:scale-[1.01] flex items-center justify-center gap-1.5"
+                      onClick={() => {
+                        if (hasMarketPrice) {
+                          addToCart({
+                            productId: product.id,
+                            productName: product.name,
+                            productArabicName: product.arabicName,
+                            orderType: 'DUBAI_WHOLESALE',
+                            packagingUnit: product.market.packagingUnit,
+                            pricePerCtn: product.market.priceAED!,
+                            quantityCtn: 10,
+                            image: product.image,
+                          });
+                        } else if (hasContainerPrice) {
+                          addToCart({
+                            productId: product.id,
+                            productName: product.name,
+                            productArabicName: product.arabicName,
+                            orderType: 'CONTAINER',
+                            packagingUnit: product.container.packagingUnit,
+                            pricePerCtn: product.container.priceAED!,
+                            quantityCtn: 100,
+                            image: product.image,
+                          });
+                        } else {
+                          onOpenQuoteModal(product.name, 'Wholesale Order');
+                        }
+                      }}
+                      className="w-full py-2.5 px-3 rounded-xl bg-[#063D24] text-white hover:bg-emerald-900 font-mono font-bold text-[11px] sm:text-xs uppercase tracking-wider transition-all shadow-sm hover:scale-[1.01] flex items-center justify-center gap-1.5 cursor-pointer"
                     >
                       <span>ORDER WHOLESALE</span>
                     </button>

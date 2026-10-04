@@ -292,3 +292,42 @@ export interface FoodstuffUpdateSchedule {
   feedSourceUrl?: string;
 }
 
+// ==========================================
+// B2B WHOLESALE ORDER & PICKUP SYSTEM
+// ==========================================
+
+export type WholesaleOrderStatus = 'PENDING' | 'CONFIRMED' | 'READY_FOR_PICKUP' | 'COMPLETED' | 'CANCELLED';
+
+export interface WholesaleOrderItem {
+  productId: string;
+  productName: string;
+  productArabicName?: string;
+  orderType: 'CONTAINER' | 'DUBAI_WHOLESALE';
+  packagingUnit: string;
+  pricePerCtn: number;
+  quantityCtn: number;
+  lineTotalAED: number;
+  moq: number; // 100 for Container, 10 for Dubai Wholesale
+  image?: string;
+}
+
+export interface WholesaleOrder {
+  id: string; // e.g. BARAKAH-ORD-20261005-XXXX
+  customerName: string;
+  companyName?: string;
+  phone: string;
+  email: string;
+  pickupDate: string;
+  pickupTime?: string;
+  pickupLocation: string; // Strictly Store Pickup
+  orderType: 'CONTAINER' | 'DUBAI_WHOLESALE' | 'MIXED';
+  items: WholesaleOrderItem[];
+  totalCtn: number;
+  totalAED: number;
+  notes?: string;
+  status: WholesaleOrderStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+

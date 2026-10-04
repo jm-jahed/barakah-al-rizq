@@ -43,6 +43,10 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
+import { WholesaleCartProvider } from '@/context/WholesaleCartContext';
+import { WholesaleCartDrawer } from '@/components/barakah/WholesaleCartDrawer';
+import { FloatingCartButton } from '@/components/barakah/FloatingCartButton';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -59,7 +63,11 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased bg-[#0B0907] text-gray-100 min-h-screen" suppressHydrationWarning>
-        {children}
+        <WholesaleCartProvider>
+          {children}
+          <WholesaleCartDrawer />
+          <FloatingCartButton />
+        </WholesaleCartProvider>
       </body>
     </html>
   );

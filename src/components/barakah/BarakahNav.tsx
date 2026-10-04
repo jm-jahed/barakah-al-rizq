@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { MessageCircle, Menu, X, ArrowUpRight, ShieldCheck } from 'lucide-react';
+import { MessageCircle, Menu, X, ArrowUpRight, ShieldCheck, ShoppingBag } from 'lucide-react';
 import { BARAKAH_BRAND } from '@/data/barakahData';
+import { useWholesaleCart } from '@/context/WholesaleCartContext';
 
 interface BarakahNavProps {
   onOpenQuoteModal: (productName?: string) => void;
@@ -12,6 +13,7 @@ interface BarakahNavProps {
 export const BarakahNav: React.FC<BarakahNavProps> = ({ onOpenQuoteModal }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { openCart, totalCtn, totalItems } = useWholesaleCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -113,12 +115,27 @@ export const BarakahNav: React.FC<BarakahNavProps> = ({ onOpenQuoteModal }) => {
             </nav>
 
             {/* Header Action Buttons */}
-            <div className="hidden sm:flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={openCart}
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 text-[#063D24] border border-amber-400/60 font-mono font-bold text-xs transition-all shadow-xs"
+                title="Open Wholesale Order Cart"
+              >
+                <ShoppingBag className="w-4 h-4 text-emerald-800" />
+                <span>Cart</span>
+                {totalItems > 0 && (
+                  <span className="px-1.5 py-0.2 rounded-full bg-[#063D24] text-amber-300 text-[10px] font-black">
+                    {totalCtn} CTN
+                  </span>
+                )}
+              </button>
+
               <a
                 href={BARAKAH_BRAND.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-800 font-bold text-xs hover:bg-emerald-100 transition-all font-mono"
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-800 font-bold text-xs hover:bg-emerald-100 transition-all font-mono"
               >
                 <MessageCircle className="w-4 h-4 text-emerald-600" />
                 <span>WhatsApp</span>
@@ -126,21 +143,37 @@ export const BarakahNav: React.FC<BarakahNavProps> = ({ onOpenQuoteModal }) => {
 
               <button
                 onClick={() => onOpenQuoteModal()}
-                className="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-[#063D24] hover:bg-[#042A18] text-white font-extrabold text-xs tracking-wider uppercase font-mono shadow-md hover:scale-105 transition-all border border-emerald-900"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#063D24] hover:bg-[#042A18] text-white font-extrabold text-xs tracking-wider uppercase font-mono shadow-md hover:scale-105 transition-all border border-emerald-900"
               >
-                <span className="text-amber-300">REQUEST A QUOTE</span>
+                <span className="text-amber-300">QUOTE</span>
                 <ArrowUpRight className="w-4 h-4 text-amber-300" />
               </button>
             </div>
 
-            {/* Mobile Menu Toggle */}
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-3 rounded-xl bg-emerald-50 text-[#063D24] hover:bg-emerald-100 transition-all border border-emerald-200 touch-manipulation cursor-pointer"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6 text-[#063D24]" /> : <Menu className="w-6 h-6 text-[#063D24]" />}
-            </button>
+            {/* Mobile Header Actions (Cart + Menu) */}
+            <div className="lg:hidden flex items-center gap-2">
+              <button
+                type="button"
+                onClick={openCart}
+                className="relative p-2.5 rounded-xl bg-amber-400/20 text-[#063D24] border border-amber-400/50 hover:bg-amber-400/30 transition-all font-mono flex items-center gap-1.5"
+                title="Open Wholesale Cart"
+              >
+                <ShoppingBag className="w-5 h-5 text-emerald-800" />
+                {totalItems > 0 && (
+                  <span className="px-1.5 py-0.2 rounded-full bg-[#063D24] text-amber-300 text-[9px] font-black">
+                    {totalCtn}
+                  </span>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2.5 rounded-xl bg-emerald-50 text-[#063D24] hover:bg-emerald-100 transition-all border border-emerald-200 touch-manipulation cursor-pointer"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5 text-[#063D24]" /> : <Menu className="w-5 h-5 text-[#063D24]" />}
+              </button>
+            </div>
           </div>
         </div>
 

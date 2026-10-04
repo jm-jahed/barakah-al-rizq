@@ -24,6 +24,9 @@ import {
   FoodstuffPriceHistory,
   FoodstuffPriceSource,
   FoodstuffUpdateSchedule,
+  WholesaleOrder,
+  WholesaleOrderItem,
+  WholesaleOrderStatus,
 } from "@/lib/db/types";
 import { getDynamicUAESession, calculatePricePerKg } from "@/lib/foodstuff/utils";
 
@@ -813,3 +816,150 @@ export async function getSettingsCollection(): Promise<Collection<any>> {
   const db = await getDb();
   return db.collection("settings");
 }
+
+// ==========================================
+// B2B WHOLESALE ORDERS & PICKUP STORE
+// ==========================================
+
+export async function getWholesaleOrdersCollection(): Promise<Collection<WholesaleOrder & { _id: string }>> {
+  const db = await getDb();
+  return db.collection<WholesaleOrder & { _id: string }>("wholesale_orders");
+}
+
+function getLocalOrdersFilePath(): string {
+  return path.join(process.cwd(), "data", "barakah", "wholesale_orders.json");
+}
+
+function readLocalOrders(): WholesaleOrder[] {
+  try {
+    const fp = getLocalOrdersFilePath();
+    if (fs.existsSync(fp)) {
+      const raw = fs.readFileSync(fp, "utf-8");
+      return JSON.parse(raw);
+    }
+  } catch {}
+  return [];
+}
+
+function writeLocalOrders(orders: WholesaleOrder[]): void {
+  try {
+    const fp = getLocalOrdersFilePath();
+    fs.mkdirSync(path.dirname(fp), { recursive: true });
+    fs.writeFileSync(fp, JSON.stringify(orders, null, 2), "utf-8");
+  } catch {}
+}
+
+export async function getWholesaleOrders(): Promise<WholesaleOrder[]> {
+  try {
+    const col = await getWholesaleOrdersCollection();
+    const items = await col.find({}).sort({ createdAt: -1 }).toArray();
+    if (items && items.length > 0) return items;
+  } catch (err) {
+    console.warn("MongoDB getWholesaleOrders fallback:", (err as Error).message);
+  }
+  return readLocalOrders();
+}
+
+export async function createWholesaleOrder(
+  orderData: Omit<WholesaleOrder, 'id' | 'createdAt' | 'updatedAt' | 'status'> & { status?: WholesaleOrderStatus }
+): Promise<WholesaleOrder> {
+  const now = new Date();
+  const dateStr = now.toISOString().slice(0, 10).replace(/-/g, "");
+  const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
+  const id = `BARAKAH-ORD-${dateStr}-${rand}`;
+  const nowISO = now.toISOString();
+
+  const newOrder: WholesaleOrder = {
+    ...orderData,
+    id,
+    status: orderData.status || 'PENDING',
+    createdAt: nowISO,
+    updatedAt: nowISO,
+  };
+
+  // Try MongoDB
+  try {
+    const col = await getWholesaleOrdersCollection();
+    await col.insertOne({ ...newOrder, _id: id } as any);
+  } catch (err) {
+    console.warn("MongoDB createWholesaleOrder fallback to JSON:", (err as Error).message);
+  }
+
+  // Always sync to local JSON fallback
+  const existing = readLocalOrders();
+  existing.unshift(newOrder);
+  writeLocalOrders(existing);
+
+  // Mirror to Leads pipeline so general sales admin also tracks it
+  try {
+    const itemSummary = newOrder.items
+      .map(i => `${i.productName} (${i.orderType === 'CONTAINER' ? 'Container Wholesale' : 'Dubai Wholesale'}): ${i.quantityCtn} CTN @ AED ${i.pricePerCtn.toFixed(2)} = AED ${i.lineTotalAED.toFixed(2)}`)
+      .join('\n');
+
+    await createLead({
+      name: newOrder.customerName,
+      email: newOrder.email,
+      phone: newOrder.phone,
+      company: newOrder.companyName || '',
+      service: `Wholesale Order [${newOrder.orderType}] - ${newOrder.totalCtn} CTN`,
+      budget: `AED ${newOrder.totalAED.toLocaleString()}`,
+      message: `B2B Wholesale Pickup Order #${newOrder.id}\nPickup Date: ${newOrder.pickupDate} (${newOrder.pickupTime || 'Standard'})\nPickup Location: ${newOrder.pickupLocation}\n\nItems:\n${itemSummary}\n\nNotes: ${newOrder.notes || 'None'}`,
+      source: 'wholesale_cart',
+      status: 'NEW',
+      notes: `Order ID: ${newOrder.id} | Status: ${newOrder.status} | Total: AED ${newOrder.totalAED}`,
+    });
+  } catch (leadErr) {
+    console.warn("Could not mirror wholesale order to lead:", leadErr);
+  }
+
+  await logActivityToMongo('system', 'WHOLESALE_ORDER_CREATED', id);
+  return newOrder;
+}
+
+export async function updateWholesaleOrderStatus(
+  id: string,
+  status: WholesaleOrderStatus,
+  notes?: string
+): Promise<WholesaleOrder | null> {
+  const nowISO = new Date().toISOString();
+  let updatedOrder: WholesaleOrder | null = null;
+
+  try {
+    const col = await getWholesaleOrdersCollection();
+    const existing = await col.findOne({ $or: [{ _id: id }, { id }] });
+    if (existing) {
+      const updated: WholesaleOrder & { _id: string } = {
+        ...existing,
+        status,
+        ...(notes ? { notes } : {}),
+        _id: existing._id,
+        id: existing.id,
+        updatedAt: nowISO,
+      };
+      await col.replaceOne({ _id: existing._id }, updated, { upsert: true });
+      updatedOrder = updated;
+    }
+  } catch (err) {
+    console.warn("MongoDB updateWholesaleOrderStatus fallback to JSON:", (err as Error).message);
+  }
+
+  // Update local JSON fallback
+  const orders = readLocalOrders();
+  const idx = orders.findIndex(o => o.id === id);
+  if (idx !== -1) {
+    orders[idx] = {
+      ...orders[idx],
+      status,
+      ...(notes ? { notes } : {}),
+      updatedAt: nowISO,
+    };
+    writeLocalOrders(orders);
+    if (!updatedOrder) updatedOrder = orders[idx];
+  }
+
+  if (updatedOrder) {
+    await logActivityToMongo('admin@barakahalrizquae.com', 'WHOLESALE_ORDER_UPDATED', id);
+  }
+  return updatedOrder;
+}
+
