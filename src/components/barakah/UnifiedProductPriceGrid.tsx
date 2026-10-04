@@ -200,11 +200,11 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
   }, [unifiedProducts, searchTerm, selectedCategory, selectedSession]);
 
   return (
-    <section id="live-prices" className="py-14 sm:py-20 bg-[#F4F7F4] text-[#111827] relative font-sans border-b border-emerald-200/80">
+    <section id="live-prices" className="py-14 sm:py-20 bg-[#F4F7F4] text-[#111827] relative font-sans border-b border-emerald-200/80 scroll-mt-32">
       {/* Target anchors for deep links */}
-      <span id="products" className="absolute -top-24" />
-      <span id="container-prices" className="absolute -top-24" />
-      <span id="market-prices" className="absolute -top-24" />
+      <span id="products" className="absolute -top-32" />
+      <span id="container-prices" className="absolute -top-32" />
+      <span id="market-prices" className="absolute -top-32" />
 
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         
@@ -383,16 +383,16 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
                   <div className="px-3.5 sm:px-4 space-y-2.5 pb-3.5">
                     
                     {/* 1. CONTAINER WHOLESALE TILE */}
-                    <div className="p-3.5 rounded-2xl bg-gradient-to-br from-[#062417] via-[#093522] to-[#041B11] text-white border border-[#D4AF37]/35 shadow-[0_4px_16px_rgba(6,36,23,0.25)] relative overflow-hidden group/container">
+                    <div className="p-3.5 rounded-2xl bg-gradient-to-br from-[#062417] via-[#093522] to-[#041B11] text-white border border-[#D4AF37]/40 shadow-[0_4px_16px_rgba(6,36,23,0.25)] relative overflow-hidden group/container">
                       {/* Subtle ambient luxury gold radial highlight */}
                       <div className="absolute -top-12 -right-12 w-28 h-28 bg-[#D4AF37]/15 rounded-full blur-2xl pointer-events-none" />
 
                       <div className="flex items-center justify-between gap-1 mb-2 relative z-10">
-                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-[9px] font-mono font-black text-[#F8D879] uppercase tracking-wider">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#D4AF37]/20 border border-[#D4AF37]/50 text-[10px] font-sans font-black text-[#F8D879] uppercase tracking-wide">
                           <Lock className="w-3 h-3 text-[#F8D879]" />
                           <span>CONTAINER WHOLESALE</span>
                         </span>
-                        <span className="text-[9.5px] font-mono text-emerald-200/90 font-medium">
+                        <span className="text-[11px] font-sans text-emerald-100 font-semibold">
                           Direct Importer FCL
                         </span>
                       </div>
@@ -400,20 +400,20 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
                       {hasContainerPrice ? (
                         <div className="relative z-10">
                           <div className="flex items-baseline gap-1.5">
-                            <span className="text-xs font-mono font-black text-[#F8D879] tracking-wider">
+                            <span className="text-sm font-sans font-black text-[#F8D879] tracking-wide">
                               Dhs
                             </span>
-                            <span className="text-xl sm:text-2xl font-black text-white font-mono tracking-tight">
+                            <span className="text-2xl sm:text-3xl font-black text-white font-sans tracking-tight tabular-nums">
                               {product.container.priceAED!.toFixed(2)}
                             </span>
-                            <span className="text-[10px] text-emerald-200/70 font-mono">
+                            <span className="text-xs font-sans text-emerald-200 font-bold">
                               / {product.container.packagingUnit}
                             </span>
                           </div>
 
-                          <div className="flex items-center justify-between text-[10.5px] font-mono mt-1.5 pt-1.5 border-t border-emerald-700/40 text-emerald-200/90">
+                          <div className="flex items-center justify-between text-xs font-sans mt-2 pt-1.5 border-t border-emerald-700/50 text-emerald-100">
                             <span>MOQ: <strong className="text-white font-black">100 CTN</strong></span>
-                            <span className="text-[9.5px] text-[#F8D879] italic font-semibold">Direct Container Pricing</span>
+                            <span className="text-[11px] text-[#F8D879] font-bold">Direct Container Pricing</span>
                           </div>
 
                           <button
@@ -430,23 +430,23 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
                                 image: product.image,
                               })
                             }
-                            className="w-full mt-2.5 h-10 rounded-xl bg-gradient-to-r from-[#E6BD56] via-[#F8DA84] to-[#D4AF37] hover:brightness-105 active:scale-[0.98] text-[#1A1300] font-mono font-black text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-[0_2px_12px_rgba(212,175,55,0.3)] cursor-pointer"
+                            className="w-full mt-2.5 h-10 rounded-xl bg-gradient-to-r from-[#E6BD56] via-[#F8DA84] to-[#D4AF37] hover:brightness-105 active:scale-[0.98] text-[#1A1300] font-sans font-black text-xs uppercase tracking-wide flex items-center justify-center gap-1.5 transition-all shadow-[0_2px_12px_rgba(212,175,55,0.3)] cursor-pointer"
                           >
                             <span>+ ADD CONTAINER (100 CTN)</span>
                           </button>
                         </div>
                       ) : (
                         <div className="py-1 relative z-10">
-                          <span className="inline-block px-2 py-0.5 rounded-md bg-[#D4AF37]/20 text-[#F8D879] border border-[#D4AF37]/40 text-[10px] font-mono font-bold tracking-tight">
+                          <span className="inline-block px-2.5 py-0.5 rounded-md bg-[#D4AF37]/20 text-[#F8D879] border border-[#D4AF37]/50 text-[10.5px] font-sans font-bold tracking-tight">
                             PRICE ON REQUEST
                           </span>
-                          <div className="text-[9.5px] font-mono text-emerald-200/80 italic mt-1.5">
+                          <div className="text-[11px] font-sans text-emerald-100 italic mt-1.5 font-medium">
                             Direct Port Booking • MOQ: {product.container.moq}
                           </div>
                           <button
                             type="button"
                             onClick={() => onOpenQuoteModal(product.name, 'Container Wholesale')}
-                            className="w-full mt-2.5 h-10 rounded-xl bg-black/40 hover:bg-black/60 text-[#F8D879] border border-[#D4AF37]/40 font-mono font-black text-[10.5px] uppercase tracking-wider transition-all flex items-center justify-center cursor-pointer"
+                            className="w-full mt-2.5 h-10 rounded-xl bg-black/50 hover:bg-black/70 text-[#F8D879] border border-[#D4AF37]/50 font-sans font-black text-xs uppercase tracking-wide transition-all flex items-center justify-center cursor-pointer"
                           >
                             Inquire Container Rate
                           </button>
@@ -455,31 +455,31 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
                     </div>
 
                     {/* 2. DUBAI WHOLESALE MARKET (SPOT) TILE */}
-                    <div className="p-3.5 rounded-2xl bg-gradient-to-br from-[#F5FAF7] via-white to-[#EEF8F2] text-[#063D24] border border-emerald-300/80 shadow-xs relative overflow-hidden group/market">
+                    <div className="p-3.5 rounded-2xl bg-gradient-to-br from-[#F5FAF7] via-white to-[#EEF8F2] text-[#063D24] border border-emerald-300 shadow-xs relative overflow-hidden group/market">
                       <div className="flex items-center justify-between gap-1 mb-2">
-                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-950/10 border border-emerald-900/20 text-[9px] font-mono font-black text-[#063D24] uppercase tracking-wider">
-                          <Store className="w-3 h-3 text-emerald-700 shrink-0" />
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-100 border border-emerald-300 text-[10px] font-sans font-black text-[#063D24] uppercase tracking-wide">
+                          <Store className="w-3 h-3 text-emerald-800 shrink-0" />
                           <span>DUBAI WHOLESALE MARKET</span>
                         </span>
                         
                         {product.market.trend && (
-                          <span className="flex items-center gap-0.5 text-[9.5px] font-mono font-bold px-1.5 py-0.5 rounded-md bg-white border border-emerald-200 shadow-2xs">
+                          <span className="flex items-center gap-0.5 text-[10px] font-sans font-extrabold px-1.5 py-0.5 rounded-md bg-white border border-emerald-300 shadow-2xs">
                             {product.market.trend === 'UP' && (
                               <>
                                 <TrendingUp className="w-2.5 h-2.5 text-rose-600" />
-                                <span className="text-rose-600">UP</span>
+                                <span className="text-rose-600 font-bold">UP</span>
                               </>
                             )}
                             {product.market.trend === 'DOWN' && (
                               <>
                                 <TrendingDown className="w-2.5 h-2.5 text-emerald-700" />
-                                <span className="text-emerald-700">DOWN</span>
+                                <span className="text-emerald-700 font-bold">DOWN</span>
                               </>
                             )}
                             {product.market.trend === 'STABLE' && (
                               <>
                                 <Minus className="w-2.5 h-2.5 text-gray-500" />
-                                <span className="text-gray-500">STABLE</span>
+                                <span className="text-gray-600 font-bold">STABLE</span>
                               </>
                             )}
                           </span>
@@ -489,20 +489,20 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
                       {hasMarketPrice ? (
                         <div>
                           <div className="flex items-baseline gap-1.5">
-                            <span className="text-xs font-mono font-black text-emerald-800 tracking-wider">
+                            <span className="text-sm font-sans font-black text-emerald-800 tracking-wide">
                               Dhs
                             </span>
-                            <span className="text-xl sm:text-2xl font-black text-[#063D24] font-mono tracking-tight">
+                            <span className="text-2xl sm:text-3xl font-black text-[#063D24] font-sans tracking-tight tabular-nums">
                               {product.market.priceAED!.toFixed(2)}
                             </span>
-                            <span className="text-[10px] text-emerald-800/80 font-mono">
+                            <span className="text-xs font-sans text-slate-600 font-bold">
                               / {product.market.packagingUnit}
                             </span>
                           </div>
 
-                          <div className="flex items-center justify-between text-[10.5px] font-mono mt-1.5 pt-1.5 border-t border-emerald-200/70 text-slate-600">
+                          <div className="flex items-center justify-between text-xs font-sans mt-2 pt-1.5 border-t border-emerald-200 text-slate-700">
                             <span>MOQ: <strong className="text-emerald-950 font-black">10 CTN</strong></span>
-                            <span className="text-[9.5px] text-emerald-800 italic font-semibold">Dubai Spot Pricing</span>
+                            <span className="text-[11px] text-emerald-800 font-bold">Dubai Spot Pricing</span>
                           </div>
 
                           <button
@@ -519,23 +519,23 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
                                 image: product.image,
                               })
                             }
-                            className="w-full mt-2.5 h-10 rounded-xl bg-gradient-to-r from-[#063D24] to-[#0A4D2E] hover:from-[#042A18] hover:to-[#083E26] active:scale-[0.98] text-white font-mono font-black text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-[0_2px_10px_rgba(6,61,36,0.22)] cursor-pointer"
+                            className="w-full mt-2.5 h-10 rounded-xl bg-gradient-to-r from-[#063D24] to-[#0A4D2E] hover:from-[#042A18] hover:to-[#083E26] active:scale-[0.98] text-white font-sans font-black text-xs uppercase tracking-wide flex items-center justify-center gap-1.5 transition-all shadow-[0_2px_10px_rgba(6,61,36,0.22)] cursor-pointer"
                           >
                             <span>+ ADD SPOT (10 CTN)</span>
                           </button>
                         </div>
                       ) : (
                         <div className="py-1">
-                          <span className="inline-block px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-900 border border-emerald-300 text-[10px] font-mono font-bold tracking-tight">
+                          <span className="inline-block px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-950 border border-emerald-300 text-[10.5px] font-sans font-bold tracking-tight">
                             PRICE ON REQUEST
                           </span>
-                          <div className="text-[9.5px] font-mono text-emerald-800 italic mt-1.5">
+                          <div className="text-[11px] font-sans text-emerald-900 italic mt-1.5 font-medium">
                             Al Aweer Spot Market • MOQ: {product.market.minPurchaseQty}
                           </div>
                           <button
                             type="button"
                             onClick={() => onOpenQuoteModal(product.name, 'Dubai Market Spot')}
-                            className="w-full mt-2.5 h-10 rounded-xl bg-emerald-100/80 hover:bg-emerald-200/80 text-emerald-950 border border-emerald-300 font-mono font-black text-[10.5px] uppercase tracking-wider transition-all flex items-center justify-center cursor-pointer"
+                            className="w-full mt-2.5 h-10 rounded-xl bg-emerald-100/90 hover:bg-emerald-200 text-emerald-950 border border-emerald-300 font-sans font-black text-xs uppercase tracking-wide transition-all flex items-center justify-center cursor-pointer"
                           >
                             Inquire Spot Rate
                           </button>
@@ -548,15 +548,15 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
 
                 {/* Card Footer: Live Trading Session */}
                 <div className="p-3.5 sm:p-4 pt-0">
-                  <div className="pt-2.5 border-t border-emerald-100/90 flex items-center justify-between text-[10px] font-mono">
-                    <span className="inline-flex items-center gap-1.5 text-emerald-900 font-bold">
+                  <div className="pt-2.5 border-t border-emerald-100 flex items-center justify-between text-xs font-sans">
+                    <span className="inline-flex items-center gap-1.5 text-emerald-950 font-bold">
                       <span className="relative flex h-2 w-2">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
                       </span>
                       <span>Live UAE Trading Session</span>
                     </span>
-                    <span className="text-[9px] font-mono text-emerald-800/70 font-medium">
+                    <span className="px-2 py-0.5 rounded-md bg-emerald-100/90 text-emerald-900 border border-emerald-300 text-[10.5px] font-sans font-bold">
                       Store Pickup Only
                     </span>
                   </div>
