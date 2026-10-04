@@ -152,8 +152,8 @@ export const BarakahHero: React.FC<BarakahHeroProps> = ({ onOpenQuoteModal }) =>
             </div>
           </div>
 
-          {/* Right Column Logo & Photography Card */}
-          <div className="lg:col-span-5 relative space-y-6">
+          {/* Right Column Logo & Photography Card (Hidden on mobile) */}
+          <div className="hidden lg:block lg:col-span-5 relative space-y-6">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}

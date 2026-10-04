@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { 
   Search, Clock, ShieldCheck, Anchor, Store, MessageCircle, 
-  TrendingUp, TrendingDown, Minus
+  TrendingUp, TrendingDown, Minus, Lock, Package, ArrowUpRight, ShoppingBag
 } from 'lucide-react';
 import { ContainerPriceItem } from './ContainerWholesaleDashboard';
 import { MarketPriceItem } from './MarketPriceDashboard';
@@ -313,10 +313,9 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
 
         {/* ========================================================================= */}
         {/* UNIFIED PRODUCT PRICE GRID                                               */}
-        {/* Mobile: 2-column (grid-cols-2)                                            */}
-        {/* Desktop / Web: 4-column (lg:grid-cols-4)                                 */}
+        {/* Mobile: 1-column on very small, 2-column on sm, 4-column on lg/xl        */}
         {/* ========================================================================= */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
           {filteredProducts.map((product) => {
             const hasContainerPrice = product.container.priceAED !== null && product.container.priceAED > 0;
             const hasMarketPrice = product.market.priceAED !== null && product.market.priceAED > 0;
@@ -324,86 +323,97 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
             return (
               <div
                 key={product.id}
-                className="bg-white rounded-2xl sm:rounded-3xl border border-emerald-200/90 overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col justify-between group"
+                className="bg-white rounded-3xl border border-slate-200/80 hover:border-emerald-500/40 shadow-[0_4px_24px_rgba(6,61,36,0.06)] hover:shadow-[0_16px_40px_rgba(6,61,36,0.12)] transition-all duration-300 flex flex-col justify-between overflow-hidden group"
               >
                 {/* Upper Section: Image & Identifiers */}
                 <div>
                   {/* Image Container with Badges */}
-                  <div className="relative aspect-4/3 w-full bg-emerald-950/10 overflow-hidden border-b border-emerald-100">
+                  <div className="relative aspect-[4/3] w-full bg-slate-900/5 overflow-hidden border-b border-gray-100">
                     <img
                       src={product.image}
                       alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
                     
+                    {/* Dark gradient overlay for badge legibility */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/30 pointer-events-none" />
+
                     {/* Origin & Grade Floating Badges */}
-                    <div className="absolute top-2 left-2 right-2 flex items-center justify-between pointer-events-none gap-1">
-                      <span className="px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-xs text-white text-[9px] sm:text-[10px] font-mono font-bold uppercase truncate max-w-[65%]">
+                    <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none gap-1.5">
+                      <span className="px-2.5 py-1 rounded-full bg-slate-950/85 backdrop-blur-md text-amber-200 text-[9.5px] font-mono font-bold uppercase truncate max-w-[65%] border border-white/10 shadow-xs">
                         {product.origin}
                       </span>
-                      <span className="px-1.5 py-0.5 rounded-md bg-emerald-600/90 text-white text-[9px] sm:text-[10px] font-mono font-bold shrink-0">
+                      <span className="px-2.5 py-1 rounded-full bg-gradient-to-r from-[#063D24]/95 to-[#0A4D2E]/95 backdrop-blur-md text-emerald-100 text-[9.5px] font-mono font-black tracking-wider uppercase border border-emerald-400/40 shadow-xs shrink-0">
                         {product.grade}
                       </span>
                     </div>
 
                     {/* Category Label Overlay */}
-                    <div className="absolute bottom-1.5 left-2">
-                      <span className="px-1.5 py-0.5 rounded bg-white/90 text-[#063D24] text-[9px] font-mono font-bold tracking-wider uppercase shadow-xs">
+                    <div className="absolute bottom-2.5 left-2.5">
+                      <span className="px-2.5 py-0.5 rounded-full bg-white/95 backdrop-blur-md text-[#063D24] text-[9px] font-mono font-black tracking-widest uppercase shadow-sm border border-emerald-200/80">
                         {product.category}
                       </span>
                     </div>
                   </div>
 
                   {/* Product Title & Details */}
-                  <div className="p-2.5 sm:p-3.5 pb-2">
-                    <div className="flex items-baseline justify-between gap-1 mb-0.5">
-                      <h3 className="font-bold text-xs sm:text-sm lg:text-base text-[#063D24] line-clamp-1">
+                  <div className="p-4 pb-3">
+                    <div className="flex items-start justify-between gap-2 mb-1.5">
+                      <h3 className="font-black text-[15px] sm:text-base text-slate-900 group-hover:text-[#063D24] transition-colors leading-tight line-clamp-1">
                         {product.name}
                       </h3>
                       {product.arabicName && (
-                        <span className="font-arabic text-[11px] sm:text-xs text-emerald-800 font-semibold shrink-0">
+                        <span className="font-arabic text-xs text-emerald-800 font-bold shrink-0" dir="rtl">
                           {product.arabicName}
                         </span>
                       )}
                     </div>
-                    <p className="text-[10px] sm:text-[11px] text-gray-500 font-mono truncate">
-                      {product.market.packagingDetails || product.container.packagingDetails}
-                    </p>
+                    <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-mono">
+                      <Package className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                      <span className="truncate">
+                        {product.market.packagingDetails || product.container.packagingDetails}
+                      </span>
+                    </div>
                   </div>
 
                   {/* ============================================================= */}
-                  {/* TWO DISTINCT, VISUALLY BALANCED PRICE TILES                   */}
+                  {/* TWO COHESIVE, ULTRA-PREMIUM WHOLESALE PROCUREMENT TILES       */}
                   {/* ============================================================= */}
-                  <div className="px-2 sm:px-3 space-y-2 pb-2">
+                  <div className="px-3.5 sm:px-4 space-y-2.5 pb-3.5">
                     
-                    {/* 1. CONTAINER WHOLESALE TILE (Wholesale / Container Purchase Only) */}
-                    <div className="p-2 sm:p-2.5 rounded-xl bg-slate-900 text-white border border-slate-800 relative overflow-hidden shadow-xs">
-                      <div className="flex items-center justify-between gap-1 mb-1">
-                        <span className="flex items-center gap-1 text-[9px] sm:text-[10px] font-mono font-bold text-amber-300 uppercase tracking-wider">
-                          <span>🔒 CONTAINER WHOLESALE</span>
+                    {/* 1. CONTAINER WHOLESALE TILE */}
+                    <div className="p-3.5 rounded-2xl bg-gradient-to-br from-[#062417] via-[#093522] to-[#041B11] text-white border border-[#D4AF37]/35 shadow-[0_4px_16px_rgba(6,36,23,0.25)] relative overflow-hidden group/container">
+                      {/* Subtle ambient luxury gold radial highlight */}
+                      <div className="absolute -top-12 -right-12 w-28 h-28 bg-[#D4AF37]/15 rounded-full blur-2xl pointer-events-none" />
+
+                      <div className="flex items-center justify-between gap-1 mb-2 relative z-10">
+                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-[9px] font-mono font-black text-[#F8D879] uppercase tracking-wider">
+                          <Lock className="w-3 h-3 text-[#F8D879]" />
+                          <span>CONTAINER WHOLESALE</span>
                         </span>
-                        <span className="text-[8px] sm:text-[9px] font-mono text-slate-400 truncate">
-                          {product.container.packagingUnit}
+                        <span className="text-[9.5px] font-mono text-emerald-200/90 font-medium">
+                          Direct Importer FCL
                         </span>
                       </div>
 
                       {hasContainerPrice ? (
-                        <div>
-                          <div className="flex items-baseline gap-1">
-                            <span className="text-xs sm:text-sm lg:text-base font-black text-white font-mono">
-                              AED {product.container.priceAED!.toFixed(2)}
+                        <div className="relative z-10">
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-xs font-mono font-black text-[#F8D879] tracking-wider uppercase">
+                              AED / Dhs
                             </span>
-                            <span className="text-[9px] sm:text-[10px] text-slate-300 font-mono">
+                            <span className="text-xl sm:text-2xl font-black text-white font-mono tracking-tight">
+                              {product.container.priceAED!.toFixed(2)}
+                            </span>
+                            <span className="text-[10px] text-emerald-200/70 font-mono">
                               / {product.container.packagingUnit}
                             </span>
                           </div>
 
-                          <div className="text-[8px] sm:text-[9px] font-mono text-amber-300/90 italic mt-0.5">
-                            Direct Container Pricing
-                          </div>
-                          <div className="text-[8px] sm:text-[9px] font-mono text-slate-300 mt-0.5">
-                            <span className="font-bold text-white">MOQ:</span> {product.container.moq}
+                          <div className="flex items-center justify-between text-[10.5px] font-mono mt-1.5 pt-1.5 border-t border-emerald-700/40 text-emerald-200/90">
+                            <span>MOQ: <strong className="text-white font-black">100 CTN</strong></span>
+                            <span className="text-[9.5px] text-[#F8D879] italic font-semibold">Direct Container Pricing</span>
                           </div>
 
                           <button
@@ -420,67 +430,79 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
                                 image: product.image,
                               })
                             }
-                            className="w-full mt-2 py-1 px-2 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-mono font-bold text-[9px] sm:text-[10px] uppercase tracking-wider flex items-center justify-center gap-1 transition-colors shadow-xs"
+                            className="w-full mt-2.5 h-10 rounded-xl bg-gradient-to-r from-[#E6BD56] via-[#F8DA84] to-[#D4AF37] hover:brightness-105 active:scale-[0.98] text-[#1A1300] font-mono font-black text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-[0_2px_12px_rgba(212,175,55,0.3)] cursor-pointer"
                           >
-                            <span>+ Add Container (100 CTN)</span>
+                            <span>+ ADD CONTAINER (100 CTN)</span>
                           </button>
                         </div>
                       ) : (
-                        <div className="py-0.5">
-                          <span className="inline-block px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 border border-amber-400/40 text-[9px] sm:text-[10px] font-mono font-bold tracking-tight">
+                        <div className="py-1 relative z-10">
+                          <span className="inline-block px-2 py-0.5 rounded-md bg-[#D4AF37]/20 text-[#F8D879] border border-[#D4AF37]/40 text-[10px] font-mono font-bold tracking-tight">
                             PRICE ON REQUEST
                           </span>
-                          <div className="text-[8px] sm:text-[9px] font-mono text-amber-300/80 italic mt-0.5">
-                            Direct Container Booking
-                          </div>
-                          <div className="text-[8px] sm:text-[9px] font-mono text-slate-400 mt-0.5">
-                            <span className="font-bold text-slate-300">MOQ:</span> {product.container.moq}
+                          <div className="text-[9.5px] font-mono text-emerald-200/80 italic mt-1.5">
+                            Direct Port Booking • MOQ: {product.container.moq}
                           </div>
                           <button
                             type="button"
                             onClick={() => onOpenQuoteModal(product.name, 'Container Wholesale')}
-                            className="w-full mt-2 py-1 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 font-mono font-bold text-[9px] uppercase tracking-wider transition-colors"
+                            className="w-full mt-2.5 h-10 rounded-xl bg-black/40 hover:bg-black/60 text-[#F8D879] border border-[#D4AF37]/40 font-mono font-black text-[10.5px] uppercase tracking-wider transition-all flex items-center justify-center cursor-pointer"
                           >
-                            Inquire Rate
+                            Inquire Container Rate
                           </button>
                         </div>
                       )}
                     </div>
 
-                    {/* 2. DUBAI WHOLESALE MARKET TILE */}
-                    <div className="p-2 sm:p-2.5 rounded-xl bg-emerald-50 text-[#063D24] border border-emerald-200/90 relative overflow-hidden shadow-xs">
-                      <div className="flex items-center justify-between gap-1 mb-1">
-                        <span className="flex items-center gap-1 text-[9px] sm:text-[10px] font-mono font-bold text-emerald-900 uppercase tracking-wider">
-                          <Store className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-emerald-700 shrink-0" />
+                    {/* 2. DUBAI WHOLESALE MARKET (SPOT) TILE */}
+                    <div className="p-3.5 rounded-2xl bg-gradient-to-br from-[#F5FAF7] via-white to-[#EEF8F2] text-[#063D24] border border-emerald-300/80 shadow-xs relative overflow-hidden group/market">
+                      <div className="flex items-center justify-between gap-1 mb-2">
+                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-950/10 border border-emerald-900/20 text-[9px] font-mono font-black text-[#063D24] uppercase tracking-wider">
+                          <Store className="w-3 h-3 text-emerald-700 shrink-0" />
                           <span>DUBAI WHOLESALE MARKET</span>
                         </span>
                         
-                        {/* Trend indicator if valid */}
                         {product.market.trend && (
-                          <span className="flex items-center text-[9px] font-mono font-bold">
-                            {product.market.trend === 'UP' && <TrendingUp className="w-2.5 h-2.5 text-rose-600" />}
-                            {product.market.trend === 'DOWN' && <TrendingDown className="w-2.5 h-2.5 text-emerald-700" />}
-                            {product.market.trend === 'STABLE' && <Minus className="w-2.5 h-2.5 text-gray-500" />}
+                          <span className="flex items-center gap-0.5 text-[9.5px] font-mono font-bold px-1.5 py-0.5 rounded-md bg-white border border-emerald-200 shadow-2xs">
+                            {product.market.trend === 'UP' && (
+                              <>
+                                <TrendingUp className="w-2.5 h-2.5 text-rose-600" />
+                                <span className="text-rose-600">UP</span>
+                              </>
+                            )}
+                            {product.market.trend === 'DOWN' && (
+                              <>
+                                <TrendingDown className="w-2.5 h-2.5 text-emerald-700" />
+                                <span className="text-emerald-700">DOWN</span>
+                              </>
+                            )}
+                            {product.market.trend === 'STABLE' && (
+                              <>
+                                <Minus className="w-2.5 h-2.5 text-gray-500" />
+                                <span className="text-gray-500">STABLE</span>
+                              </>
+                            )}
                           </span>
                         )}
                       </div>
 
                       {hasMarketPrice ? (
                         <div>
-                          <div className="flex items-baseline gap-1">
-                            <span className="text-xs sm:text-sm lg:text-base font-black text-emerald-950 font-mono">
-                              AED {product.market.priceAED!.toFixed(2)}
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-xs font-mono font-black text-emerald-800 tracking-wider uppercase">
+                              AED / Dhs
                             </span>
-                            <span className="text-[9px] sm:text-[10px] text-emerald-800 font-mono">
+                            <span className="text-xl sm:text-2xl font-black text-[#063D24] font-mono tracking-tight">
+                              {product.market.priceAED!.toFixed(2)}
+                            </span>
+                            <span className="text-[10px] text-emerald-800/80 font-mono">
                               / {product.market.packagingUnit}
                             </span>
                           </div>
 
-                          <div className="text-[8px] sm:text-[9px] font-mono text-emerald-700 italic mt-0.5">
-                            Dubai Spot Pricing
-                          </div>
-                          <div className="text-[8px] sm:text-[9px] font-mono text-emerald-900 mt-0.5">
-                            <span className="font-bold">Minimum Order:</span> {product.market.minPurchaseQty}
+                          <div className="flex items-center justify-between text-[10.5px] font-mono mt-1.5 pt-1.5 border-t border-emerald-200/70 text-slate-600">
+                            <span>MOQ: <strong className="text-emerald-950 font-black">10 CTN</strong></span>
+                            <span className="text-[9.5px] text-emerald-800 italic font-semibold">Dubai Spot Pricing</span>
                           </div>
 
                           <button
@@ -497,28 +519,25 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
                                 image: product.image,
                               })
                             }
-                            className="w-full mt-2 py-1 px-2 rounded-lg bg-[#063D24] hover:bg-emerald-900 text-white font-mono font-bold text-[9px] sm:text-[10px] uppercase tracking-wider flex items-center justify-center gap-1 transition-colors shadow-xs"
+                            className="w-full mt-2.5 h-10 rounded-xl bg-gradient-to-r from-[#063D24] to-[#0A4D2E] hover:from-[#042A18] hover:to-[#083E26] active:scale-[0.98] text-white font-mono font-black text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-[0_2px_10px_rgba(6,61,36,0.22)] cursor-pointer"
                           >
-                            <span>+ Add Spot (10 CTN)</span>
+                            <span>+ ADD SPOT (10 CTN)</span>
                           </button>
                         </div>
                       ) : (
-                        <div className="py-0.5">
-                          <span className="inline-block px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-900 border border-emerald-300 text-[9px] sm:text-[10px] font-mono font-bold tracking-tight">
+                        <div className="py-1">
+                          <span className="inline-block px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-900 border border-emerald-300 text-[10px] font-mono font-bold tracking-tight">
                             PRICE ON REQUEST
                           </span>
-                          <div className="text-[8px] sm:text-[9px] font-mono text-emerald-700 italic mt-0.5">
-                            Dubai Spot Inquiries
-                          </div>
-                          <div className="text-[8px] sm:text-[9px] font-mono text-emerald-800 mt-0.5">
-                            <span className="font-bold">Minimum Order:</span> {product.market.minPurchaseQty}
+                          <div className="text-[9.5px] font-mono text-emerald-800 italic mt-1.5">
+                            Al Aweer Spot Market • MOQ: {product.market.minPurchaseQty}
                           </div>
                           <button
                             type="button"
                             onClick={() => onOpenQuoteModal(product.name, 'Dubai Market Spot')}
-                            className="w-full mt-2 py-1 px-2 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-mono font-bold text-[9px] uppercase tracking-wider transition-colors"
+                            className="w-full mt-2.5 h-10 rounded-xl bg-emerald-100/80 hover:bg-emerald-200/80 text-emerald-950 border border-emerald-300 font-mono font-black text-[10.5px] uppercase tracking-wider transition-all flex items-center justify-center cursor-pointer"
                           >
-                            Inquire Rate
+                            Inquire Spot Rate
                           </button>
                         </div>
                       )}
@@ -527,57 +546,26 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
                   </div>
                 </div>
 
-                {/* Card Footer: Last Updated & Quotation Action */}
-                <div className="p-2 sm:p-3 pt-0">
-                  <div className="pt-2 border-t border-emerald-100 flex items-center justify-between text-[8px] sm:text-[9px] font-mono text-gray-500 mb-2">
-                    <span className="truncate">
-                      Updated: {liveDateStr || (product.market.lastUpdatedUAE !== 'Pending Entry' ? product.market.lastUpdatedUAE : product.container.lastUpdatedUAE)}
+                {/* Card Footer: Live Session Badge & Custom Volume Quote */}
+                <div className="p-3.5 sm:p-4 pt-0">
+                  <div className="pt-3 border-t border-emerald-100/90 flex items-center justify-between text-[10px] font-mono">
+                    <span className="inline-flex items-center gap-1.5 text-emerald-900 font-bold">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+                      </span>
+                      <span>Live UAE Trading Session</span>
                     </span>
-                    <span className="px-1.5 py-0.2 rounded bg-emerald-100/70 text-emerald-900 font-semibold shrink-0">
-                      UAE GST
-                    </span>
-                  </div>
-
-                  <div>
                     <button
                       type="button"
-                      onClick={() => {
-                        if (hasMarketPrice) {
-                          addToCart({
-                            productId: product.id,
-                            productName: product.name,
-                            productArabicName: product.arabicName,
-                            orderType: 'DUBAI_WHOLESALE',
-                            packagingUnit: product.market.packagingUnit,
-                            pricePerCtn: product.market.priceAED!,
-                            quantityCtn: 10,
-                            image: product.image,
-                          });
-                        } else if (hasContainerPrice) {
-                          addToCart({
-                            productId: product.id,
-                            productName: product.name,
-                            productArabicName: product.arabicName,
-                            orderType: 'CONTAINER',
-                            packagingUnit: product.container.packagingUnit,
-                            pricePerCtn: product.container.priceAED!,
-                            quantityCtn: 100,
-                            image: product.image,
-                          });
-                        } else {
-                          onOpenQuoteModal(product.name, 'Wholesale Order');
-                        }
-                      }}
-                      className="w-full py-2.5 px-3 rounded-xl bg-[#063D24] text-white hover:bg-emerald-900 font-mono font-bold text-[11px] sm:text-xs uppercase tracking-wider transition-all shadow-sm hover:scale-[1.01] flex items-center justify-center gap-1.5 cursor-pointer"
+                      onClick={() => onOpenQuoteModal(product.name, 'Wholesale RFQ')}
+                      className="text-emerald-800 hover:text-emerald-950 font-black hover:underline inline-flex items-center gap-1 cursor-pointer"
                     >
-                      <span>ORDER WHOLESALE</span>
+                      <span>Custom Volume RFQ</span>
+                      <ArrowUpRight className="w-3 h-3" />
                     </button>
-                    <p className="text-[8px] sm:text-[9px] text-gray-500 italic text-center mt-1.5 leading-tight">
-                      Submit your order request and our team will confirm availability &amp; final pricing.
-                    </p>
                   </div>
                 </div>
-
               </div>
             );
           })}
