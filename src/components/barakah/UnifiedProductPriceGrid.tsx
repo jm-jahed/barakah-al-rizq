@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { 
   Search, Clock, ShieldCheck, Anchor, Store, MessageCircle, 
-  TrendingUp, TrendingDown, Minus, Lock, Package, ArrowUpRight, ShoppingBag
+  TrendingUp, TrendingDown, Minus, Lock, Package, ShoppingBag
 } from 'lucide-react';
 import { ContainerPriceItem } from './ContainerWholesaleDashboard';
 import { MarketPriceItem } from './MarketPriceDashboard';
@@ -399,9 +399,9 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
 
                       {hasContainerPrice ? (
                         <div className="relative z-10">
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-xs font-mono font-black text-[#F8D879] tracking-wider uppercase">
-                              AED / Dhs
+                          <div className="flex items-baseline gap-1.5">
+                            <span className="text-xs font-mono font-black text-[#F8D879] tracking-wider">
+                              Dhs
                             </span>
                             <span className="text-xl sm:text-2xl font-black text-white font-mono tracking-tight">
                               {product.container.priceAED!.toFixed(2)}
@@ -488,9 +488,9 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
 
                       {hasMarketPrice ? (
                         <div>
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-xs font-mono font-black text-emerald-800 tracking-wider uppercase">
-                              AED / Dhs
+                          <div className="flex items-baseline gap-1.5">
+                            <span className="text-xs font-mono font-black text-emerald-800 tracking-wider">
+                              Dhs
                             </span>
                             <span className="text-xl sm:text-2xl font-black text-[#063D24] font-mono tracking-tight">
                               {product.market.priceAED!.toFixed(2)}
@@ -546,9 +546,9 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
                   </div>
                 </div>
 
-                {/* Card Footer: Live Session Badge & Custom Volume Quote */}
+                {/* Card Footer: Live Trading Session */}
                 <div className="p-3.5 sm:p-4 pt-0">
-                  <div className="pt-3 border-t border-emerald-100/90 flex items-center justify-between text-[10px] font-mono">
+                  <div className="pt-2.5 border-t border-emerald-100/90 flex items-center justify-between text-[10px] font-mono">
                     <span className="inline-flex items-center gap-1.5 text-emerald-900 font-bold">
                       <span className="relative flex h-2 w-2">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -556,14 +556,9 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
                       </span>
                       <span>Live UAE Trading Session</span>
                     </span>
-                    <button
-                      type="button"
-                      onClick={() => onOpenQuoteModal(product.name, 'Wholesale RFQ')}
-                      className="text-emerald-800 hover:text-emerald-950 font-black hover:underline inline-flex items-center gap-1 cursor-pointer"
-                    >
-                      <span>Custom Volume RFQ</span>
-                      <ArrowUpRight className="w-3 h-3" />
-                    </button>
+                    <span className="text-[9px] font-mono text-emerald-800/70 font-medium">
+                      Store Pickup Only
+                    </span>
                   </div>
                 </div>
               </div>
