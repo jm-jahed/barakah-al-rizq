@@ -170,41 +170,101 @@ export async function getFoodstuffScheduleCollection(): Promise<Collection<Foods
 }
 
 export async function getFoodstuffProducts(): Promise<FoodstuffProduct[]> {
-  const col = await getFoodstuffProductsCollection();
-  return col.find({}).toArray();
+  try {
+    const col = await getFoodstuffProductsCollection();
+    const items = await col.find({}).toArray();
+    if (items && items.length > 0) return items;
+  } catch (err) {
+    console.warn('MongoDB getFoodstuffProducts fallback:', (err as Error).message);
+  }
+  try {
+    const { readDB } = await import('@/lib/db/index');
+    return readDB().foodstuffProducts || [];
+  } catch {
+    return [];
+  }
 }
 
 export async function getFoodstuffContainerPrices(): Promise<FoodstuffContainerPrice[]> {
-  const col = await getFoodstuffContainerPricesCollection();
-  return col.find({}).toArray();
+  try {
+    const col = await getFoodstuffContainerPricesCollection();
+    const items = await col.find({}).toArray();
+    if (items && items.length > 0) return items;
+  } catch (err) {
+    console.warn('MongoDB getFoodstuffContainerPrices fallback:', (err as Error).message);
+  }
+  try {
+    const { readDB } = await import('@/lib/db/index');
+    return readDB().foodstuffContainerPrices || [];
+  } catch {
+    return [];
+  }
 }
 
 export async function getFoodstuffMarketPrices(): Promise<FoodstuffMarketPrice[]> {
-  const col = await getFoodstuffMarketPricesCollection();
-  return col.find({}).toArray();
+  try {
+    const col = await getFoodstuffMarketPricesCollection();
+    const items = await col.find({}).toArray();
+    if (items && items.length > 0) return items;
+  } catch (err) {
+    console.warn('MongoDB getFoodstuffMarketPrices fallback:', (err as Error).message);
+  }
+  try {
+    const { readDB } = await import('@/lib/db/index');
+    return readDB().foodstuffMarketPrices || [];
+  } catch {
+    return [];
+  }
 }
 
 export async function getFoodstuffSchedule(): Promise<FoodstuffUpdateSchedule> {
-  const col = await getFoodstuffScheduleCollection();
-  const doc = await col.findOne({ _id: "schedule_config" });
-  if (doc) {
-    const { _id, ...rest } = doc;
-    return rest as FoodstuffUpdateSchedule;
+  try {
+    const col = await getFoodstuffScheduleCollection();
+    const doc = await col.findOne({ _id: "schedule_config" });
+    if (doc) {
+      const { _id, ...rest } = doc;
+      return rest as FoodstuffUpdateSchedule;
+    }
+  } catch (err) {
+    console.warn('MongoDB getFoodstuffSchedule fallback:', (err as Error).message);
   }
-  return {
-    morningTime: '06:30',
-    middayTime: '12:30',
-    eveningTime: '18:00',
-    timezone: 'Asia/Dubai',
-    staleThresholdHours: 8,
-    lastSyncAt: null,
-    autoFeedEnabled: false,
-  };
+  try {
+    const { readDB } = await import('@/lib/db/index');
+    return readDB().foodstuffUpdateSchedule || {
+      morningTime: '06:30',
+      middayTime: '12:30',
+      eveningTime: '18:00',
+      timezone: 'Asia/Dubai',
+      staleThresholdHours: 8,
+      lastSyncAt: null,
+      autoFeedEnabled: false,
+    };
+  } catch {
+    return {
+      morningTime: '06:30',
+      middayTime: '12:30',
+      eveningTime: '18:00',
+      timezone: 'Asia/Dubai',
+      staleThresholdHours: 8,
+      lastSyncAt: null,
+      autoFeedEnabled: false,
+    };
+  }
 }
 
 export async function getFoodstuffPriceHistory(limit: number = 100): Promise<FoodstuffPriceHistory[]> {
-  const col = await getFoodstuffPriceHistoryCollection();
-  return col.find({}).sort({ timestamp: -1 }).limit(limit).toArray();
+  try {
+    const col = await getFoodstuffPriceHistoryCollection();
+    return await col.find({}).sort({ timestamp: -1 }).limit(limit).toArray();
+  } catch (err) {
+    console.warn('MongoDB getFoodstuffPriceHistory fallback:', (err as Error).message);
+  }
+  try {
+    const { readDB } = await import('@/lib/db/index');
+    return (readDB().foodstuffPriceHistory || []).slice(-limit).reverse();
+  } catch {
+    return [];
+  }
 }
 
 export async function logActivityToMongo(user: string, action: string, entity: string): Promise<void> {
