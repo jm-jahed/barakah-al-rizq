@@ -1,0 +1,100 @@
+[
+  {
+    "id": "act-1791025928514",
+    "user": "bulk-admin@webstudioae.com",
+    "action": "FOODSTUFF_BULK_UPDATE",
+    "entity": "Updated 2 DUBAI_MARKET price records via EXCEL_IMPORT",
+    "timestamp": "2026-10-03T11:12:08.514Z"
+  },
+  {
+    "id": "act-1791025928504",
+    "user": "qa-admin@webstudioae.com",
+    "action": "CONTAINER_PRICE_UPDATED",
+    "entity": "tomato-fresh: 30 -> null",
+    "timestamp": "2026-10-03T11:12:08.504Z"
+  },
+  {
+    "id": "act-1791025928496",
+    "user": "qa-admin@webstudioae.com",
+    "action": "CONTAINER_PRICE_UPDATED",
+    "entity": "tomato-fresh: 27.5 -> 30",
+    "timestamp": "2026-10-03T11:12:08.497Z"
+  },
+  {
+    "id": "act-1791025928491",
+    "user": "qa-admin@webstudioae.com",
+    "action": "CONTAINER_PRICE_UPDATED",
+    "entity": "tomato-fresh: null -> 27.5",
+    "timestamp": "2026-10-03T11:12:08.491Z"
+  },
+  {
+    "id": "act-1791025888856",
+    "user": "bulk-admin@webstudioae.com",
+    "action": "FOODSTUFF_BULK_UPDATE",
+    "entity": "Updated 2 DUBAI_MARKET price records via EXCEL_IMPORT",
+    "timestamp": "2026-10-03T11:11:28.856Z"
+  },
+  {
+    "id": "act-1791025888843",
+    "user": "qa-admin@webstudioae.com",
+    "action": "CONTAINER_PRICE_UPDATED",
+    "entity": "tomato-fresh: 30 -> null",
+    "timestamp": "2026-10-03T11:11:28.843Z"
+  },
+  {
+    "id": "act-1791025888837",
+    "user": "qa-admin@webstudioae.com",
+    "action": "CONTAINER_PRICE_UPDATED",
+    "entity": "tomato-fresh: 27.5 -> 30",
+    "timestamp": "2026-10-03T11:11:28.837Z"
+  },
+  {
+    "id": "act-1791025888830",
+    "user": "qa-admin@webstudioae.com",
+    "action": "CONTAINER_PRICE_UPDATED",
+    "entity": "tomato-fresh: null -> 27.5",
+    "timestamp": "2026-10-03T11:11:28.831Z"
+  },
+  {
+    "id": "act-1791025828936",
+    "user": "bulk-admin@webstudioae.com",
+    "action": "FOODSTUFF_BULK_UPDATE",
+    "entity": "Updated 2 DUBAI_MARKET price records via EXCEL_IMPORT",
+    "timestamp": "2026-10-03T11:10:28.936Z"
+  },
+  {
+    "id": "act-1791025828871",
+    "user": "qa-admin@webstudioae.com",
+    "action": "CONTAINER_PRICE_UPDATED",
+    "entity": "tomato-fresh: 30 -> null",
+    "timestamp": "2026-10-03T11:10:28.871Z"
+  },
+  {
+    "id": "act-1791025828861",
+    "user": "qa-admin@webstudioae.com",
+    "action": "CONTAINER_PRICE_UPDATED",
+    "entity": "tomato-fresh: 27.5 -> 30",
+    "timestamp": "2026-10-03T11:10:28.861Z"
+  },
+  {
+    "id": "act-1791025828853",
+    "user": "qa-admin@webstudioae.com",
+    "action": "CONTAINER_PRICE_UPDATED",
+    "entity": "tomato-fresh: null -> 27.5",
+    "timestamp": "2026-10-03T11:10:28.853Z"
+  },
+  {
+    "id": "act-1788338262811",
+    "user": "admin@webstudioae.com",
+    "action": "HOMEPAGE_UPDATED",
+    "entity": "homepage",
+    "timestamp": "2026-09-02T08:37:42.811Z"
+  },
+  {
+    "id": "act-1",
+    "user": "admin@webstudioae.com",
+    "action": "SYSTEM_INITIALIZED",
+    "entity": "Control Center",
+    "timestamp": "2026-09-02T08:37:42.806Z"
+  }
+]

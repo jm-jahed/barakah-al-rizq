@@ -26,7 +26,7 @@ interface BarakahShowcaseProps {
 }
 
 const VERIFIED_PRICE_MAP: Record<string, { containerPrice: number; marketPrice: number; prevMarketPrice: number; trend: 'UP' | 'DOWN' | 'STABLE'; moq: string; minQty: string }> = {
-  'tomato-fresh': { containerPrice: 18.00, marketPrice: 22.00, prevMarketPrice: 24.00, trend: 'DOWN', moq: '1 x 40ft Reefer (2,400 CTN)', minQty: '25 Cartons' },
+  'tomato-fresh': { containerPrice: 18.00, marketPrice: 22.00, prevMarketPrice: 24.00, trend: 'DOWN', moq: '100 CTN', minQty: '10 CTN' },
   'potato-yellow': { containerPrice: 24.00, marketPrice: 28.00, prevMarketPrice: 28.00, trend: 'STABLE', moq: '1 x 40ft Reefer (2,600 Bags)', minQty: '50 Bags' },
   'onion-red': { containerPrice: 22.00, marketPrice: 26.50, prevMarketPrice: 25.00, trend: 'UP', moq: '1 x 40ft Container (2,800 Bags)', minQty: '50 Bags' },
   'carrot-orange': { containerPrice: 32.00, marketPrice: 38.00, prevMarketPrice: 36.00, trend: 'UP', moq: '1 x 40ft Reefer (2,200 CTN)', minQty: '30 Cartons' },

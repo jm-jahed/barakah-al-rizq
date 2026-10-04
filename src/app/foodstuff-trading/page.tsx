@@ -4,7 +4,7 @@ import { BarakahShowcase } from '@/components/barakah/BarakahShowcase';
 
 export const metadata: Metadata = {
   title: 'Barakah Al Rizq Foodstuff Trading L.L.C | UAE Foodstuff Importer & Wholesaler',
-  description: 'Barakah Al Rizq Foodstuff Trading L.L.C is a premier UAE-based foodstuff trading company specializing in import, export, container wholesale, and daily trading floor market distribution across Dubai, UAE, and GCC markets.',
+  description: 'Barakah Al Rizq Foodstuff Trading L.L.C is a UAE-based foodstuff trading company specializing in import, export, wholesale and reliable food supply across Dubai and international markets.',
   keywords: [
     'Barakah Al Rizq Foodstuff Trading',
     'Dubai Foodstuff Importer',
@@ -18,12 +18,12 @@ export const metadata: Metadata = {
     title: 'Barakah Al Rizq Foodstuff Trading L.L.C | UAE Foodstuff Importer & Wholesaler',
     description: 'Leading UAE foodstuff import, export, wholesale, and bulk supply enterprise headquartered at Al Aweer Vegetable Market, Ras Al Khor, Dubai.',
     images: ['https://images.unsplash.com/photo-1592924357228-91a4daadcfea?q=80&w=1200&auto=format&fit=crop'],
-    url: 'https://barakahalrizquae.com',
+    url: 'https://barakahalrizquae.com/foodstuff-trading',
     type: 'website',
   },
 };
 
-export default function Home() {
+export default function FoodstuffTradingRoute() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WholesaleStore',
@@ -38,7 +38,7 @@ export default function Home() {
       'addressRegion': 'Dubai',
       'addressCountry': 'AE'
     },
-    'url': 'https://barakahalrizquae.com',
+    'url': 'https://barakahalrizquae.com/foodstuff-trading',
     'priceRange': '$$$',
   };
 

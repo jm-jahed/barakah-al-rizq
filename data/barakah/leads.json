@@ -1,0 +1,32 @@
+[
+  {
+    "id": "qa-test-lead-1",
+    "name": "QA Test Client",
+    "email": "qa.test@company.ae",
+    "phone": "+971 50 999 8888",
+    "company": "QA Enterprises",
+    "service": "Growth Enterprise",
+    "budget": "AED 15,000 - 30,000",
+    "message": "Automated QA submission test for full-stack pipeline.",
+    "source": "website",
+    "status": "NEW",
+    "notes": "Verified via automated test runner.",
+    "createdAt": "2026-09-02T02:08:00.000Z",
+    "updatedAt": "2026-09-02T02:08:00.000Z"
+  },
+  {
+    "id": "lead-1",
+    "name": "Tariq Al Mansoori",
+    "email": "tariq@apexcapital.ae",
+    "phone": "+971 50 123 4567",
+    "company": "Apex Capital",
+    "service": "Growth Enterprise",
+    "budget": "AED 15,000 - 30,000",
+    "message": "Custom platform inquiry.",
+    "source": "website",
+    "status": "NEW",
+    "notes": "Initial inquiry.",
+    "createdAt": "2026-09-02T00:00:00.000Z",
+    "updatedAt": "2026-09-02T00:00:00.000Z"
+  }
+]

@@ -73,6 +73,32 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [selectedSession, setSelectedSession] = useState('ALL');
+  const [liveDateStr, setLiveDateStr] = useState<string>('');
+
+  // Live UAE formatted date/time for active market session (LIVE ALWAYS)
+  React.useEffect(() => {
+    const updateLiveDate = () => {
+      try {
+        const now = new Date();
+        const formatted = new Intl.DateTimeFormat('en-GB', {
+          timeZone: 'Asia/Dubai',
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true,
+        }).format(now) + ' GST';
+        setLiveDateStr(formatted);
+      } catch {
+        // Fallback to empty if Intl fails
+      }
+    };
+
+    updateLiveDate();
+    const interval = setInterval(updateLiveDate, 30000); // Auto-refreshes to stay live always
+    return () => clearInterval(interval);
+  }, []);
 
   const categories = ['ALL', 'VEGETABLES', 'FRUITS', 'RICE & GRAINS', 'PULSES', 'SPICES', 'DRY FOOD'];
   const sessions = ['ALL', 'MORNING', 'MIDDAY', 'EVENING'];
@@ -370,18 +396,11 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
                             </span>
                           </div>
 
-                          {/* Calculated Per-KG Price when Net Weight is valid */}
-                          {product.container.calculatedPricePerKg !== null && product.container.calculatedPricePerKg > 0 ? (
-                            <div className="text-[9px] sm:text-[10px] font-mono text-emerald-400 font-semibold mt-0.5">
-                              AED {product.container.calculatedPricePerKg.toFixed(2)} / KG
-                            </div>
-                          ) : null}
-
-                          <div className="text-[8px] sm:text-[9px] font-mono text-amber-300/80 flex items-center gap-1 mt-0.5">
-                            <span>🔒 Wholesale / Container Purchase</span>
+                          <div className="text-[8px] sm:text-[9px] font-mono text-amber-300/90 italic mt-0.5">
+                            Direct Container Pricing
                           </div>
-                          <div className="text-[8px] font-mono text-slate-400">
-                            MOQ: {product.container.moq}
+                          <div className="text-[8px] sm:text-[9px] font-mono text-slate-300 mt-0.5">
+                            <span className="font-bold text-white">MOQ:</span> {product.container.moq}
                           </div>
                         </div>
                       ) : (
@@ -389,22 +408,22 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
                           <span className="inline-block px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 border border-amber-400/40 text-[9px] sm:text-[10px] font-mono font-bold tracking-tight">
                             PRICE ON REQUEST
                           </span>
-                          <div className="text-[8px] sm:text-[9px] font-mono text-amber-300/80 mt-0.5">
-                            🔒 Wholesale / Container Booking
+                          <div className="text-[8px] sm:text-[9px] font-mono text-amber-300/80 italic mt-0.5">
+                            Direct Container Booking
                           </div>
-                          <div className="text-[8px] sm:text-[9px] font-mono text-slate-400">
-                            MOQ: {product.container.moq}
+                          <div className="text-[8px] sm:text-[9px] font-mono text-slate-400 mt-0.5">
+                            <span className="font-bold text-slate-300">MOQ:</span> {product.container.moq}
                           </div>
                         </div>
                       )}
                     </div>
 
-                    {/* 2. DUBAI WHOLESALE / AL AWEER MARKET TILE */}
+                    {/* 2. DUBAI WHOLESALE MARKET TILE */}
                     <div className="p-2 sm:p-2.5 rounded-xl bg-emerald-50 text-[#063D24] border border-emerald-200/90 relative overflow-hidden shadow-xs">
                       <div className="flex items-center justify-between gap-1 mb-1">
                         <span className="flex items-center gap-1 text-[9px] sm:text-[10px] font-mono font-bold text-emerald-900 uppercase tracking-wider">
                           <Store className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-emerald-700 shrink-0" />
-                          <span>DUBAI WHOLESALE</span>
+                          <span>DUBAI WHOLESALE MARKET</span>
                         </span>
                         
                         {/* Trend indicator if valid */}
@@ -428,15 +447,11 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
                             </span>
                           </div>
 
-                          {/* Calculated Per-KG Price when Net Weight is valid */}
-                          {product.market.calculatedPricePerKg !== null && product.market.calculatedPricePerKg > 0 ? (
-                            <div className="text-[9px] sm:text-[10px] font-mono text-emerald-800 font-bold mt-0.5">
-                              AED {product.market.calculatedPricePerKg.toFixed(2)} / KG
-                            </div>
-                          ) : null}
-
-                          <div className="text-[8px] sm:text-[9px] font-mono text-emerald-700 mt-0.5">
-                            Spot Minimum: {product.market.minPurchaseQty}
+                          <div className="text-[8px] sm:text-[9px] font-mono text-emerald-700 italic mt-0.5">
+                            Dubai Spot Pricing
+                          </div>
+                          <div className="text-[8px] sm:text-[9px] font-mono text-emerald-900 mt-0.5">
+                            <span className="font-bold">Minimum Order:</span> {product.market.minPurchaseQty}
                           </div>
                         </div>
                       ) : (
@@ -444,8 +459,11 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
                           <span className="inline-block px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-900 border border-emerald-300 text-[9px] sm:text-[10px] font-mono font-bold tracking-tight">
                             PRICE ON REQUEST
                           </span>
-                          <div className="text-[8px] sm:text-[9px] font-mono text-emerald-700 mt-0.5">
-                            Min: {product.market.minPurchaseQty}
+                          <div className="text-[8px] sm:text-[9px] font-mono text-emerald-700 italic mt-0.5">
+                            Dubai Spot Inquiries
+                          </div>
+                          <div className="text-[8px] sm:text-[9px] font-mono text-emerald-800 mt-0.5">
+                            <span className="font-bold">Minimum Order:</span> {product.market.minPurchaseQty}
                           </div>
                         </div>
                       )}
@@ -458,33 +476,24 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
                 <div className="p-2 sm:p-3 pt-0">
                   <div className="pt-2 border-t border-emerald-100 flex items-center justify-between text-[8px] sm:text-[9px] font-mono text-gray-500 mb-2">
                     <span className="truncate">
-                      Updated: {product.market.lastUpdatedUAE !== 'Pending Entry' ? product.market.lastUpdatedUAE : product.container.lastUpdatedUAE}
+                      Updated: {liveDateStr || (product.market.lastUpdatedUAE !== 'Pending Entry' ? product.market.lastUpdatedUAE : product.container.lastUpdatedUAE)}
                     </span>
                     <span className="px-1.5 py-0.2 rounded bg-emerald-100/70 text-emerald-900 font-semibold shrink-0">
                       UAE GST
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-1.5">
+                  <div>
                     <button
                       type="button"
-                      onClick={() => onOpenQuoteModal(product.name, 'Container Wholesale Order')}
-                      className="py-1.5 sm:py-2 px-1 rounded-xl bg-slate-900 border border-amber-500/40 text-amber-300 hover:bg-slate-800 font-mono font-bold text-[9px] sm:text-[11px] transition-colors flex items-center justify-center gap-1 shadow-xs truncate"
-                      title="Wholesale Customer Access / Approval Required to Order Container"
+                      onClick={() => onOpenQuoteModal(product.name, 'Wholesale Order')}
+                      className="w-full py-2 sm:py-2.5 px-2 rounded-xl bg-[#063D24] text-white hover:bg-emerald-900 font-mono font-bold text-[10px] sm:text-xs uppercase tracking-wider transition-all shadow-sm hover:scale-[1.01] flex items-center justify-center gap-1.5"
                     >
-                      <span className="shrink-0">🔒</span>
-                      <span className="truncate">Order Wholesale</span>
+                      <span>ORDER WHOLESALE</span>
                     </button>
-
-                    <button
-                      type="button"
-                      onClick={() => onOpenQuoteModal(product.name, 'Dubai Market Spot')}
-                      className="py-1.5 sm:py-2 px-1 rounded-xl bg-[#063D24] text-white hover:bg-emerald-900 font-mono font-bold text-[9px] sm:text-[11px] transition-colors flex items-center justify-center gap-1 shadow-xs truncate"
-                      title="Inquire Dubai Market Spot Price"
-                    >
-                      <MessageCircle className="w-2.5 h-2.5 text-amber-300 shrink-0" />
-                      <span className="truncate">Market Inquire</span>
-                    </button>
+                    <p className="text-[8px] sm:text-[9px] text-gray-500 italic text-center mt-1.5 leading-tight">
+                      Submit your order request and our team will confirm availability &amp; final pricing.
+                    </p>
                   </div>
                 </div>
 

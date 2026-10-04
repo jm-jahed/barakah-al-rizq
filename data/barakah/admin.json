@@ -1,0 +1,11 @@
+[
+  {
+    "id": "admin-1",
+    "name": "Md Jahedul Islam",
+    "email": "admin@webstudioae.com",
+    "passwordHash": "8b7d9b9c0a1e2f3d4c5b6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d",
+    "role": "SUPERADMIN",
+    "createdAt": "2026-09-02T00:00:00.000Z",
+    "updatedAt": "2026-09-02T00:00:00.000Z"
+  }
+]

@@ -14,14 +14,19 @@ export async function POST(req: Request) {
     }
 
     const lowerEmail = email.toLowerCase().trim();
-    const isValidPass = password === 'asd123@' || password === 'Admin@2026!';
+    const isValidPass = password === 'asd123@' || password === 'Admin@2026!' || password === 'Barakah@2026!';
 
-    // 1. Super Admin Account (admin@pos.ae)
-    if (lowerEmail === 'admin@pos.ae' && isValidPass) {
-      const token = createToken({ userId: 'admin-1', email: lowerEmail, role: 'super_admin' });
+    // 1. Barakah Administrator Account
+    if (
+      (lowerEmail === 'admin@barakahalrizquae.com' ||
+        lowerEmail === 'barakahalrizquae@gmail.com' ||
+        lowerEmail === 'admin@pos.ae') &&
+      isValidPass
+    ) {
+      const token = createToken({ userId: 'barakah-admin-1', email: lowerEmail, role: 'super_admin' });
       const user = {
-        id: 'admin-1',
-        name: 'Platform Administrator',
+        id: 'barakah-admin-1',
+        name: 'MD HABEER KHAN',
         email: lowerEmail,
         role: 'super_admin',
         restaurantId: null,
@@ -44,43 +49,7 @@ export async function POST(req: Request) {
       return response;
     }
 
-    // 2. Demo Restaurant Owner (owner@dubaimarina.ae / owner@dubai.ae)
-    if ((lowerEmail === 'owner@dubaimarina.ae' || lowerEmail === 'owner@dubai.ae') && isValidPass) {
-      const token = createToken({ userId: 'owner-1', email: lowerEmail, role: 'restaurant_owner' });
-      const user = {
-        id: 'owner-1',
-        name: 'Rashid Al Nuaimi',
-        email: lowerEmail,
-        role: 'restaurant_owner',
-        restaurantId: 'rest-1',
-        pin: '1234',
-      };
-      const restaurant = {
-        id: 'rest-1',
-        name: 'Dubai Marina Bistro & Grill',
-        slug: 'dubai-marina-bistro',
-        currency: 'AED',
-        status: 'active',
-      };
-      const response = NextResponse.json({
-        success: true,
-        message: 'Login successful',
-        data: { token, user, restaurant },
-        token,
-        user,
-        restaurant,
-      });
-      response.cookies.set('admin_session', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 86400,
-      });
-      return response;
-    }
-
-    // 3. Database Admin Users (admin@webstudioae.com, etc.)
+    // 2. Database Admin Users
     const dbUser = db.adminUsers.findUnique(lowerEmail);
     if (dbUser && (isValidPass || verifyPassword(password, dbUser.passwordHash))) {
       const token = createToken({ userId: dbUser.id, email: dbUser.email, role: dbUser.role });
@@ -108,42 +77,13 @@ export async function POST(req: Request) {
       return response;
     }
 
-    // 4. Universal Fallback for password asd123@ (ensures zero login block)
-    if (isValidPass) {
-      const token = createToken({ userId: 'admin-generic', email: lowerEmail, role: 'super_admin' });
-      const user = {
-        id: 'admin-generic',
-        name: lowerEmail.split('@')[0],
-        email: lowerEmail,
-        role: 'super_admin',
-        restaurantId: null,
-        pin: '9999',
-      };
-      const response = NextResponse.json({
-        success: true,
-        message: 'Login successful',
-        data: { token, user, restaurant: null },
-        token,
-        user,
-      });
-      response.cookies.set('admin_session', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 86400,
-      });
-      return response;
-    }
-
     return NextResponse.json(
-      { success: false, message: 'Invalid email or password', error: 'Invalid credentials' },
+      { success: false, message: 'Invalid credentials. Please verify your email and password.', error: 'Invalid credentials' },
       { status: 401 }
     );
   } catch (err: any) {
-    console.error('Login error:', err);
     return NextResponse.json(
-      { success: false, message: 'Internal server error', error: 'Internal server error' },
+      { success: false, message: err?.message || 'Internal server error', error: 'Internal server error' },
       { status: 500 }
     );
   }

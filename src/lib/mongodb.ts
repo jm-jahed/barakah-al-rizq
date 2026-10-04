@@ -702,7 +702,7 @@ export async function updateLead(id: string, updates: Partial<Lead>): Promise<Le
   };
 
   await col.replaceOne({ _id: existing._id }, updatedRecord, { upsert: true });
-  await logActivityToMongo('admin@webstudioae.com', 'LEAD_UPDATED', id);
+  await logActivityToMongo('admin@barakahalrizquae.com', 'LEAD_UPDATED', id);
   return updatedRecord;
 }
 
@@ -710,7 +710,7 @@ export async function deleteLead(id: string): Promise<boolean> {
   const col = await getLeadsCollection();
   const res = await col.deleteOne({ $or: [{ _id: id }, { id }] });
   if (res.deletedCount > 0) {
-    await logActivityToMongo('admin@webstudioae.com', 'LEAD_DELETED', id);
+    await logActivityToMongo('admin@barakahalrizquae.com', 'LEAD_DELETED', id);
     return true;
   }
   return false;

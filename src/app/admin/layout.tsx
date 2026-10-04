@@ -35,7 +35,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     setMobileMenuOpen(false);
   }, [pathname]);
 
-  if (pathname === '/admin/login' || pathname.startsWith('/admin/pos')) {
+  if (pathname === '/admin/login') {
     return <>{children}</>;
   }
 
@@ -43,8 +43,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return (
       <div className="min-h-screen bg-[#07090E] text-slate-400 flex items-center justify-center p-4">
         <div className="flex items-center gap-3">
-          <span className="w-3.5 h-3.5 rounded-full bg-amber-400 animate-ping" />
-          <span className="text-xs font-mono">Verifying Mobile Control Center Session...</span>
+          <span className="w-3.5 h-3.5 rounded-full bg-emerald-500 animate-ping" />
+          <span className="text-xs font-mono">Verifying Barakah Admin Session...</span>
         </div>
       </div>
     );
@@ -59,42 +59,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const navGroups = [
     {
       group: 'OVERVIEW',
-      items: [{ label: 'Dashboard', href: '/admin', icon: '📊' }],
+      items: [{ label: 'Executive Overview', href: '/admin', icon: '📊' }],
     },
     {
-      group: 'WEBSITE',
+      group: 'FOODSTUFF OPERATIONS',
       items: [
-        { label: 'Homepage CMS', href: '/admin/homepage', icon: '🏠' },
-        { label: 'Navigation Menu', href: '/admin/navigation', icon: '🧭' },
-        { label: 'SEO Control Center', href: '/admin/seo', icon: '🔍' },
-        { label: 'Media Library', href: '/admin/media', icon: '🖼️' },
-        { label: 'Global Settings', href: '/admin/settings', icon: '⚙️' },
-      ],
-    },
-    {
-      group: 'CONTENT',
-      items: [
-        { label: 'Foodstuff Live Prices', href: '/admin/foodstuff-prices', icon: '🥬' },
-        { label: 'Projects', href: '/admin/projects', icon: '📁' },
-        { label: 'Services', href: '/admin/services', icon: '⚡' },
-        { label: 'Pricing', href: '/admin/pricing', icon: '💎' },
-        { label: 'Testimonials', href: '/admin/testimonials', icon: '⭐' },
-        { label: 'Blog & Insights', href: '/admin/blog', icon: '📝' },
-        { label: 'FAQ Manager', href: '/admin/faq', icon: '❓' },
-      ],
-    },
-    {
-      group: 'BUSINESS',
-      items: [
-        { label: 'LinkedIn Studio', href: '/admin/linkedin', icon: '💼' },
-        { label: 'Leads & CRM', href: '/admin/leads', icon: '📥' },
-        { label: 'Newsletter', href: '/admin/newsletter', icon: '✉️' },
+        { label: 'Live Market & Container Prices', href: '/admin/foodstuff-prices', icon: '🥬' },
+        { label: 'Customer Inquiries & Leads', href: '/admin/leads', icon: '📥' },
       ],
     },
     {
       group: 'SYSTEM',
       items: [
-        { label: 'Admin Account', href: '/admin/account', icon: '👤' },
+        { label: 'Admin Security', href: '/admin/account', icon: '👤' },
         { label: 'Audit Logs', href: '/admin/activity', icon: '📜' },
       ],
     },
@@ -105,12 +82,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Mobile Header Bar */}
       <header className="md:hidden bg-[#0F172A] border-b border-slate-800 p-4 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-slate-950 font-black text-base">
-            WS
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-amber-500 flex items-center justify-center text-slate-950 font-black text-base">
+            BR
           </div>
           <div>
-            <span className="text-xs font-bold text-white block leading-none">WebStudioAE</span>
-            <span className="text-[9px] font-mono text-amber-400 uppercase block">ADMIN CMS</span>
+            <span className="text-xs font-bold text-white block leading-none">Barakah Al Rizq</span>
+            <span className="text-[9px] font-mono text-emerald-400 uppercase block">ADMIN PORTAL</span>
           </div>
         </div>
 
@@ -140,12 +117,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="space-y-6">
           <div className="flex items-center justify-between border-b border-slate-800 pb-4">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-slate-950 font-black text-lg">
-                WS
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500 to-amber-500 flex items-center justify-center text-slate-950 font-black text-lg">
+                BR
               </div>
               <div>
-                <span className="text-sm font-bold text-white block leading-none">WebStudioAE</span>
-                <span className="text-[10px] font-mono text-amber-400 uppercase mt-0.5 block">CONTROL CENTER</span>
+                <span className="text-sm font-bold text-white block leading-none">Barakah Al Rizq</span>
+                <span className="text-[10px] font-mono text-emerald-400 uppercase mt-0.5 block">FOODSTUFF TRADING</span>
               </div>
             </div>
             <button
@@ -171,7 +148,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                       onClick={() => setMobileMenuOpen(false)}
                       className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                         active
-                          ? 'bg-amber-500/10 border border-amber-500/30 text-amber-400 shadow-sm'
+                          ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shadow-sm'
                           : 'text-slate-400 hover:text-white hover:bg-slate-900'
                       }`}
                     >
@@ -187,8 +164,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
           <div className="text-xs">
-            <span className="font-bold text-white block">Md Jahedul Islam</span>
-            <span className="text-[10px] text-slate-500">SuperAdmin</span>
+            <span className="font-bold text-white block">MD HABEER KHAN</span>
+            <span className="text-[10px] text-slate-500">Authorized Admin</span>
           </div>
           <button
             onClick={handleLogout}

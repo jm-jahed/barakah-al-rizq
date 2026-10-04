@@ -62,8 +62,15 @@ function getDBFilePath(): string {
   if (process.env.DB_FILE_PATH) {
     return process.env.DB_FILE_PATH;
   }
+  const barakahPath = path.join(process.cwd(), 'data', 'barakah', 'barakah.db.json');
+  if (fs.existsSync(barakahPath)) {
+    return barakahPath;
+  }
+  const legacyBackupPath = path.join(process.cwd(), 'data', 'backups', 'legacy_webstudioae.db.json');
+  if (fs.existsSync(legacyBackupPath)) {
+    return legacyBackupPath;
+  }
   return path.join(process.cwd(), 'data', 'webstudioae.db.json');
-
 }
 
 function ensureDirectory(filePath: string) {
@@ -83,7 +90,7 @@ function getInitialData(): DatabaseSchema {
       {
         id: 'admin-1',
         name: 'Md Jahedul Islam',
-        email: 'admin@webstudioae.com',
+        email: 'admin@barakahalrizquae.com',
         passwordHash: '8b7d9b9c0a1e2f3d4c5b6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d',
         role: 'SUPERADMIN',
         createdAt: new Date().toISOString(),
@@ -143,7 +150,7 @@ function getInitialData(): DatabaseSchema {
     ],
     newsletterSubscribers: [],
     siteSettings: [
-      { id: 'set-1', key: 'agency_email', value: 'inquiries@webstudioae.com', updatedAt: new Date().toISOString() },
+      { id: 'set-1', key: 'agency_email', value: 'barakahalrizquae@gmail.com', updatedAt: new Date().toISOString() },
       { id: 'set-2', key: 'agency_phone', value: '+971 4 800 63987', updatedAt: new Date().toISOString() },
       { id: 'set-3', key: 'agency_whatsapp', value: 'https://wa.me/971480063987', updatedAt: new Date().toISOString() },
     ],
@@ -179,11 +186,11 @@ function getInitialData(): DatabaseSchema {
     seoConfig: {
       defaultTitle: 'WebStudioAE — Bespoke UAE Web Development & Digital Solutions',
       defaultDescription: 'Architecting high-impact Next.js 16 web applications, AI workflows, and digital platforms across Dubai and Abu Dhabi.',
-      ogImage: 'https://webstudioae.com/og-image.jpg',
+      ogImage: 'https://barakahalrizquae.com/og-image.jpg',
       indexingEnabled: true,
     },
     activityLogs: [
-      { id: 'act-1', user: 'admin@webstudioae.com', action: 'SYSTEM_INITIALIZED', entity: 'Control Center', timestamp: new Date().toISOString() },
+      { id: 'act-1', user: 'admin@barakahalrizquae.com', action: 'SYSTEM_INITIALIZED', entity: 'Control Center', timestamp: new Date().toISOString() },
     ],
     analyticsEvents: [],
     foodstuffProducts: getInitialFoodstuffProducts(),
@@ -268,7 +275,10 @@ export function readDB(): DatabaseSchema {
 
     // Try reading seed data from local data directory
     try {
-      const seedPath = path.join(process.cwd(), 'data', 'webstudioae.db.json');
+      const barakahSeed = path.join(process.cwd(), 'data', 'barakah', 'barakah.db.json');
+      const legacySeed = path.join(process.cwd(), 'data', 'backups', 'legacy_webstudioae.db.json');
+      const fallbackSeed = path.join(process.cwd(), 'data', 'webstudioae.db.json');
+      const seedPath = fs.existsSync(barakahSeed) ? barakahSeed : (fs.existsSync(legacySeed) ? legacySeed : fallbackSeed);
       if (fs.existsSync(seedPath)) {
         const raw = fs.readFileSync(seedPath, 'utf-8');
         const parsed = JSON.parse(raw);
@@ -388,7 +398,7 @@ export const db = {
       if (idx !== -1) {
         data.leads[idx] = { ...data.leads[idx], ...updates, updatedAt: new Date().toISOString() };
         writeDB(data);
-        logActivity('admin@webstudioae.com', 'LEAD_UPDATED', id);
+        logActivity('admin@barakahalrizquae.com', 'LEAD_UPDATED', id);
         return data.leads[idx];
       }
       return null;
@@ -397,7 +407,7 @@ export const db = {
       const data = readDB();
       data.leads = (data.leads || []).filter((l) => l.id !== id);
       writeDB(data);
-      logActivity('admin@webstudioae.com', 'LEAD_DELETED', id);
+      logActivity('admin@barakahalrizquae.com', 'LEAD_DELETED', id);
     },
   },
   projects: {
@@ -413,7 +423,7 @@ export const db = {
       };
       data.projects.push(newProj);
       writeDB(data);
-      logActivity('admin@webstudioae.com', 'PROJECT_CREATED', newProj.id);
+      logActivity('admin@barakahalrizquae.com', 'PROJECT_CREATED', newProj.id);
       return newProj;
     },
   },
@@ -456,7 +466,7 @@ export const db = {
         data.siteSettings.push({ id: 'set-' + Date.now(), key, value, updatedAt: new Date().toISOString() });
       }
       writeDB(data);
-      logActivity('admin@webstudioae.com', 'SETTING_UPDATED', key);
+      logActivity('admin@barakahalrizquae.com', 'SETTING_UPDATED', key);
     },
   },
   homepage: {
@@ -465,7 +475,7 @@ export const db = {
       const data = readDB();
       data.homepageContent = { ...data.homepageContent, ...content };
       writeDB(data);
-      logActivity('admin@webstudioae.com', 'HOMEPAGE_UPDATED', 'homepage');
+      logActivity('admin@barakahalrizquae.com', 'HOMEPAGE_UPDATED', 'homepage');
       return data.homepageContent;
     },
   },
@@ -475,7 +485,7 @@ export const db = {
       const data = readDB();
       data.navigationItems = items;
       writeDB(data);
-      logActivity('admin@webstudioae.com', 'NAVIGATION_UPDATED', 'navigation');
+      logActivity('admin@barakahalrizquae.com', 'NAVIGATION_UPDATED', 'navigation');
       return data.navigationItems;
     },
   },
@@ -487,7 +497,7 @@ export const db = {
       const data = readDB();
       data.seoConfig = { ...data.seoConfig, ...config };
       writeDB(data);
-      logActivity('admin@webstudioae.com', 'SEO_UPDATED', 'seo');
+      logActivity('admin@barakahalrizquae.com', 'SEO_UPDATED', 'seo');
       return data.seoConfig;
     },
   },

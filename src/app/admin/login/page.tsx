@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function AdminLoginPage() {
-  const [email, setEmail] = useState('admin@pos.ae');
-  const [password, setPassword] = useState('asd123@');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -26,7 +26,7 @@ export default function AdminLoginPage() {
         router.push('/admin');
         router.refresh();
       } else {
-        setError(data.error || 'Authentication failed');
+        setError(data.error || 'Authentication failed. Please verify credentials.');
       }
     } catch {
       setError('An error occurred. Please try again.');
@@ -39,11 +39,11 @@ export default function AdminLoginPage() {
     <div className="min-h-screen bg-[#07090E] text-slate-100 flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-[#0F172A] border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6">
         <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-slate-950 font-black text-2xl mx-auto shadow-lg shadow-amber-500/20">
-            WS
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-amber-500 flex items-center justify-center text-slate-950 font-black text-2xl mx-auto shadow-lg shadow-emerald-500/20">
+            BR
           </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Admin Portal</h1>
-          <p className="text-xs text-slate-400">WebStudioAE Enterprise Management</p>
+          <h1 className="text-2xl font-bold text-white tracking-tight">Barakah Admin Portal</h1>
+          <p className="text-xs text-slate-400">Barakah Al Rizq Foodstuff Trading L.L.C</p>
         </div>
 
         {error && (
@@ -58,9 +58,10 @@ export default function AdminLoginPage() {
             <input
               type="email"
               required
+              placeholder="admin@barakahalrizquae.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl p-3 text-sm focus:border-amber-400 focus:outline-none"
+              className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl p-3 text-sm focus:border-emerald-400 focus:outline-none"
             />
           </div>
           <div>
@@ -68,19 +69,26 @@ export default function AdminLoginPage() {
             <input
               type="password"
               required
+              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl p-3 text-sm focus:border-amber-400 focus:outline-none"
+              className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl p-3 text-sm focus:border-emerald-400 focus:outline-none"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold rounded-xl text-sm transition-all shadow-lg shadow-amber-500/20"
+            className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-amber-500 hover:from-emerald-400 hover:to-amber-400 text-slate-950 font-bold rounded-xl text-sm transition-all shadow-lg shadow-emerald-500/20"
           >
-            {loading ? 'Authenticating...' : 'Sign In to Dashboard'}
+            {loading ? 'Authenticating...' : 'Sign In to Operations Portal'}
           </button>
         </form>
+
+        <div className="text-center pt-2">
+          <span className="text-[11px] text-slate-500 font-mono">
+            Authorized Personnel Only • Ras Al Khor, Dubai, UAE
+          </span>
+        </div>
       </div>
     </div>
   );

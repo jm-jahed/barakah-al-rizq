@@ -1,5 +1,3 @@
-import { Invoice } from "./invoice";
-
 export type PaymentStatus = "PAID" | "PARTIALLY PAID" | "PENDING" | "DUE" | "OVERDUE" | "CANCELLED";
 
 export type PaymentMethod = "Cash" | "Bank Transfer" | "Card" | "Cheque" | "Online" | "Other";
@@ -8,56 +6,62 @@ export type PaymentTerms = "Due Immediately" | "7 Days" | "15 Days" | "30 Days" 
 
 export interface Client {
   id: string;
-  clientCode: string;
+  clientCode?: string;
   name: string;
-  companyName: string;
-  arabicName: string;
-  englishName: string;
-  contactPerson: string;
-  mobile: string;
-  email: string;
-  address: string;
-  city: string;
-  country: string;
-  trn: string;
-  accountNumber: string;
-  paymentTerms: PaymentTerms;
-  creditLimit: number;
+  companyName?: string;
+  arabicName?: string;
+  englishName?: string;
+  contactPerson?: string;
+  mobile?: string;
+  email?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  trn?: string;
+  accountNumber?: string;
+  paymentTerms?: PaymentTerms;
+  creditLimit?: number;
   notes?: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
   lastInvoiceDate?: string;
-  totalInvoices: number;
-  totalInvoiced: number;
-  totalPaid: number;
-  totalDue: number;
-  totalOverdue: number;
+  totalInvoices?: number;
+  totalInvoiced?: number;
+  totalPaid?: number;
+  totalDue?: number;
+  totalOverdue?: number;
+  [key: string]: any;
 }
 
 export interface Payment {
   id: string;
-  paymentNumber: string;
-  invoiceId: string;
-  invoiceNumber: string;
-  clientId: string;
-  clientName: string;
+  paymentNumber?: string;
+  invoiceId?: string;
+  invoiceNumber?: string;
+  clientId?: string;
+  clientName?: string;
   amount: number;
-  paymentDate: string;
-  paymentMethod: PaymentMethod;
+  paymentDate?: string;
+  paymentMethod?: PaymentMethod;
   referenceNumber?: string;
   bankAccount?: string;
   notes?: string;
-  createdAt: string;
+  createdAt?: string;
+  [key: string]: any;
 }
 
-export interface ManagedInvoice extends Invoice {
-  paymentTerms: PaymentTerms;
-  dueDate: string;
-  paidAmount: number;
-  dueAmount: number;
-  status: PaymentStatus;
-  overdueDays: number;
-  payments: Payment[];
+export interface ManagedInvoice {
+  id: string;
+  meta?: any;
+  totals?: any;
+  paymentTerms?: PaymentTerms;
+  dueDate?: string;
+  paidAmount?: number;
+  dueAmount?: number;
+  status?: PaymentStatus;
+  overdueDays?: number;
+  payments?: Payment[];
+  [key: string]: any;
 }
 
 export interface ClientStatementEntry {

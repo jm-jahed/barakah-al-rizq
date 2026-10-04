@@ -2,8 +2,17 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'RETAIL POS — Universal Retail Management, Billing & Inventory System | WebStudio UAE',
-  description: 'Enterprise UAE Retail POS system with USB/Bluetooth barcode scanner integration, 5% UAE VAT FTA tax invoices, one-click checkout, and thermal receipt printing.',
+  title: 'Barakah Al Rizq Foodstuff Trading L.L.C | UAE Foodstuff Importer & Wholesaler',
+  description: 'Barakah Al Rizq Foodstuff Trading L.L.C is a premier UAE-based foodstuff trading company specializing in import, export, container wholesale, and daily trading floor market distribution across Dubai, UAE, and GCC markets.',
+  keywords: [
+    'Barakah Al Rizq Foodstuff Trading',
+    'Dubai Foodstuff Importer',
+    'Al Aweer Vegetable Market Wholesaler',
+    'UAE Fruit and Vegetable Supplier',
+    'Basmati Rice Wholesale Dubai',
+    'Spices Importer Ras Al Khor',
+    'MD HABEER KHAN'
+  ],
   manifest: '/site.webmanifest',
   icons: {
     icon: [
@@ -17,6 +26,13 @@ export const metadata: Metadata = {
       { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
     ],
     shortcut: '/favicon.ico',
+  },
+  openGraph: {
+    title: 'Barakah Al Rizq Foodstuff Trading L.L.C | UAE Foodstuff Importer & Wholesaler',
+    description: 'Leading UAE foodstuff import, export, wholesale, and bulk supply enterprise headquartered at Al Aweer Vegetable Market, Ras Al Khor, Dubai.',
+    images: ['https://images.unsplash.com/photo-1592924357228-91a4daadcfea?q=80&w=1200&auto=format&fit=crop'],
+    url: 'https://barakahalrizquae.com',
+    type: 'website',
   },
 };
 
@@ -38,7 +54,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Scheherazade+New:wght@400;700;900&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Scheherazade+New:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap"
           rel="stylesheet"
         />
       </head>
