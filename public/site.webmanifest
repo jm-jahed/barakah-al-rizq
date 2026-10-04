@@ -1,6 +1,6 @@
 {
-  "name": "Web Studio AE",
-  "short_name": "WebStudio",
+  "name": "Barakah Al Rizq Foodstuff Trading L.L.C",
+  "short_name": "Barakah Al Rizq",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -13,8 +13,8 @@
       "type": "image/png"
     }
   ],
-  "theme_color": "#0B0907",
-  "background_color": "#0B0907",
+  "theme_color": "#063D24",
+  "background_color": "#063D24",
   "display": "standalone",
   "start_url": "/"
 }
