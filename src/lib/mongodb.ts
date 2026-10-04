@@ -106,6 +106,11 @@ export function isMongoConfigured(): boolean {
   return Boolean(uri && uri.trim().length > 0);
 }
 
+const mongoOptions = {
+  serverSelectionTimeoutMS: 2500,
+  connectTimeoutMS: 2500,
+};
+
 export async function getMongoClient(): Promise<MongoClient> {
   const activeUri = getActiveUri();
   if (!activeUri) {
@@ -114,7 +119,7 @@ export async function getMongoClient(): Promise<MongoClient> {
 
   if (process.env.NODE_ENV === "development") {
     if (!global._mongoClientPromise) {
-      client = new MongoClient(activeUri);
+      client = new MongoClient(activeUri, mongoOptions);
       global._mongoClientPromise = client.connect();
     }
     try {
@@ -126,7 +131,7 @@ export async function getMongoClient(): Promise<MongoClient> {
     }
   } else {
     if (!clientPromise) {
-      client = new MongoClient(activeUri);
+      client = new MongoClient(activeUri, mongoOptions);
       clientPromise = client.connect();
     }
     try {
@@ -667,14 +672,18 @@ export async function getActivityLogsCollection(): Promise<Collection<ActivityLo
 }
 
 export async function getLeads(): Promise<Lead[]> {
-  const col = await getLeadsCollection();
-  return col.find({}).sort({ createdAt: -1 }).toArray();
+  try {
+    const col = await getLeadsCollection();
+    return await col.find({}).sort({ createdAt: -1 }).toArray();
+  } catch (err) {
+    console.warn("MongoDB getLeads fallback:", (err as Error).message);
+    return [];
+  }
 }
 
 export async function createLead(
   lead: Omit<Lead, 'id' | 'createdAt' | 'updatedAt' | 'status'> & { status?: Lead['status'] }
 ): Promise<Lead> {
-  const col = await getLeadsCollection();
   const id = 'lead-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4);
   const nowISO = new Date().toISOString();
   const newLead: Lead & { _id: string } = {
@@ -685,8 +694,13 @@ export async function createLead(
     createdAt: nowISO,
     updatedAt: nowISO,
   };
-  await col.insertOne(newLead as any);
-  await logActivityToMongo('system', 'LEAD_CREATED', newLead.id);
+  try {
+    const col = await getLeadsCollection();
+    await col.insertOne(newLead as any);
+    await logActivityToMongo('system', 'LEAD_CREATED', newLead.id);
+  } catch (err) {
+    console.warn("MongoDB createLead fallback:", (err as Error).message);
+  }
   return newLead;
 }
 
@@ -877,7 +891,12 @@ export async function createWholesaleOrder(
     updatedAt: nowISO,
   };
 
-  // Try MongoDB
+  // 1. Always sync to local JSON fallback immediately
+  const existing = readLocalOrders();
+  existing.unshift(newOrder);
+  writeLocalOrders(existing);
+
+  // 2. Try MongoDB persistence
   try {
     const col = await getWholesaleOrdersCollection();
     await col.insertOne({ ...newOrder, _id: id } as any);
@@ -885,12 +904,7 @@ export async function createWholesaleOrder(
     console.warn("MongoDB createWholesaleOrder fallback to JSON:", (err as Error).message);
   }
 
-  // Always sync to local JSON fallback
-  const existing = readLocalOrders();
-  existing.unshift(newOrder);
-  writeLocalOrders(existing);
-
-  // Mirror to Leads pipeline so general sales admin also tracks it
+  // 3. Mirror to Leads pipeline so general sales admin also tracks it (non-blocking)
   try {
     const itemSummary = newOrder.items
       .map(i => `${i.productName} (${i.orderType === 'CONTAINER' ? 'Container Wholesale' : 'Dubai Wholesale'}): ${i.quantityCtn} CTN @ AED ${i.pricePerCtn.toFixed(2)} = AED ${i.lineTotalAED.toFixed(2)}`)
@@ -909,10 +923,15 @@ export async function createWholesaleOrder(
       notes: `Order ID: ${newOrder.id} | Status: ${newOrder.status} | Total: AED ${newOrder.totalAED}`,
     });
   } catch (leadErr) {
-    console.warn("Could not mirror wholesale order to lead:", leadErr);
+    // Non-fatal
   }
 
-  await logActivityToMongo('system', 'WHOLESALE_ORDER_CREATED', id);
+  try {
+    await logActivityToMongo('system', 'WHOLESALE_ORDER_CREATED', id);
+  } catch {
+    // Non-fatal
+  }
+
   return newOrder;
 }
 
