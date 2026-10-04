@@ -1,0 +1,10528 @@
+'use client';
+
+export interface ColorOption {
+  name: string;
+  hex: string;
+}
+
+export interface NouraProduct {
+  id: string;
+  name: string;
+  category: string;
+  collection: string;
+  priceAED: number;
+  originalPriceAED?: number;
+  badge?: 'NEW' | 'NEW ARRIVAL' | 'BESTSELLER' | 'LIMITED' | 'EXCLUSIVE' | 'RAMADAN EDIT' | 'EID EDITION';
+  colorOptions: ColorOption[];
+  sizes: string[];
+  fabric: string;
+  fit: string;
+  closure: string;
+  finishingDetails: string;
+  occasion: string;
+  care: string;
+  rating: number;
+  reviewsCount: number;
+  image: string;
+  secondaryImages: string[];
+  overview: string;
+  isNewArrival: boolean;
+  isBestseller: boolean;
+  inStock: boolean;
+}
+
+export const NOURA_BRAND = {
+  name: 'NOURA ABAYA',
+  tagline: 'Arabian Haute Couture & Luxury Modestwear',
+  supporting: 'Bespoke Emirati Abayas & Luxury Modestwear Handcrafted in Dubai',
+  dubaiFlagship: 'Dubai Design District (d3), Building 7 • Downtown Atelier',
+  email: 'concierge@nouraabaya.ae',
+  location: 'Downtown Dubai Atelier • UAE',
+  phone: '+971 4 388 9000',
+  whatsapp: 'https://wa.me/971508889900?text=Hello%20NOURA%20ABAYA,%20I%20am%20inquiring%20about%20your%20luxury%20couture%20collection.',
+  freeDeliveryThreshold: 350,
+};
+
+export const NOURA_STATS = [
+  { value: '248+', label: 'Verified Posh Abaya Designs' },
+  { value: '100%', label: 'Authentic Emirati Atelier' },
+  { value: '7 Emirates', label: 'Doorstep Same-Day Delivery' },
+  { value: '4.9 ★', label: 'UAE Luxury Client Rating' },
+];
+
+export const NOURA_COLLECTIONS_INFO = [
+  {
+    id: 'eid-collection',
+    name: 'EID COLLECTION',
+    count: '60+ Eid Dresses & Kaftans',
+    image: 'https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260641-2.jpg?v=1789122483',
+    desc: 'Festive Eid dresses featuring gold zari embroidery, crystal cuffs, and luxury silk kaftans.',
+    description: 'Festive Eid dresses featuring gold zari embroidery, crystal cuffs, and luxury silk kaftans.'
+  },
+  {
+    id: 'new-arrivals',
+    name: 'NEW ARRIVALS',
+    count: '40+ Fresh Season Drops',
+    image: 'https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260434copy.jpg?v=1787917283',
+    desc: 'Fresh seasonal drops featuring Japanese Nida, organza sleeves, and bespoke Emirati embroidery.',
+    description: 'Fresh seasonal drops featuring Japanese Nida, organza sleeves, and bespoke Emirati embroidery.'
+  },
+  {
+    id: 'signature-abayas',
+    name: 'SIGNATURE ABAYAS',
+    count: '80+ Iconic Silhouettes',
+    image: 'https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0701.jpg?v=1787916744',
+    desc: 'Time-honored black Nida silhouettes with handcrafted zari finishing and fluid drapes.',
+    description: 'Time-honored black Nida silhouettes with handcrafted zari finishing and fluid drapes.'
+  },
+  {
+    id: 'ramadan-edit',
+    name: 'RAMADAN EDIT',
+    count: '50+ Festive Suhoor Pieces',
+    image: 'https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260175copy2_f3d4bdf5-d71c-406a-ab74-a1b30e356179.jpg?v=1787920062',
+    desc: 'Fluid silk kaftans, embroidered overlays, and modest eveningwear crafted for Holy Month gatherings.',
+    description: 'Fluid silk kaftans, embroidered overlays, and modest eveningwear crafted for Holy Month gatherings.'
+  }
+];
+
+export const NOURA_FAQS = [
+  {
+    question: 'How fast is delivery across the UAE Emirates?',
+    answer: 'We offer Same-Day Express Delivery across Dubai & Sharjah for orders placed before 2:00 PM. Deliveries to Abu Dhabi, Ajman, RAK, Fujairah, and Umm Al Quwain arrive within 24 hours.'
+  },
+  {
+    question: 'Is a matching Sheila (headscarf) included with each abaya?',
+    answer: 'Yes! Every NOURA ABAYA includes a complimentary, color-matched luxury Sheila crafted from matching chiffon or Nida fabric with coordinated edge piping.'
+  },
+  {
+    question: 'Can I request custom length adjustments or bespoke measurements?',
+    answer: 'Yes. You can customize your exact length (50" to 62") directly via our online Bespoke Studio or book a private fitting consultation at our Dubai Design District (d3) Atelier.'
+  },
+  {
+    question: 'What payment options are available?',
+    answer: 'We accept all major credit/debit cards (Visa, MasterCard, Amex), Apple Pay, Tabby (split into 4 interest-free payments), and Cash on Delivery (COD) across the UAE.'
+  },
+  {
+    question: 'What is your exchange and return policy in the UAE?',
+    answer: 'We offer hassle-free 7-day doorstep exchanges across all 7 Emirates. Our courier will pick up the item directly from your home or office.'
+  }
+];
+
+export function getDiverseAbayaImage(productOrIdOrUrl?: NouraProduct | string | null, index?: number): string {
+  if (!productOrIdOrUrl) {
+    const fallback = [
+      'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=1000&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?q=80&w=1000&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=1000&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=1000&auto=format&fit=crop'
+    ];
+    return fallback[(index || 0) % fallback.length];
+  }
+
+  let prod: NouraProduct | undefined;
+  if (typeof productOrIdOrUrl === 'object') {
+    prod = productOrIdOrUrl;
+  } else if (typeof productOrIdOrUrl === 'string') {
+    if (productOrIdOrUrl.startsWith('http://') || productOrIdOrUrl.startsWith('https://')) {
+      return productOrIdOrUrl;
+    }
+    prod = NOURA_PRODUCTS.find(p => p.id === productOrIdOrUrl);
+  }
+
+  if (prod) {
+    const idx = index || 0;
+    if (idx === 0) return prod.image;
+    if (prod.secondaryImages && prod.secondaryImages[idx - 1]) {
+      return prod.secondaryImages[idx - 1];
+    }
+    if (prod.secondaryImages && prod.secondaryImages[0]) {
+      return prod.secondaryImages[0];
+    }
+    return prod.image;
+  }
+
+  const fallback = [
+    'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=1000&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?q=80&w=1000&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=1000&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=1000&auto=format&fit=crop'
+  ];
+  return fallback[(index || 0) % fallback.length];
+}
+
+export const NOURA_PRODUCTS: NouraProduct[] = [
+  {
+    "id": "posh-9268863762563",
+    "name": "Blue Reem Nada Abaya, Embroidery Detail",
+    "category": "Embroidered Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 729,
+    "originalPriceAED": 911,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 14,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260641-2.jpg?v=1789122483",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260629-2.jpg?v=1789122483",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260633-2.jpg?v=1789122483",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260646-2.jpg?v=1789122483",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260644-2.jpg?v=1789122483"
+    ],
+    "overview": "A blue abaya designed for social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from reem nada fabric with lightweight, wrinkle-resistant, and easy-care properties. Finished with embroidery details that add refined character. Suitable for social occas",
+    "isNewArrival": true,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9249116520579",
+    "name": "Black Deema Nada Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 495,
+    "originalPriceAED": 619,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 15,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260434copy.jpg?v=1787917283",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260424copy.jpg?v=1787917283",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260426copy.jpg?v=1787917283",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260430copy.jpg?v=1787917283",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260436copy.jpg?v=1787917284"
+    ],
+    "overview": "A black abaya designed for daily wear and work occasions. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from deema nada fabric with a lightweight feel, wrinkle-resistant performance, fluid drape, and easy-care properties. Finished with lace details and com",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9249116586115",
+    "name": "Maroon Amani Nada Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 495,
+    "originalPriceAED": 619,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 16,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0701.jpg?v=1787916744",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0681.jpg?v=1787916744",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0684.jpg?v=1787916745",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0690.jpg?v=1787916744",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0707.jpg?v=1787916744"
+    ],
+    "overview": "A maroon abaya designed for daily wear. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from amani nada fabric with a lightweight feel, wrinkle-resistant performance, and easy-care properties. Finished with lace details and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9249137361027",
+    "name": "Blue Reem Nada Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 495,
+    "originalPriceAED": 619,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 17,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260175copy2_f3d4bdf5-d71c-406a-ab74-a1b30e356179.jpg?v=1787920062",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260169copy2_a2d75bb9-ee01-4a83-8b97-cb88f3a1f2c9.jpg?v=1787920063",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260170copy2_cff08ecb-e322-4beb-a80a-f2c679f92cde.jpg?v=1787920063",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260177copy2_4ed95e70-35df-4150-b4f5-efb04ce7df21.jpg?v=1787920062",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260173copy2_cb8979ee-6157-4778-9ace-1f2b790b0e2c.jpg?v=1787920062"
+    ],
+    "overview": "A blue abaya designed for daily wear. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from reem nada fabric with a lightweight feel, wrinkle-resistant performance, and easy-care properties. Finished with lace details and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9249137426563",
+    "name": "Green Amani Nada Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 495,
+    "originalPriceAED": 619,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 18,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0764.jpg?v=1787916841",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0741.jpg?v=1787916841",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0744.jpg?v=1787916841",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0770.jpg?v=1787916841",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0768.jpg?v=1787916841"
+    ],
+    "overview": "A green abaya designed for daily wear. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from amani nada fabric with a lightweight feel, wrinkle-resistant performance, and easy-care properties. Finished with lace details and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9250919645315",
+    "name": "Black Atlas Crepe Abaya, Seam Lines",
+    "category": "Linen & Crepe Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 575,
+    "originalPriceAED": 719,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60",
+      "RJ",
+      "MOKUP"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 19,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20260357_9dc7023d-99e7-49c6-8795-5234980d329d.jpg?v=1787920105",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20260352_4068a1ed-6cf1-4cb9-8a7a-c8ebbb6e161e.jpg?v=1787920105",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20260353_d950b60d-6977-4c73-9aac-2637c6804f78.jpg?v=1787920105",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20260360_7fecc209-30e3-4e89-ac38-92279d4399cb.jpg?v=1787920104",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20260362_c2545430-af7d-4d67-a246-1b5d53f46d36.jpg?v=1787920105"
+    ],
+    "overview": "A black abaya designed for daily wear and work occasions. Features an A-line cut that offers comfortable movement throughout the day. Crafted from atlas crepe fabric with a lightweight feel, shape retention, and easy-care properties. Suitable for daily use and workdays and comes with a matching shei",
+    "isNewArrival": true,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9249140375683",
+    "name": "Blue Cool Crepe Abaya, Seam Lines",
+    "category": "Linen & Crepe Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 449,
+    "originalPriceAED": 561,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60",
+      "RJ",
+      "MOKUP"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 20,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0854.jpg?v=1787916164",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0835.jpg?v=1787916164",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0837.jpg?v=1787916164",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0841.jpg?v=1787916164",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0860.jpg?v=1787916164"
+    ],
+    "overview": "A blue abaya designed for daily wear. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from cool crepe fabric with a lightweight feel, a soft hand feel, and easy-care properties. Suitable for everyday use and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9249140703363",
+    "name": "Pink Cool Crepe Abaya, Seam Lines",
+    "category": "Linen & Crepe Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 449,
+    "originalPriceAED": 561,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 21,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0469.jpg?v=1787915974",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0451.jpg?v=1787915974",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0453.jpg?v=1787915974",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0474.jpg?v=1787915974",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0475.jpg?v=1787915974"
+    ],
+    "overview": "A pink abaya designed for daily wear. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from cool crepe fabric with a lightweight feel, a soft hand feel, and easy-care properties. Suitable for everyday use and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9249140801667",
+    "name": "Purple Cool Crepe Abaya, Seam Lines",
+    "category": "Linen & Crepe Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 449,
+    "originalPriceAED": 561,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 22,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0669.jpg?v=1787916025",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0648.jpg?v=1787916024",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0651.jpg?v=1787916025",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0655.jpg?v=1787916025",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0677.jpg?v=1787916024"
+    ],
+    "overview": "A purple abaya designed for daily wear. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from cool crepe fabric with a lightweight feel, wrinkle-resistant performance, and easy-care properties. Suitable for everyday use and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103757312131",
+    "name": "Blue Alya Nada Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 495,
+    "originalPriceAED": 619,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 23,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260175copy2.jpg?v=1782470190",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260169copy2.jpg?v=1782470190",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260170copy2.jpg?v=1782470048",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260177copy2.jpg?v=1782470189",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260173copy2.jpg?v=1782470048"
+    ],
+    "overview": "A blue abaya designed for daily wear and outings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from alya nada fabric with a lightweight feel and easy-care properties. Suitable for long hours of wear and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103757246595",
+    "name": "Beige Alya Nada Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 495,
+    "originalPriceAED": 619,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 24,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260163copy2.jpg?v=1782470157",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260157copy.jpg?v=1782470157",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260166copy2.jpg?v=1782470157",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260159copy.jpg?v=1782470298",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260165copy2.jpg?v=1782470158"
+    ],
+    "overview": "A beige abaya designed for daily wear and outings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from alya nada fabric with a lightweight feel and easy-care properties, and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214269587587",
+    "name": "Custom Sleek Curve Bead Flare Chiffon Custom Black Abaya",
+    "category": "Luxury Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 600,
+    "originalPriceAED": 750,
+    "badge": "EID EDITION",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 25,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89827_c486b3bb-1346-4c84-ac6f-de0cb90d6706.webp?v=1786721112",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89829_fe7d037f-48ea-4aaa-a781-192287eb5389.webp?v=1786721186",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89839_d434b6d4-d4c2-4467-809e-ca1cdd7cfba9.webp?v=1786721195",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89841_527a0da1-8abd-4548-9a67-d026ab345c3b.webp?v=1786721194",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89843_b30b395a-65f0-4e15-bf17-d594072ced38.webp?v=1786721194"
+    ],
+    "overview": "Fabric name: Chiffon formal evening flared abaya, adorned with sleek black hand-beaded curves from shoulder to hem. made of lightweight chiffon, it's perfect for year-round wear, combining elegance and comfort seamlessly.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213586702467",
+    "name": "Black Jaime Crepe Custom Abaya with Organza Border and Crystal Bead Embellishment",
+    "category": "Linen & Crepe Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 758,
+    "originalPriceAED": 948,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "French Crushed Organza",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 26,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9850HIRES_c2dc4c11-87ae-4c7a-8e89-0a8574cdbe2c.jpg?v=1786684043",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9845HIRES_ee77089d-ab1d-4440-80d9-34b93b088bfb.jpg?v=1786684087",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9856HIRES_9b6c59b1-f9ce-4c37-a3f7-c7100e2e30c0.jpg?v=1786684087",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9859HIRES-2_eeaebed9-714b-49b3-b98e-d7fc8d9311db.jpg?v=1786684086",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9863HIRES_22a6ddc4-10d1-433f-8444-b415b3228d51.jpg?v=1786684085"
+    ],
+    "overview": "This black abaya is crafted from lightweight Jaime Crepe, known for its smooth feel and breathable comfort. The fabric holds a modest silhouette while remaining soft and wearable throughout the day. The design features a statement border of sheer organza along the hem and sleeves. Embellished with f",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213557342339",
+    "name": "Black Wave Crepe Custom Abaya, Front Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 649,
+    "originalPriceAED": 811,
+    "badge": "LIMITED",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 27,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260863_7994db53-4dc5-47fe-b0e7-d3ac5c07d0d7.jpg?v=1786612077",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260855_0f1eec58-c371-4797-b5ff-74487859530e.jpg?v=1786612101",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260858_9b2a2b07-4b4f-4957-a3e8-c5748aa14124.jpg?v=1786612100",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260870_bccdd963-e1cb-493a-8a7a-4259cbcb2c76.jpg?v=1786612101",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260874_0cad70bc-2e91-4d3f-8b4e-4e55b7af81b7.jpg?v=1786612101"
+    ],
+    "overview": "A black abaya designed for work and social gatherings. Features a comfortable silhouette suitable for long hours of wear. Crafted from wave crepe fabric with a lightweight feel and easy-care properties. Suitable for work and social occasions and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213334782083",
+    "name": "Black Claire Crepe Custom  Abaya with Front Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 659,
+    "originalPriceAED": 824,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 28,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA8088_1_7b7d4ec6-3ab9-463a-a15f-d9a29f4044af.jpg?v=1786378687",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA8075_dccec4d8-e084-4945-af4a-50b8be5609e8.jpg?v=1786378710",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA8081_089be7f3-de12-48f2-bf98-e369a758f6e9.jpg?v=1786378710",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA8092_a0efe435-5885-466f-bcb3-9db43ceca7d6.jpg?v=1786378708",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA8093_8f9e3d3e-f7b7-4b7c-ab32-3900ba17bdf5.jpg?v=1786378708"
+    ],
+    "overview": "This Black abaya is crafted from lightweight Claire Crepe and finished with refined hand beadwork along the front. The beadwork incorporates black and brown poth beads and delicate resham thread embroidery, creating a quiet focal point without overpowering the garment’s simplicity. Designed in a KLO",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-8800599900291",
+    "name": "Black Jaime Crepe Abaya with Front Button Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 559,
+    "originalPriceAED": 699,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 29,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12820.jpg?v=1766337816",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12806.jpg?v=1766337816",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12824.jpg?v=1766337816",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12812.jpg?v=1766337816",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12822.jpg?v=1766337816"
+    ],
+    "overview": "A refined black abaya crafted from lightweight Jaime Crepe, designed for everyday wear with a polished and composed appearance. The KLOSH cut introduces a gentle flare from the waist, allowing comfortable movement while maintaining modest coverage. The front is finished with a clean decorative butto",
+    "isNewArrival": true,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-8591457845379",
+    "name": "Black Elite Nada Abaya with Soft Front Shape and Minimal Detailing",
+    "category": "Luxury Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 398,
+    "originalPriceAED": 569,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "54",
+      "56",
+      "58",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 30,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9208HIRES.jpg?v=1748601470",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9216HIRES.jpg?v=1748601470",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9222HIRES.jpg?v=1748601470",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9229HIRES.jpg?v=1748601470",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9231HIRES.jpg?v=1748601470"
+    ],
+    "overview": "This black abaya is made from Elite Nada, a medium-weight fabric chosen for its soft surface and natural structure. It provides full coverage with a composed silhouette, offering comfort and elegance in equal measure. The design features a gently shaped neckline with hidden snap buttons along the fr",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-8567263133827",
+    "name": "Black Wave Crepe Abaya with Beadwork Embroidery",
+    "category": "Embroidered Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 461,
+    "originalPriceAED": 659,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "54",
+      "56",
+      "58",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 31,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR5112HIRES.jpg?v=1760597286",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR5101HIRES.jpg?v=1760597286",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR5107HIRES.jpg?v=1760597286",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR5113HIRES.jpg?v=1760597286",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR5115HIRES.jpg?v=1760597286"
+    ],
+    "overview": "Tailored from medium-weight Wave Crepe, this abaya features a graceful KLOSH silhouette designed for elegant structure and fluid movement. The neckline is shaped into a neat V with a concealed snap placket for a clean front finish. The focal point of this design is its hand beadwork — tonal black cu",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-8555701272707",
+    "name": "Black Claire Crepe Abaya with Klosh Cut and Straight Basic Design",
+    "category": "Linen & Crepe Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 312,
+    "originalPriceAED": 520,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "54",
+      "56",
+      "58",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 32,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA8110.jpg?v=1760434550",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA8112.jpg?v=1760434550",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA8099.jpg?v=1760434550",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA8107.jpg?v=1760434550",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA8118.jpg?v=1754217768"
+    ],
+    "overview": "This black abaya is tailored for a refined, polished look. Made from Claire Crepe, the fabric feels soft and light on the skin. It’s comfortable for daily wear, especially during warmer months. The Klosh cut adds gentle structure without being too wide, keeping the silhouette clean and modest. The s",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-8493641138307",
+    "name": "Green Wave Crepe Abaya with Side and Sleeves Loop Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 390,
+    "originalPriceAED": 650,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "54",
+      "56",
+      "58",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 33,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II0092HIRES-2.jpg?v=1750425736",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II0097HIRES-2.jpg?v=1750425736",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II0103HIRES-2.jpg?v=1750425737",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II0105HIRES-2.jpg?v=1750425736",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II0109HIRES-2.jpg?v=1750425737"
+    ],
+    "overview": "This green abaya features a unique fabric loop detail adorned with pearls on the sides and sleeves. This breathable material is comfortable against the skin, making it ideal for both everyday wear and gatherings.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-8493100531843",
+    "name": "Black Farasha Crepe Abaya with Embroidered Front Overlap",
+    "category": "Embroidered Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 268,
+    "originalPriceAED": 669,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "54",
+      "56",
+      "58",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 34,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/BD6A2E75-6FD4-4837-8889-C04E9913C532.jpg?v=1748645828",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/920D892F-A453-44D8-A583-A361F740E7EA.jpg?v=1748645828",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/2BC114B2-65B4-43F1-BD4C-6BDBCB5DAEB3.jpg?v=1748645828",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/F67C6C45-DC7C-40E1-B67E-297E198D58E3.jpg?v=1740482642",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/F408976C-9B7E-4280-82D5-19B759909C11.jpg?v=1740482644"
+    ],
+    "overview": "Ideal for various occasions, this Black abaya adds elegance to your wardrobe.Featuring a uinque Overlap detail, enhanced with Embellished embroidery. Made of Crepe that is comfortable against the skin, making it ideal for both everyday wear and more formal occasions.",
+    "isNewArrival": true,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-8488832106627",
+    "name": "Brown Nova Crepe Abaya with Front Stitch Collar",
+    "category": "Linen & Crepe Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 240,
+    "originalPriceAED": 599,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "54",
+      "56",
+      "58",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 35,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/F748694F-BB82-4BD6-B8E0-64CA3FBF21FD.jpg?v=1740482154",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/0C8513D1-157C-40D5-9157-40F1DDF1079C.jpg?v=1740482157",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/6476E805-4424-43BE-BC5B-B98E90AEEAAD.jpg?v=1740482161",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/8883406C-DAC1-4BC6-A66F-8D4E7215751F.jpg?v=1740482164",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/2AA36134-0E82-46D5-9E45-A84A2EC1EDFE.jpg?v=1740482166"
+    ],
+    "overview": "Semi formal beige abaya, featuring a front shawl collar adorned with stitch details. Made of comfortable crepe, it offers exceptional comfort , and works well for everyday wear and formal wear.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-7885547339907",
+    "name": "Dolce Pelle",
+    "category": "Luxury Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 170,
+    "originalPriceAED": 213,
+    "badge": "EID EDITION",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 36,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_3031.jpg?v=1740476039",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_3032.jpg?v=1740476041"
+    ],
+    "overview": "Top note : Leather , Patchouli , Olibanum Heart note : Musk , Rosewood , Candy floss Base note : Raspberry , Apricot , Muguet",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103776350339",
+    "name": "Brown Sand Viscose Abaya, Plain Design",
+    "category": "Luxury Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 709,
+    "originalPriceAED": 886,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 37,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260187copy2.jpg?v=1787306759",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260180copy2.jpg?v=1787306759",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260182copy2.jpg?v=1787306759",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260189copy2.jpg?v=1787306759",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260183copy2.jpg?v=1787306759"
+    ],
+    "overview": "A brown abaya designed for social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from sand viscose fabric with a lightweight, breathable feel and a distinctive dyed texture effect, and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103776415875",
+    "name": "Grey Sand Viscose Abaya, Plain Design",
+    "category": "Luxury Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 709,
+    "originalPriceAED": 886,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 38,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260197copy2.jpg?v=1787306613",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260191copy2.jpg?v=1787306613",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260202copy2.jpg?v=1787306613",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260192copy2.jpg?v=1787306613",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260195copy2.jpg?v=1787306613"
+    ],
+    "overview": "A grey abaya designed for social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from sand viscose fabric with a lightweight, breathable feel and distinctive color variations, and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103776219267",
+    "name": "Black Runa Crepe Abaya, Plain Design",
+    "category": "Linen & Crepe Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 799,
+    "originalPriceAED": 999,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 39,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-202602641copy.jpg?v=1787306535",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-202602541copy.jpg?v=1787306535",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-202602561copy.jpg?v=1787306535",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-202602631copy.jpg?v=1787306535",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-202602581copy.jpg?v=1787306535"
+    ],
+    "overview": "A black abaya designed for social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from runa crepe fabric with a breathable feel, soft hand feel, and easy-care properties, and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103776153731",
+    "name": "Black Royal Nada Abaya, Front Beadwork",
+    "category": "Luxury Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 1575,
+    "originalPriceAED": 1969,
+    "badge": "LIMITED",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 40,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260666copy.jpg?v=1787302725",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260653copy.jpg?v=1787302725",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260654copy.jpg?v=1787302725",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260656copy.jpg?v=1787302725",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260659copy.jpg?v=1787302725"
+    ],
+    "overview": "A black abaya designed for occasions and evening events. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from royal nada fabric with a lightweight feel, deep color, and shape retention. Finished with front beadwork details and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103776088195",
+    "name": "Black Royal Nada Abaya, Front Beadwork",
+    "category": "Luxury Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 1499,
+    "originalPriceAED": 1874,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 41,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260701copy.jpg?v=1787302633",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260693copy.jpg?v=1787302633",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260695copy.jpg?v=1787302633",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260696copy.jpg?v=1787302633",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260702copy.jpg?v=1787302633"
+    ],
+    "overview": "A black abaya designed for occasions and evening gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from royal nada fabric with a lightweight feel, deep color, and easy-care properties. Detailed beadwork adds an elegant touch, and the abaya comes wi",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9232011722883",
+    "name": "Black Deema Nada Abaya, Basic Design",
+    "category": "Luxury Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 545,
+    "originalPriceAED": 681,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 42,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260379copy_55cf6757-2c1b-4b0d-875d-3f47fb63aa2a.jpg?v=1787302322",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260371copy_590b1f89-15ef-4ffa-bd59-41a56f3c3210.jpg?v=1787302322",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260373copy_d1d9f671-a7e8-4fcb-9b4f-d02c4a70b135.jpg?v=1787302322",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260377copy_5aa05b3d-cf02-4498-a0b3-7077afdb527e.jpg?v=1787302322",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260382copy_ef42c820-c379-4be6-bddd-479b657f0a55.jpg?v=1787302322"
+    ],
+    "overview": "A black abaya designed for daily wear and work. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from deema nada fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9232011821187",
+    "name": "Purple Classic Nada Abaya, Basic Design",
+    "category": "Luxury Abayas",
+    "collection": "NEW ARRIVALS",
+    "priceAED": 545,
+    "originalPriceAED": 681,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 43,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0635.jpg?v=1787302174",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0619.jpg?v=1787302174",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0621.jpg?v=1787302174",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0625.jpg?v=1787302173",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0642.jpg?v=1787302174"
+    ],
+    "overview": "A purple abaya designed for daily wear. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from classic nada fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9231792734339",
+    "name": "Maroon Deema Nada Abaya, Basic Design",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 545,
+    "originalPriceAED": 681,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 44,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0911.jpg?v=1787302364",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0895.jpg?v=1787302364",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0897.jpg?v=1787302364",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0900.jpg?v=1787302364",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0916.jpg?v=1787302364"
+    ],
+    "overview": "A maroon abaya designed for daily wear. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from deema nada fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9231792701571",
+    "name": "Blue Amani Nada Abaya, Basic Design",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 545,
+    "originalPriceAED": 681,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 45,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0236.jpg?v=1787302514",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0220.jpg?v=1787302514",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0225.jpg?v=1787302514",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0239.jpg?v=1787302514",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0240.jpg?v=1787302514"
+    ],
+    "overview": "A blue abaya designed for daily wear. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from amani nada fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9232011788419",
+    "name": "Green Reem Nada Abaya, Basic Design",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 545,
+    "originalPriceAED": 681,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 46,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260006.jpg?v=1787302235",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260005copy_ed37902a-14fb-4b1f-8cdd-f10fbffc4c3e.jpg?v=1787302235",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-202600031copy_08d394a3-7983-483b-b561-d09f5f2dc31d.jpg?v=1787302235",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-202600141copy_687a3205-50ac-4db2-802e-79f13c141706.jpg?v=1787302235",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260007copy_15dd2a9c-2660-4dd7-aa27-0776a8249472.jpg?v=1787302235"
+    ],
+    "overview": "A green abaya designed for daily wear. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from reem nada fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9232011755651",
+    "name": "Brown Amani Nada Abaya, Basic Design",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 545,
+    "originalPriceAED": 681,
+    "badge": "EID EDITION",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 47,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260251.jpg?v=1787302275",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260261copy_f0c75dfc-c631-4276-b5f3-3dc3a22364e6.jpg?v=1787302275",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260268.jpg?v=1787302275",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260263copy_6108a5b8-e9bd-4dc0-8cbf-ac01c0e8a531.jpg?v=1787302275",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260269copy_44bb5d57-1817-4029-ad53-5469664bfe9f.jpg?v=1787302275"
+    ],
+    "overview": "A brown abaya designed for daily wear. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from amani nada fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9233658380419",
+    "name": "Brown Zoe Crepe Abaya, Front Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 659,
+    "originalPriceAED": 824,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 48,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0289.jpg?v=1787302088",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0271.jpg?v=1787302088",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0272.jpg?v=1787302088",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0291.jpg?v=1787302088",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0277.jpg?v=1787302088"
+    ],
+    "overview": "A brown abaya designed for social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from zoe crepe fabric with easy-care properties and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9233658314883",
+    "name": "Blue Zoe Crepe Abaya, Front Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 659,
+    "originalPriceAED": 824,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 49,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0261.jpg?v=1787302123",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0247.jpg?v=1787302123",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0249.jpg?v=1787302123",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0253.jpg?v=1787302122",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0267.jpg?v=1787302123"
+    ],
+    "overview": "A blue abaya designed for social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from zoe crepe fabric with easy-care properties and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103773892739",
+    "name": "Blue Durra Chiffon Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 689,
+    "originalPriceAED": 861,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 50,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july161096.jpg?v=1787301961",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july161079.jpg?v=1787301961",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july161080.jpg?v=1787301961",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july161100.jpg?v=1787301962",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july161098.jpg?v=1787301962"
+    ],
+    "overview": "A blue abaya designed for social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from durra chiffon fabric with a lightweight feel and comfortable movement, and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103773859971",
+    "name": "Purple Durra Chiffon Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 689,
+    "originalPriceAED": 861,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 51,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july161069.jpg?v=1787301905",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july161056.jpg?v=1787301905",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july161060.jpg?v=1787301905",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july161072.jpg?v=1787301905",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july161076.jpg?v=1787301905"
+    ],
+    "overview": "A purple abaya designed for social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from durra chiffon fabric with a lightweight feel and comfortable movement, and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9122977611907",
+    "name": "Brown Shaina Jacquard Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 679,
+    "originalPriceAED": 849,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 52,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0547.jpg?v=1787131955",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0527.jpg?v=1787131955",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0529.jpg?v=1787131955",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0533.jpg?v=1787131955",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0549.jpg?v=1787131955"
+    ],
+    "overview": "A brown abaya designed for social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from shaina jacquard fabric with a lightweight feel, breathable comfort, and a soft hand feel, and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9122977579139",
+    "name": "Black Shaina Jacquard Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 679,
+    "originalPriceAED": 849,
+    "badge": "LIMITED",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 53,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0547_a2376ee9-9514-4f27-923c-a1bbb4029ba1.jpg?v=1787132504",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0527_be63133a-ca36-4b14-875b-e917d7355314.jpg?v=1787132504",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0529_5d4f91c4-b9e9-4619-b1bf-78515e8d436e.jpg?v=1787132504",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0533_8b0fc5c8-c3a9-4e40-9c0f-c13197d1795e.jpg?v=1787132504",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AUG_18_0549_cb14959b-fcba-41bc-ab3b-cb9fceb61028.jpg?v=1787132504"
+    ],
+    "overview": "A black abaya designed for social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from shaina jacquard fabric with a lightweight feel, breathable comfort, and a soft hand feel, and comes with a matching sheila.",
+    "isNewArrival": true,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9122977710211",
+    "name": "Black Arwa Crepe Abaya, Front Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 789,
+    "originalPriceAED": 986,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 54,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160070.jpg?v=1787134474",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160059.jpg?v=1787134474",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160061.jpg?v=1787134475",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160065.jpg?v=1787134474",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160076.jpg?v=1787134474"
+    ],
+    "overview": "A black abaya designed for social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from arwa crepe fabric with a lightweight feel, easy-care properties, and a structure that supports detailed handwork, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9122977644675",
+    "name": "Black Arwa Crepe Abaya, Embroidery Detail",
+    "category": "Embroidered Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 649,
+    "originalPriceAED": 811,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 55,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160113.jpg?v=1787134438",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160101.jpg?v=1787134438",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160103.jpg?v=1787134438",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160107.jpg?v=1787134438",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160114.jpg?v=1787134438"
+    ],
+    "overview": "A black abaya designed for social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from arwa crepe fabric with a lightweight feel, easy-care properties, and a structure that supports embroidery and detailed handwork, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-8591457910915",
+    "name": "Brown Mario Crepe Abaya with Soft Front Shape and Minimal Detailing",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 398,
+    "originalPriceAED": 569,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "54",
+      "56",
+      "58",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 56,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II0070HIRES.jpg?v=1748601371",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II0071HIRES.jpg?v=1748601371",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II0083HIRES.jpg?v=1748601374",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II0077HIRES.jpg?v=1748601374",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II0085HIRES.jpg?v=1748601370"
+    ],
+    "overview": "This brown abaya is made from Mario Crepe, a medium-weight fabric known for its soft texture and clean finish. It offers breathable comfort with a structured silhouette, suitable for refined, modest wear. The design features a gently shaped neckline with hidden snap buttons down the front. Each seam",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214270341251",
+    "name": "Black Salmi Nada Custom Abaya with Shiny Handwork",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 525,
+    "originalPriceAED": 656,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 57,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1237_1.webp?v=1786736538",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1238_1.webp?v=1786736587",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1244_1.webp?v=1786736587",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1249_1.webp?v=1786736587",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1250_1.webp?v=1786736586"
+    ],
+    "overview": "Beadwork details make this abaya stand out, combined with the Nada fabric and a flowing straight cut. Nada fabric adds an effortless feel, ideal for staying comfortable in style.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214270374019",
+    "name": "Black Emarati Crepe Custom Abaya with Front Pleats and Threadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 563,
+    "originalPriceAED": 704,
+    "badge": "EID EDITION",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 58,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/6E10B167-1DFC-4064-99EA-3603D7FDE676.webp?v=1786736134",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/94C88405-E97B-43F1-98F3-82781EA93DAB_1.webp?v=1786736286",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/E28B28DD-AD9D-4C0E-B055-0F366B7DFA90.webp?v=1786736288",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/9EC104C5-B791-46B2-9978-603C5F40517D.webp?v=1786736287",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/479F64B8-4453-47BF-8554-73F48EDA91B8.webp?v=1786736285"
+    ],
+    "overview": "This black abaya features front pleats and minimal floral threadwork adorned with delicate beadwork. This breathable material is comfortable against the skin, making it ideal for both everyday wear and more formal occasions.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214270439555",
+    "name": "Black Farasha Crepe Custom  Abaya with Front Scattered Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 618,
+    "originalPriceAED": 773,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 14,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/9A5D1076-37F2-4773-8C89-1888198B572E.webp?v=1786735801",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/E4C10650-EC70-4BB6-9313-D574519B5625.webp?v=1786735825",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/A3D66985-B547-4C2F-9CB5-60CFA9B1271E.webp?v=1786735825",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/798C56CF-E930-46BD-9D18-F159BEB1CD01.webp?v=1786735823",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/EB191B8C-96EB-46F5-B59D-0DD6B02269FA.webp?v=1786735827"
+    ],
+    "overview": "Whether its a chic brunch or an evening gathering , this semi- formal black abaya adds elegance to your dailywear. Featuring subtle beadwork made with a blend of threadwork placed along the front . Made from crepe that drapes elegantly and provides comfort through the day.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214270472323",
+    "name": "Black Farasha Crepe Custom Abaya with Front Floral Scatter Embroidery",
+    "category": "Embroidered Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 555,
+    "originalPriceAED": 694,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 15,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/FCB46BBC-D59D-41CB-A0A7-208CEAB79096.webp?v=1786735602",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/B2DEFF49-6B5F-4CA2-BDCA-704C9878284E.webp?v=1786735602",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/D056EA6F-72FF-4066-AB4B-B335FF6DD0A0_1.webp?v=1786735603",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/798F449D-2B37-4F88-B846-3C6D30864D28.webp?v=1786735602",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/9805D335-C0F3-4632-8724-869F47099BE7.webp?v=1786735601"
+    ],
+    "overview": "This black abaya features elegant, scattered floral embroidery on the front and sleeves. Crafted from Crepe, it provides both comfort and style, making it perfect for evening gatherings or work-wear.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214270537859",
+    "name": "Black Farasha Crepe Custom Abaya with Abstract Line Threadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 706,
+    "originalPriceAED": 883,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 16,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/AF7C9832-1E22-41AA-B5B7-D7D73054006C.webp?v=1786735192",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/B05EDDAD-D988-470F-80CF-4FDCE0D76746.webp?v=1786735231",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/94754168-9834-4F35-BE8D-A107D0B19921.webp?v=1786735232",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/B1C2DC32-C927-4396-9602-D935D4C35778.webp?v=1786735231",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ECA6F9E7-8247-472C-AEB4-2FE6EC4019E4.webp?v=1786735232"
+    ],
+    "overview": "Elevate your wardrobe with this black abaya, featuring intricate threadwork line-art . Crafted from Crepe, it offers all-day comfort feel, making it an ideal choice for evening gatherings or work.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214270570627",
+    "name": "Black Kadi Crepe Custom Abaya with Overlap Beadwork Panel",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 694,
+    "originalPriceAED": 868,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 17,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/B72B30CA-1445-479D-95EA-539315E00C5A.webp?v=1786734786",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/B72091EE-7DDE-4B20-8A4C-8AC560657E98.webp?v=1786734785",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/CED0C881-060F-4DE8-921A-6FE2A7F8173F.webp?v=1786734822",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/7450A263-E62E-487A-A687-D99BB0EBC94D.webp?v=1786734785",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/29F3F064-B595-4248-B4F0-870A785D767C.webp?v=1786734786"
+    ],
+    "overview": "This stunning black abaya is beautifully detailed with intricate floral embroidery, elevating its graceful appeal. Crafted from breathable crepe, it provides all-day comfort. Its timeless design makes it an excellent choice for formal wear and gatherings.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214270668931",
+    "name": "Black Classic Nada Custom Abaya with Beaded Crisscross Detail",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 653,
+    "originalPriceAED": 816,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 18,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/7082BC26-E59F-49A1-8A11-EE658B6C5025.webp?v=1786734097",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/63CDDBAC-4252-4033-B9A6-172AFD194094.webp?v=1786734135",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/BDD27873-A90C-4B4C-83F9-B8580EE56EFF.webp?v=1786734162",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/4B705C22-D9F9-4C40-9D1D-BDF809947C35.webp?v=1786734135",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/544F5772-2B56-4E7D-BC9C-4DBAE4C84C23.webp?v=1786734134"
+    ],
+    "overview": "Elevate your wardrobe with this black abaya, featuring intricate crisscross beaded pleat details. Crafted from Nada, it offers an all-day comfort feel, making it an ideal choice for evening gatherings or social events.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214270701699",
+    "name": "Black Khalifa Chiffon Custom Abaya with Front Star Design and Hand Beadwork",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 857,
+    "originalPriceAED": 1071,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 19,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9337HIRES-2_06cc7372-4ee2-40c7-8b71-c79643c93f31.jpg?v=1786728499",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9345HIRES_0eb33c5d-09f9-43fc-861f-4130bcd24a62.jpg?v=1786728518",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9329HIRES_bf1c8e01-18ca-4f63-8460-a35dd8d54299.jpg?v=1786728519",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9344HIRES_d30cc30e-25e7-4ec8-a215-627ddffe2e14.jpg?v=1786728519",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9350HIRES_8c0e3c5e-7d4c-47eb-ab41-84d5e41df10f.jpg?v=1786728519"
+    ],
+    "overview": "This black abaya is made from Khalifa Chiffon, a lightweight fabric with a smooth surface and soft structure. It offers breathable comfort and full coverage, making it ideal for long hours of wear. The design features structured front pleats that add clean lines and subtle depth. Beige handwork is d",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214270767235",
+    "name": "Black Emarati Crepe Custom Abaya with Front Overlap and Beadwork Details",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 659,
+    "originalPriceAED": 824,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 20,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/2099207F-E4BF-4E0B-8160-C1449E5F8C92.webp?v=1786728247",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/848F0A57-9A95-4277-950F-4BDB2F58CF4D.webp?v=1786728247",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/4FDE03A8-BE3E-470F-9FEB-077EA5D8D121.webp?v=1786728246",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/3EE3DDC0-F936-4931-A698-D08BC407D9FF.webp?v=1786728247",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/0DBB6129-7969-477B-A08A-F4A23A12450D.webp?v=1786728246"
+    ],
+    "overview": "This black abaya features a stylish overlap and collar on the front with a chic tie-up detail, adorned with delicate beadwork on the collar and sleeves. Crafted from Crepe, it provides both comfort and style, making it perfect for formal wear or everyday wear.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214270800003",
+    "name": "Black Emarati Crepe Custom Abaya with Beaded Fabric Buttons",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 650,
+    "originalPriceAED": 813,
+    "badge": "LIMITED",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 21,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/11350E8A-372B-42FB-86C3-8856FB3E60DB.webp?v=1786727843",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/10D52D4F-B862-4947-A23A-46FF0C41F544.webp?v=1786727872",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/4F240BDF-FECD-4F63-BB0A-CEF63D239933.webp?v=1786727870",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/11A9C3D4-8BBA-4F9E-9912-A3D7AF37CF23.webp?v=1786727871",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/D93E80CC-6DAE-4306-B18F-EAFE8E264988.webp?v=1786727870"
+    ],
+    "overview": "This black abaya boasts a sophisticated and understated look. It features fabric-covered buttons, embellished with beads and crystals, placed down the center and on the cuffs, adding a subtle yet stylish detail. Crafted from comfortable crepe fabric, this abaya is suitable for both everyday wear and",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214270832771",
+    "name": "Black Malika Chiffon Custom Abaya with Front Beadwork Detail",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 709,
+    "originalPriceAED": 886,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 22,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/63A474B4-2B4B-4CE5-8CFF-06740961D23C_ac0b423f-4925-4213-a2bd-61225a0e5c4b.webp?v=1786727567",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/83D09C7B-2EF1-447D-A85C-A3954425A98B_da01b47a-bff3-4218-a3e7-adc47a79d921.webp?v=1786727567",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/0B7BD203-4776-4CE2-916E-4C12620ABC41_233d34be-d3f5-4438-9297-ca1d474078e6.webp?v=1786727567",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/FBDE3896-0580-41E5-98E9-4315DDEB5BF1_2c0245c0-b44d-4754-8b90-ba6e8343a241.webp?v=1786727566",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/32329C4D-CB1A-4CF0-AA2F-CB170372FD5B_882f4a81-2ed1-4392-aa7e-1a5a11e256c7.webp?v=1786727567"
+    ],
+    "overview": "This stunning black abaya is beautifully detailed with intricate scattered beadwork details, elevating its graceful appeal. Crafted from lightweight chiffon, it provides all-day comfort. Its timeless design makes it an excellent choice for ocassion wear and gatherings.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214270898307",
+    "name": "Black Emarati Crepe Custom Abaya with Intricate Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 722,
+    "originalPriceAED": 903,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 23,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/RJL_3752_4ad6c875-bbe0-4611-ad7d-d43cccf2c6bc.png?v=1786727111",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/RJL_3759_9ca22662-563c-4a2c-b6ec-83845c299e72.png?v=1786727197",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/RJL_3755_9bd885f6-5346-46b5-a207-2a6b45433dec.png?v=1786727195",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/RJL_3749_2b19d2d5-e928-4970-b7fb-266459c148ac.png?v=1786727196",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/RJL_3758_2b43e40a-807a-4a27-8b83-3108ab324447.png?v=1786727196"
+    ],
+    "overview": "A perfect blend of structure and elegance, this straight-cut Emarati Crepe abaya features pleated detailing accented with intricate beadwork on the front and sleeves. Designed with a shaped V-neckline and finished with fine craftsmanship, it offers a refined and polished look. Ideal for formal setti",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214278762627",
+    "name": "Black Classic Nada Custom Abaya with Front Semi Floral Beadwork",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 665,
+    "originalPriceAED": 831,
+    "badge": "EID EDITION",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 24,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/E9A86DEC-8EDB-421C-9241-0E9A39ACB4D5.webp?v=1786726586",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/B91B0D4A-5800-4B8A-B5B4-F44CC33E2C34.webp?v=1786726623",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/151010FE-6CA3-4E43-B330-4BBF8B39D534.webp?v=1786726624",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/FE613FAB-77B1-4C2D-9E9B-8381B51F414F.webp?v=1786726624",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/EDE5B031-EC39-4EBE-B6BF-9B5E7E12AAEF.webp?v=1786726622"
+    ],
+    "overview": "Hand-sewn beadwork adds subtle sparkle, while the straight cut ensures graceful movement. The lightweight Nada fabric is breathable and perfect for warm days.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214278828163",
+    "name": "Blossom Bead & Stone Nada Custom Abaya",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 695,
+    "originalPriceAED": 869,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 25,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1693_5ec9efa5-0971-4afa-9703-437dc2cc5361_1.webp?v=1786726367",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/8A0DFC9C-F45D-4C05-9F51-F1C9CC9E6EC9.webp?v=1786726387",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/805A6AEF-C110-4704-99EF-BA352483B6C7.webp?v=1786726387",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/F0DEC078-00DD-4303-B148-3EBBAEBE58DB.webp?v=1786726389",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/16EEE2ED-0245-4928-A5AD-F5073A275C15.webp?v=1786726388"
+    ],
+    "overview": "Hand-sewn beadwork adds subtle sparkle, while the straight cut ensures graceful movement. The lightweight Nada fabric is breathable and perfect for warm days.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214270275715",
+    "name": "Black Farasha Crepe Custom Abaya with Floral Scattered Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 650,
+    "originalPriceAED": 813,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 26,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1339.webp?v=1786726048",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1336.webp?v=1786726076",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1340.webp?v=1786726077",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1341.webp?v=1786726077",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1335.webp?v=1786726076"
+    ],
+    "overview": "This black abaya features delicate floral embroidery on the sleeves, adding a feminine touch to the classic design. The front is accented with fabric-covered buttons, enhancing its elegant appeal. Made of lightweight crepe , it's perfect for gatherings or evening occasions, this abaya offers both el",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214270242947",
+    "name": "Black Farasha Crepe Custom Abaya with Embroidered Front Overlap",
+    "category": "Embroidered Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 669,
+    "originalPriceAED": 836,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 27,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/BD6A2E75-6FD4-4837-8889-C04E9913C532.webp?v=1786725709",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/920D892F-A453-44D8-A583-A361F740E7EA.webp?v=1786725800",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/2BC114B2-65B4-43F1-BD4C-6BDBCB5DAEB3.webp?v=1786725801",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/F67C6C45-DC7C-40E1-B67E-297E198D58E3.webp?v=1786725802",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/F408976C-9B7E-4280-82D5-19B759909C11.webp?v=1786725801"
+    ],
+    "overview": "Ideal for various occasions, this Black abaya adds elegance to your wardrobe.Featuring a uinque Overlap detail, enhanced with Embellished embroidery. Made of Crepe that is comfortable against the skin, making it ideal for both everyday wear and more formal occasions.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214270177411",
+    "name": "Black Kadi Custom Crepe with Bead and Thread Work on Sides",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 588,
+    "originalPriceAED": 735,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 28,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1212_1.webp?v=1786725443",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1210.webp?v=1786725553",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1209.webp?v=1786725553",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1213_1.webp?v=1786725555",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1215_1.webp?v=1786725554"
+    ],
+    "overview": "Hand-sewn beadwork adds subtle sparkle, while the straight cut ensures graceful movement. A balanced drape from Medium Crepe makes this abaya suitable for both casual and formal moments.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214270144643",
+    "name": "Black rose Crepe Custom Abaya with Front Floral Threadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 626,
+    "originalPriceAED": 783,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 29,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/FC235F76-65B4-468C-A237-6DCECE314F65.webp?v=1786725209",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/8E9981D4-CE21-436B-A7ED-57A4E3C3B46C.webp?v=1786725302",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/A14E19F0-7073-4535-BEDD-ADC58F35D5B2.webp?v=1786725302",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/41B03DD2-20D3-4DC3-B8DF-7B32A8C23900.webp?v=1786725303",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ADBBBE41-FAD8-40F8-9C6E-CCE8F1E0BB97.webp?v=1786725303"
+    ],
+    "overview": "Beadwork details make this abaya stand out, combined with the Light Crepe fabric and a flowing straight cut. Light Crepe ensures a soft, breathable feel that enhances the silhouette.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214270079107",
+    "name": "Black Rose Crepe Custom Abaya with Front Atrful Threadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 610,
+    "originalPriceAED": 763,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 30,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/BE8B7A3C-61B2-4321-9FB2-762798C512F0.webp?v=1786724952",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/0CED6340-FAC9-47D8-984D-6DBE83CBA6E2.webp?v=1786725033",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/E1FD6D76-26E0-4AB6-8AC1-49E4D82CA0D2.webp?v=1786725033",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/623A37AF-54E8-4BE0-99F7-9E1887FC34E1.webp?v=1786725035",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/5B2CBB98-906A-4B74-B18E-BC004AA7165A.webp?v=1786725035"
+    ],
+    "overview": "Artful threadwork brings texture and depth, while the straight cut ensures an elegant, confident look. Light Crepe ensures a soft, breathable feel that enhances the silhouette.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214270046339",
+    "name": "Black Crepe Ready Triangle Custom Abaya with Front Scattered Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 589,
+    "originalPriceAED": 736,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 31,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/A57FEE62-2ED5-4F23-A32E-0680CD962321.webp?v=1786724722",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/2B92FBB2-D783-4447-B03B-AFAB440044FF.webp?v=1786724741",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/0A50FB22-713A-4B10-98A2-C3AE9F1EBAC2.webp?v=1786724742",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/A3729592-E449-4AB7-BE6E-095E5F13DD93.webp?v=1786724742",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/66C3C38F-4B28-45DC-9661-E02226B944ED.webp?v=1786724741"
+    ],
+    "overview": "Beadwork details make this abaya stand out, combined with the Light Crepe fabric and a flowing straight cut. Light Crepe ensures a soft, breathable feel that enhances the silhouette.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214269980803",
+    "name": "Bead Blossom Black Custom Abaya",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 682,
+    "originalPriceAED": 853,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 32,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_5190.webp?v=1786724503",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_5189.webp?v=1786724570",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_5191.webp?v=1786724571",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_5192.webp?v=1786724570",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_5194.webp?v=1786724570"
+    ],
+    "overview": "Fabric: Chiffon formal evening flared abaya, adorned with scattered black hand-beaded florals. Made of lightweight chiffon, it offers year-round wear, seamlessly combining elegance and comfort.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214269948035",
+    "name": "Beaded Bloom Black Custom Abaya",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 620,
+    "originalPriceAED": 775,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 33,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/4D3AFB78-35AE-4DED-9307-A7EA9F083BC0.webp?v=1786724207",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/6ABE1936-2697-47C5-9C15-9346730BE460.webp?v=1786724231",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/428A4D14-525B-49E9-AEB3-41B03BB5759C.webp?v=1786724232",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/BB7EDB53-8FC1-4788-8639-9C95653C2C72.webp?v=1786724231",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/F1EDB8B5-433B-40DC-BA66-B44003A428AC.webp?v=1786724231"
+    ],
+    "overview": "Formal evening flared abaya adorned with floral black hand-beaded designs. Made of lightweight chiffon, it’s perfect for year-round wear, seamlessly combining elegance and comfort.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214269915267",
+    "name": "Floral Abstract Side Black Custom Abaya",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 605,
+    "originalPriceAED": 756,
+    "badge": "LIMITED",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 34,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/9C12E7DC-D6BA-40C9-B210-E79E37FB7203.webp?v=1786723811",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/3DAFF614-5DC6-4219-BB9E-4EB72B7E2F0E.webp?v=1786723842",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DB0457F5-51F2-47A9-8A38-F49A3629E767.webp?v=1786723842",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/D1A54047-94B4-413D-94FB-AC2B079766FA.webp?v=1786723842",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/95F2B437-FCC3-454D-A733-B41953ED2E63.webp?v=1786723842"
+    ],
+    "overview": "Fabric name: Chiffon Formal evening flared abaya adorned with semi-floral abstract black hand-beading. Made of lightweight chiffon, it’s perfect for year-round wear, seamlessly combining elegance and comfort.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214269849731",
+    "name": "Silver Floral Flare Black  Custom Abaya",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 620,
+    "originalPriceAED": 775,
+    "badge": "EID EDITION",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 35,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DD5A5096-AAC9-47B9-8FE7-79B248F287CB.webp?v=1786723487",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/8FA89EDE-8CB0-4AFF-AD1D-7C85BB516007.webp?v=1786723552",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/D4D8655A-A4E6-45A9-9256-B3416F6B2C64.webp?v=1786723552",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/3ACF61C3-7D97-4B8D-8FD5-3EE1D8268418.webp?v=1786723553",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/0DC85FAE-C799-45A9-A75C-41B259C2628B.webp?v=1786723552"
+    ],
+    "overview": "Formal evening flared abaya, It's adorned with delicate floral hand-beaded details. Made from lightweight organza, it's designed for year-round wear, offering both elegance and comfort effortlessly.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214269816963",
+    "name": "Side Bead Organza Black Custom Abaya",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 623,
+    "originalPriceAED": 779,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "French Crushed Organza",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 36,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/7EB775C9-9608-430D-8CA6-E9BCDBD6A0AE.webp?v=1786723011",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/687F3021-3C56-4521-B2DC-30B0FD1AAE76.webp?v=1786723036",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/9A5BFC07-AC40-47FC-9A1C-A8E49C67B385.webp?v=1786723036",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/A6A2DDD4-498D-4473-A0AD-E6D6FF6CF9B7.webp?v=1786723035",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/4EE876EE-29CA-4358-A2F7-64A737A2AEF7.webp?v=1786723034"
+    ],
+    "overview": "Fabric name: Organza formal evening flared abaya, It's decorated with scattered black hand-beaded semi-lines. Made from lightweight organza, it's an ideal choice for year-round wear, seamlessly blending elegance with comfort.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214269751427",
+    "name": "Black Organza Custom Abaya with Front Blossoms Beadwork",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 603,
+    "originalPriceAED": 754,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "French Crushed Organza",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 37,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1968_1.webp?v=1786722283",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1971_1.webp?v=1786722371",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1970_1.webp?v=1786722371",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1972_1_338d9fbd-c091-429b-aaa0-12596f5409b6.webp?v=1786722373",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1973_1.webp?v=1786722372"
+    ],
+    "overview": "Hand-sewn beadwork adds subtle sparkle, while the klosh cut ensures graceful movement. A lightweight and sheer Organza fabric enhances the design with a touch of sophistication.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214269620355",
+    "name": "Custom Beaded Shadow Detail Flared Chiffon Custom Abaya  Black Abaya",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 584,
+    "originalPriceAED": 730,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 38,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/0A16AF38-EEB7-42DD-9D57-DE976C20D3DA_48616ee6-2623-44e8-9d24-389c77f4bad6.webp?v=1786721621",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/4B10B16D-AFE1-47FE-8771-010D75E76854_99298e7a-d22c-4fe8-a6ca-19ef1477e457.webp?v=1786721639",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/7BF38684-5D51-4ACA-814D-CDDBC04C0800_511f0500-2faf-4b4b-b7e8-64342f630ed2.webp?v=1786721639",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/B5872D59-7E69-4756-97DC-947773BC0C64_9427bd60-57dc-4e57-90c9-dddeb29eee33.webp?v=1786721639"
+    ],
+    "overview": "Fabric name: Chiffon formal evening flared abaya, embellished with scattered abstract black hand-beaded details from shoulder to hem. made of lightweight chiffon, it's ideal for year-round wear, seamlessly combining elegance and comfort.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214269522051",
+    "name": "Custom Arc Bead Flare Chiffon Black Custom Abaya",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 591,
+    "originalPriceAED": 739,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 39,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89814_e6e3b873-f1be-42c2-af6d-1141d27ecf55.webp?v=1786720915",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89822_d36c6f93-6a09-486c-b76e-2f495d501562.webp?v=1786720919",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89815_fa8ef6b8-ceb4-4949-a3e6-023bb22523a9.webp?v=1786720919",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89820_a2488ee9-8e45-44bd-b133-2f3ac6684484.webp?v=1786720923",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89825_d5507bd4-52fa-4219-b2eb-0eed02aa67a2.webp?v=1786720919"
+    ],
+    "overview": "Fabric Name: Chiffon formal evening flared abaya, adorned with semi-circle lines of black hand bead embellishments on the front. made of lightweight chiffon, it's suitable for all seasons, offering both elegance and comfort.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214269489283",
+    "name": "Black Classic Crepe Custom Abaya with Semi-Floral Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 512,
+    "originalPriceAED": 640,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 40,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1721_1.webp?v=1786720705",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1722_1.webp?v=1786720758",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1724_1.webp?v=1786720762",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1729_1.webp?v=1786720762",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_06672-min_18bc9263-1560-4839-9433-ec23b68901a4.webp?v=1786720769"
+    ],
+    "overview": "Beadwork details make this abaya stand out, combined with the Medium Crepe fabric and a flowing straight cut. A balanced drape from Medium Crepe makes this abaya suitable for both casual and formal moments.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214269456515",
+    "name": "Beaded Lace & Stone Side Flared Black Custom Abaya",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 705,
+    "originalPriceAED": 881,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 41,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89749.webp?v=1786720506",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89746.webp?v=1786720521",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89759.webp?v=1786720522",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89761.webp?v=1786720509",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89762.webp?v=1786720509"
+    ],
+    "overview": "Fabric name: Chiffon Formal Evening Flared Abaya, elegantly trimmed with black transparent lace adorned with black stone embellishments along the sides. Made from lightweight chiffon, this versatile piece offers both elegance and comfort, making it suitable for all seasons.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214269390979",
+    "name": "Sleeve Embellished Black Custom Abaya",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 619,
+    "originalPriceAED": 774,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 42,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/B8B58847-6759-453B-B739-F658A9204B5C.webp?v=1786720281",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/41F78627-D9E9-4A3B-8516-508A6AAEF383.webp?v=1786720347",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/FD48C25C-C421-4980-B0F6-F6805B20E228.webp?v=1786720344",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/F0A73ED7-8BE2-40BE-85B8-9D85913B6349.webp?v=1786720344",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/6146E2B0-421C-40AD-AD19-52DA7344F6C5.webp?v=1786720344"
+    ],
+    "overview": "Artful threadwork brings texture and depth, while the straight cut ensures an elegant, confident look. Light Crepe ensures a soft, breathable feel that enhances the silhouette.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214269325443",
+    "name": "Layered Chiffon with Shiny Beads on Black Custom Abaya",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 669,
+    "originalPriceAED": 836,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 43,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89706.webp?v=1786695139",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89702.webp?v=1786695166",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89710.webp?v=1786695166",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89719.webp?v=1786695167",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89720.webp?v=1786695165"
+    ],
+    "overview": "Formal evening flared abaya, adorned with abstract black and silver hand-beaded layer cuts and sleeves. Made of lightweight chiffon, it seamlessly blends elegance and comfort for year-round wear.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214269259907",
+    "name": "Silver touch Bead on Chiffon Flare Black Custom  Abaya",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 622,
+    "originalPriceAED": 778,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 44,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/522412AD-34B8-4AF8-B8BF-29DA6FBED5BC.webp?v=1786694954",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/434CE889-4600-42C2-A4A7-15F5CE288FDB.webp?v=1786694989",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/4CEA4AF8-B130-426C-8F2D-2F603194651E.webp?v=1786694989",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/D240CB11-83F6-477A-81E4-40B3222D285A.webp?v=1786694989",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/136E8DD4-2E7E-426B-A596-C673E7DC0F4E.webp?v=1786694989"
+    ],
+    "overview": "Formal evening flared abaya, adorned with scattered black and silver hand-beaded layer cuts and sleeves. Made of lightweight chiffon, it seamlessly blends elegance and comfort for year-round wear.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214269227139",
+    "name": "Black Rose Crepe Custom Abaya with Front Linear Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 607,
+    "originalPriceAED": 759,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 45,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/19A218FD-02C2-42E9-8DC5-DCD180B3A7C7.webp?v=1786694731",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/040FC75F-A30C-45B7-BB80-D7B3628C43A2.webp?v=1786694757",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/46637592-6A5E-48E3-B9DD-82E21483EC23.webp?v=1786694756",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/8EFD53F5-16C1-43DB-AE28-DDDAC5DD2CA7.webp?v=1786694757",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/B139B5AA-3F08-4DFF-A844-B2C06757D487.webp?v=1786694756"
+    ],
+    "overview": "Beadwork details make this abaya stand out, combined with the Light Crepe fabric and a flowing straight cut. This fabric flows beautifully, making it great for a day that requires both comfort and elegance.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214269161603",
+    "name": "Black Iris Crepe Custom Abaya with Arcs Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 618,
+    "originalPriceAED": 773,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 46,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYANOV1055862.webp?v=1786694530",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYANOV1055847.webp?v=1786694556",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYANOV1055863.webp?v=1786694564"
+    ],
+    "overview": "Beadwork details make this abaya stand out, combined with the Light Crepe fabric and a flowing straight cut. Light Crepe ensures a soft, breathable feel that enhances the silhouette.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214269030531",
+    "name": "Bead & Bloom Crepe Custom Black Abaya",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 675,
+    "originalPriceAED": 844,
+    "badge": "LIMITED",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 47,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1777.webp?v=1786694234",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/1CEC25DB-5069-416D-B1A4-2FD71D3FEF4C.webp?v=1786694264",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1780.webp?v=1786694263",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/7093E16F-EC15-4A3B-AD13-73CEDC79F34F.webp?v=1786694263",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/EB656451-384F-43BE-912C-6219A85AE045.webp?v=1786694264"
+    ],
+    "overview": "Fabric name: Layan Crepe Semi-formal abaya, features floral thread embroidery on the front , enhanced with small beadwork.Made with lightweight crepe, it is perfect for year-round wear.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214268964995",
+    "name": "Black Lily Chiffon Custom Abaya with Front Lace and Beadwork",
+    "category": "Luxury Abayas",
+    "collection": "EID COLLECTION",
+    "priceAED": 789,
+    "originalPriceAED": 986,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 48,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/6F1E613E-EBB4-4BE8-A8DF-8AE5D000C7E3.webp?v=1786693954",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/449406FC-441A-489D-8E12-0A2B09EE6B5B_bcea7514-79d4-4549-b865-74c71863b488.webp?v=1786694004",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/6F4F7C02-6D75-47A7-AAF3-387EED059299_4c4cc14c-0f74-46a6-9bba-b50106263e1f.webp?v=1786694004",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/C5B996E1-C1BB-47A7-8E1E-8F56B9E32ADC_92d9d578-84c4-48ce-a74a-b3fd794bc934.webp?v=1786694004",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/EB9D06E8-0DDA-4B69-817A-F8EA2D65C7E0_a5758f44-dd63-4e9e-92f5-bff3fd298812.webp?v=1786694005"
+    ],
+    "overview": "Layered evening flared abaya, embellished with black bead accents and lace detailing on the front and sleeve. Made of lightweight chiffon, it's perfect for year-round wear, combining elegance and comfort effortlessly.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214268932227",
+    "name": "Black Lily Chiffon Custom Abaya  with Front Scattered Beadwork",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 635,
+    "originalPriceAED": 794,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 49,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/image_fd398cc2-8f95-422f-a679-824b82c52849.webp?v=1786693741",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/image_6d5ebdc6-033e-45a2-8911-8805e67f63b7.webp?v=1786693774",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/image_3e53a1b1-a379-4100-8872-bdeeb272b4dd.webp?v=1786693772"
+    ],
+    "overview": "Hand-sewn beadwork adds subtle sparkle, while the klosh cut ensures graceful movement. Chiffon's airy nature keeps this abaya light and stylish, ideal for layering.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9214268768387",
+    "name": "Black Classic Nada Custom Abaya with Side Floral Lace and Shiny Beadwork",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 659,
+    "originalPriceAED": 824,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 50,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_5484.webp?v=1786693330",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_5483.webp?v=1786693360",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_5482.webp?v=1786693360",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_5486.webp?v=1786693360",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_5488.webp?v=1786693361"
+    ],
+    "overview": "Formal evening abaya, adorned with floral lace and hand-beaded black details, featuring transparent organza on both sides. Made of lightweight nada fabric, it's perfect for year-round wear, effortlessly blending elegance and comfort.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213587259523",
+    "name": "Black wave crepe Custom Abaya, Front Beadwork Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 659,
+    "originalPriceAED": 824,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 51,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12685_1.jpg?v=1786693039",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12672_f75eb9ad-1cb2-45f4-b1d0-135d5d9782e9.jpg?v=1786693070",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12675_fcd84044-e364-4198-858f-1f4079625542.jpg?v=1786693070",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12675_1.jpg?v=1786693070",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12689_f01bbab7-9859-4e20-8c22-c6af018b951f.jpg?v=1786693071"
+    ],
+    "overview": "Wave crepe offers a lightweight and comfortable feel, making it suitable for extended wear during work hours. The black color provides a clean and professional appearance that works well for back-to-work settings and everyday use. The fabric remains smooth on the skin while maintaining a neat and st",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213587226755",
+    "name": "Black Emarati Crepe Custom Abaya with Sleeve Beadwork Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 719,
+    "originalPriceAED": 899,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 52,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12839_362272e6-3b64-464e-b9bc-de46734ae37d.jpg?v=1786691118",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12849_ec35caa3-7344-4779-a52d-15f4539bb0ba.jpg?v=1786691213",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12849_1_8ede1a3c-c8da-482f-9cef-c0990dfec90d.jpg?v=1786691212",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12829_92265c3f-867a-42f1-8325-0d8559de11f8.jpg?v=1786691213",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12843_5512b3b3-7490-4c7f-b685-cdac4d8fb50d.jpg?v=1786691214"
+    ],
+    "overview": "Emarati Crepe gives this black abaya a smooth and refined surface with a comfortable, balanced feel. The fabric is suitable for extended wear and maintains a neat appearance throughout the day. The black color keeps the look elegant and versatile, making it appropriate for work, social gatherings, a",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213587193987",
+    "name": "Black Layan Crepe Abaya with Front Beadwork Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 599,
+    "originalPriceAED": 749,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 53,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12892_f069e079-c4f7-44bb-967c-b9a9b96ca243.jpg?v=1786691488",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12882_193b2039-67d2-43e2-b2ab-82593707b786.jpg?v=1786691555",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12885_5e1a8494-0f52-458b-930d-d5a6504d2b5e.jpg?v=1786691555",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12885_1.jpg?v=1786691555",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12898_b1f24089-4508-4aea-a6c4-9ab053a86730.jpg?v=1786691553"
+    ],
+    "overview": "Layan Crepe gives this black abaya a smooth surface with a lightweight and comfortable feel. The fabric is suitable for extended wear and maintains a neat appearance throughout the day. The black color keeps the look refined and versatile, making it appropriate for work and social settings. The silh",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213587161219",
+    "name": "Black Farasha Crepe Custom Abaya with Beaded Curve Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 695,
+    "originalPriceAED": 869,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 54,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA13023_1.jpg?v=1786690578",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA13023_9d1727ed-ce89-42b9-aef4-203fa3184172.jpg?v=1786690578",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA13024_2c798909-d825-4a70-9c09-48d44018272a.jpg?v=1786690578",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA13030_24c86ebd-82c7-4e36-9acb-d777aa9d6a3e.jpg?v=1786690578",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA13031_42d31f3f-b8e3-4e0e-8159-ebfca10afb83.jpg?v=1786690578"
+    ],
+    "overview": "A refined black abaya crafted from soft Farasha Crepe and shaped in a graceful KLOSH cut. The clean neckline and straight front create a minimal and polished silhouette that works beautifully for work, social gatherings and everyday elegance. The design features a curved panel on the lower body and ",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213587128451",
+    "name": "Black Kadi Custom Abaya with Cross Bead Embroidery",
+    "category": "Embroidered Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 624,
+    "originalPriceAED": 780,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 55,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC05676_992e17eb-4f00-483c-a47e-82f2faf6542c.jpg?v=1786690361",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA_AUG283128_f3ff96d7-923d-49e0-b0b5-20ebf03afcd4.jpg?v=1786690365",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA_AUG283137_233e5b40-db57-404a-a911-43fb7d4102a9.jpg?v=1786690365",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA_AUG283143_761ace7b-b715-4cf8-8db1-f36bc1fbc4ed.jpg?v=1786690365",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA_AUG283143_1.jpg?v=1786690363"
+    ],
+    "overview": "An elegant statement piece crafted in premium Kadi fabric, tailored in a flowing KLOSH silhouette that balances structure and softness. The neckline is shaped into a clean V with a concealed snap placket, maintaining a smooth front line. The highlight of this design is its intricate cross-pattern be",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213587062915",
+    "name": "Black Farasha Crepe Custom Abaya with Beaded Sleeve Embroidery",
+    "category": "Embroidered Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 705,
+    "originalPriceAED": 881,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 56,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC05121_eaa90e06-308b-4739-b411-f3175a2adbdf.jpg?v=1786689806",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1887_04c0c410-0c2b-4afa-ac7b-17d1a75cd5f8.jpg?v=1786689805",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1887_1.jpg?v=1786689802",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1890_111ef5e5-f95c-4f08-8dd5-63c07bec29ae.jpg?v=1786689802",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1899_0ae8311a-8f74-458c-8bfe-ea774fd68691.jpg?v=1786689801"
+    ],
+    "overview": "This abaya is tailored in a flowing KLOSH silhouette from lightweight Farasha Crepe, offering comfort and elegance for both work and evening occasions. The neckline is finished with a neat V cut and concealed snap closures that maintain a clean front line. The standout feature is at the sleeves: han",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213587030147",
+    "name": "Black Malika Chiffon Custom Abaya with Layered Klosh Cut and Bead Embellished Panel",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 792,
+    "originalPriceAED": 990,
+    "badge": "EID EDITION",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 57,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9201HIRES_fd26d498-339a-4ca7-87fe-15a49e33912d.jpg?v=1786689362",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9196HIRES_25aaf658-4ea7-404b-b741-06e5bb2745d5.jpg?v=1786689381",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9179HIRES_220c4704-daad-45ab-9fc9-e0338523fe98.jpg?v=1786689381",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9194HIRES_1e7ea6ea-6d35-4712-8725-70cd5ab32348.jpg?v=1786689382",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9194HIRES_1.jpg?v=1786689403"
+    ],
+    "overview": "This black abaya is made from Malika Chiffon, a breathable, lightweight fabric that offers modest structure and everyday elegance. The fabric’s soft handfeel and matte finish provide both comfort and refinement. The silhouette features a wide klosh cut, finished with a layered front panel to add dim",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213586997379",
+    "name": "Black Malika Chiffon Custom  Abaya with Katka Beadwork and Layered Hem Detail",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 689,
+    "originalPriceAED": 861,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 58,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9558HIRES_cb60728a-4acb-430a-856a-b12d47b0530b.jpg?v=1786689140",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9552HIRES_c89f379b-feb0-4d3b-88a3-5a30dbd16df8.jpg?v=1786689162",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9561HIRES_3d6a5d4d-bfc5-4827-9910-859e8844302c.jpg?v=1786689161",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9570HIRES_a0fa8145-08af-4e2c-beb3-fbb7ca729042.jpg?v=1786689162",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9572HIRES_f43de1d4-18a1-41cc-8837-08734d248819.jpg?v=1786689161"
+    ],
+    "overview": "This black abaya is tailored from Malika Chiffon, a breathable, lightweight fabric known for its smooth feel and elegant matte surface. It offers full coverage with a gentle drape, ideal for refined modest wear. The design features katka-style beadwork placed across the front, sleeves, and hem. Craf",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213586931843",
+    "name": "Black Jaime Crepe Custom  Abaya with Beadwork Accents",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 634,
+    "originalPriceAED": 793,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 14,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC04425_b208a54e-1bc8-4d20-ad71-76bb84084b4a.jpg?v=1786688987",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC04417_8ede98ee-317a-43c7-ab86-3fb4db77003b.jpg?v=1786688989",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1548_f458d998-4ed2-48eb-bb10-7706c09617cd.jpg?v=1786688986",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1537_6f9269de-aef4-41dd-8965-d4cad6fb0430.jpg?v=1786688986",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1544_e012df2f-2843-4f02-b49d-52d323c25fd8.jpg?v=1786688986"
+    ],
+    "overview": "Cut from lightweight Jaime Crepe in a flowing KLOSH silhouette, this abaya balances minimal tailoring with refined embellishment. The front panel is overlapped and secured with hidden snap buttons, keeping the neckline and closure neat. What makes this piece special is its beadwork: scattered cutdan",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213586899075",
+    "name": "Black Wave Crepe Custom Abaya with Floral Beadwork and Green Piping",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 647,
+    "originalPriceAED": 809,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 15,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC05662_1ec6394a-821b-43c9-aabc-e30b64b6b4ce.jpg?v=1786686306",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1433_6671e995-de4f-4169-ac04-71379b520d0c.jpg?v=1786686308",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1436_1fe22e49-e276-4b7d-b321-96140e7eddad.jpg?v=1786686308",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1443_0ab6dce6-b246-44eb-b6da-a0974fbd17a2.jpg?v=1786686309",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1445_d32bd81c-bc8a-40fd-bbd5-4564030ac7ca.jpg?v=1786686306"
+    ],
+    "overview": "This elegant abaya, crafted in lightweight Wave Crepe, is cut in a graceful KLOSH silhouette for timeless movement and coverage. The neckline is designed with a soft V opening, accented by subtle green piping that traces the front line and muraba panel — a delicate contrast that enhances the minimal",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213586866307",
+    "name": "Black Luma Crepe Custom Abaya with Klosh Cut and Front Beadwork Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 639,
+    "originalPriceAED": 799,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 16,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II8922HIRES_48befe96-7275-40bc-bb7f-894409c7115e.jpg?v=1786685966",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II8924HIRES_3839b849-d421-4d8e-a9ec-f62a124f839c.jpg?v=1786685985",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II8931HIRES_4b579534-9690-455e-ab2b-8fa394dde819.jpg?v=1786685984",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II8933HIRES_e12e4627-71d9-41e0-9909-20ff1b55d786.jpg?v=1786685984",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II8939HIRES_11141eab-cf69-4ec2-a813-d15ee38d157c.jpg?v=1786685984"
+    ],
+    "overview": "Crafted in smooth Luma Crepe, this black abaya brings together light comfort and refined finish. The fabric ensures breathable wear while maintaining full modest coverage. The silhouette follows a klosh cut, softly widening from shoulder to hem. This shape creates a graceful outline while allowing e",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213586800771",
+    "name": "Black Sada Organza Custom Abaya with Klosh Cut and Silver Bead Embellishment",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 719,
+    "originalPriceAED": 899,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "French Crushed Organza",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 17,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9310HIRES_f44cdc25-c5b0-4719-bbe8-bd3ef9ad251d.jpg?v=1786685571",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9313HIRES_c9c75c12-d4f5-4bce-931f-5d09fd470ed0.jpg?v=1786685590",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9301HIRES_387abbb2-4f07-4c7b-8baa-2a37162e5338.jpg?v=1786685590",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9314HIRES_af72406f-6e11-41cc-b7cf-e0c25e6575d0.jpg?v=1786685590",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9316HIRES_cbe6066e-583b-4c1b-ab7a-62b531ec6f53.jpg?v=1786685590"
+    ],
+    "overview": "This black abaya is tailored from structured Sada Organza, known for its crisp texture and light sheen. The fabric offers volume and shape while maintaining breathable comfort, making it ideal for elegant, modest wear. The design features a full klosh cut that adds movement and flare. Carefully plac",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213586768003",
+    "name": "Black Sada Organza Custom Abaya with Lace Detail and Front Bead Embellishment",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 787,
+    "originalPriceAED": 984,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "French Crushed Organza",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 18,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9701HIRES_03348add-cd43-4665-a1b7-ac05c0109c95.jpg?v=1786685335",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9711HIRES_7ba45f22-3714-43ba-8ee9-fb059462b8b7.jpg?v=1786685358",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9699HIRES_3027fa66-03c6-460a-b86d-cccfcdacc8af.jpg?v=1786685357",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9709HIRES_ac7e3365-cc49-4787-9781-407a7aa864b2.jpg?v=1786685357",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9718HIRES_8b6dd639-1893-45aa-acc5-ff7a4c68aebf.jpg?v=1786685357"
+    ],
+    "overview": "This black abaya is crafted from structured Sada Organza, a lightweight fabric with crisp texture and full opacity. It offers volume with clean lines, ideal for modest silhouettes that feel elevated and graceful. The design features intricate lace panels and hand-placed bead embellishment across the",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213586735235",
+    "name": "Black Wave Crepe Custom Abaya with Beadwork Embroidery",
+    "category": "Embroidered Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 659,
+    "originalPriceAED": 824,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 19,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR5112HIRES_47d20aa8-fe2b-4436-9a4c-c665cc4d25ec.jpg?v=1786684917",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR5101HIRES_ad029cf0-29fe-4a06-8b78-295901c333fc.jpg?v=1786684833",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR5107HIRES_de25cb63-440c-4505-b2dc-4c19409b569b.jpg?v=1786684980",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR5113HIRES_3d804906-579e-48e7-bbbc-cd19f43b9104.jpg?v=1786684979",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR5115HIRES_f77a03e6-4cdc-4e11-845d-454070b42895.jpg?v=1786684979"
+    ],
+    "overview": "Tailored from medium-weight Wave Crepe, this abaya features a graceful KLOSH silhouette designed for elegant structure and fluid movement. The neckline is shaped into a neat V with a concealed snap placket for a clean front finish. The focal point of this design is its hand beadwork — tonal black cu",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213586669699",
+    "name": "Black Elite Nada Custom Abaya with Side Beadwork",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 699,
+    "originalPriceAED": 874,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 20,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9824HIRES_db09649a-829a-4296-ab8f-a3efda618078.jpg?v=1786683757",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9830HIRES_5ca0c172-bb44-4e2a-be41-9be7d69ce2bd.jpg?v=1786683777",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9833HIRES_d6b544ba-d79a-46b9-8523-a1b268446001.jpg?v=1786683776",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9835HIRES_1c89d4f4-c28f-4f70-9806-a8d307912c92.jpg?v=1786683776",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9838HIRES_29e256c1-56a3-41d1-8068-0fc5fb22c42b.jpg?v=1786683776"
+    ],
+    "overview": "This Black abaya brings a bold yet graceful update to occasionwear. Crafted from lightweight Elite Nada fabric, it features intricate beadwork along the side panels in black and brown tones, combining traditional texture with a modern edge. The KLOSH cut adds movement and softness, opening gently fr",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213586604163",
+    "name": "Black Classic Nada Custom Abaya with Sleeve Pintucks and Organza Trim",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 720,
+    "originalPriceAED": 900,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "French Crushed Organza",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 21,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR4909HIRES_276cca8f-07a6-4c75-b196-16691889b8ab.jpg?v=1786683583",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR4912HIRES_ce8c602f-e10e-4f42-9bf2-002650b57223.jpg?v=1786683581",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR4897HIRES_fe31a7f3-0dce-4903-9a3a-867ff1126155.jpg?v=1786683583",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR4905HIRES_67b9ffb3-1add-4827-903d-ccc1967a6ef7.jpg?v=1786683583",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR4913HIRES_21e32336-4c22-4ae7-889a-6b1759d79377.jpg?v=1786683581"
+    ],
+    "overview": "Made from classic nada crepe in rich black, this abaya features a straight silhouette with tailored sleeve detailing. Pintuck stitching runs precisely along the arms, framed by a soft organza insert that adds lightness without contrast. The clean front and minimal lines create a composed look, while",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213586571395",
+    "name": "Black Emarati Crepe Custom Abaya with Gold Sleeve Embroidery and Tie Finish",
+    "category": "Embroidered Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 655,
+    "originalPriceAED": 819,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 22,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR5210HIRES_97fd5e9a-b4f4-48fa-b656-ce0f3bfcdb9f.jpg?v=1786683250",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_20_MAR5214HIRES-2_cf76528a-9968-4f56-a208-d937956261fb.jpg?v=1786683248",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR5200HIRES_3e6a544c-7f0a-477a-8abb-46861d1c4fc6.jpg?v=1786683249",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR5208HIRES_849c6d5b-689e-4803-94f2-c554c059baa2.jpg?v=1786683249",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR5217HIRES_04083925-81bd-4bd7-ad0a-d6b85440db11.jpg?v=1786683248"
+    ],
+    "overview": "Tailored from structured Emarati crepe, this abaya blends clarity with quiet detail. The sleeves are finished with soft gathers and adjustable ties, while gold-toned embroidery—subtle and refined—accents the upper arm like a signature. A clean silhouette keeps the look composed, making this piece a ",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213586505859",
+    "name": "Black Emarati Crepe Custom Abaya with Overlap Front and Triple-Line Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 630,
+    "originalPriceAED": 788,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 23,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08255_d7f16cbe-e75c-403c-b70f-c2644783f1fb.jpg?v=1786682753",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08259_f138bf07-55b0-4132-b5e7-0df7535ae819.jpg?v=1786682771",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08249_20fab5a3-e07f-4df6-96b6-1bb67457ae06.jpg?v=1786682773",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08252_e25c75f9-dff4-4605-80e7-bf0180772d73.jpg?v=1786682774",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08261_8aebe613-463d-486a-bf65-e62063cad736.jpg?v=1786682773"
+    ],
+    "overview": "This black abaya is crafted from Emarati Crepe, a medium-weight fabric known for its smooth texture and soft structure. It offers breathable comfort and a clean silhouette, suitable for modest dressing with refined shape. The overlapping front design is elevated with triple-line beadwork. Shaded Jap",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213586440323",
+    "name": "Black Wave Crepe Custom Abaya with Front Embroidery",
+    "category": "Embroidered Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 627,
+    "originalPriceAED": 784,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 24,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08049_e952e12a-2ca0-4e8e-a4d7-553c9f74498f.jpg?v=1786682381",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08041_b0e889b5-046d-4557-b748-da3faa9979f1.jpg?v=1786682404",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08042_57881d8c-a6a3-441e-994d-bea5d778197a.jpg?v=1786682404",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08047_8cbde410-2e40-4332-a466-f0d7264256d5.jpg?v=1786682405",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08052_9eb3cbbe-67f5-42fa-b822-abe3f64375fc.jpg?v=1786682403"
+    ],
+    "overview": "This Black abaya features elegant lavender-toned embroidery placed along the front, adding gentle detail without overwhelming the look. Made in lightweight Wave Crepe, it’s ideal for warm weather and suitable for office, meetings, or formal daytime settings. The silhouette is a Straight cut, offerin",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213586374787",
+    "name": "Black Khalifa Chiffon Custom Abaya with Hand-Beaded Details",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 821,
+    "originalPriceAED": 1026,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 25,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DA221E54-ABE0-4C98-9013-B6916B45C3EE_1.webp?v=1786682135",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/4F745E74-E39B-43B3-B206-048F197C7432_1.webp?v=1786682156",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/5A83C41A-BB9A-400C-8FB6-D6F4B3022402_1.webp?v=1786682156",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/F1DE6729-C084-4312-A0F1-CD1758D769D3_1.webp?v=1786682156",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/FD27CE27-D4CB-4CC5-88D8-BB276A392F1A_1.webp?v=1786682156"
+    ],
+    "overview": "This black abaya has a sophisticated look with its flowing silhouette and subtle embellishments. It is adorned with delicate beadwork along the neckline and cuffs, adding a touch of sparkle and personality. Crafted from lightweight and breathable chiffon fabric, it ensures comfort and effortless mov",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213586342019",
+    "name": "Black Malika Chiffon Custom Abaya with Black & Brown Beadwork on Side and Sleeves",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 669,
+    "originalPriceAED": 836,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 26,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA07912_81f0dd08-70e9-4797-92a8-bd46917ecf86.png?v=1786614854",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA07912_1.png?v=1786614896",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA07915_cd70542c-a0c5-42aa-bd0f-2fd5b4bd4399.png?v=1786614896",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA07915_1.png?v=1786614896",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA07918_66e81f3a-3bc6-41d8-870d-61f14cf39242.png?v=1786614896"
+    ],
+    "overview": "Designed for elegance and sophistication, this Klosh-cut chiffon abaya flows gracefully, offering a refined and airy silhouette. The intricate black and brown beadwork on the side and sleeves adds a touch of artistry, making it an ideal choice for social gatherings and special occasions. A timeless ",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213586309251",
+    "name": "Black Emarati Crepe Custom Abaya with Overlap Design, Organza Patch, and Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 689,
+    "originalPriceAED": 861,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "French Crushed Organza",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 27,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08124_52a9b52c-064d-460c-8674-06d4f2e8bdb5.png?v=1786614424",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08127_425699b5-0404-41a1-83ad-330275991874.png?v=1786614490",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08119_9a27df39-f30a-4b0d-ad1a-0f94e1bc60a2.png?v=1786614491",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08122_5c8117d8-ba42-4f7c-959b-b0dac1633142.png?v=1786614489",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08132_bd08aabe-2c8f-4d4c-b8a1-a1fba770a2cd.png?v=1786614489"
+    ],
+    "overview": "This Klosh-cut abaya offers a refined blend of structure and elegance. Crafted from medium-weight Emarati Crepe, it features an overlap design enhanced with organza patch detailing and intricate beadwork on the front and sleeves. Perfect for work, social gatherings, and formal occasions, this abaya ",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213586276483",
+    "name": "Black Layan Crepe Custom Abaya with Crystal Bead Embellishments",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 699,
+    "originalPriceAED": 874,
+    "badge": "LIMITED",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 28,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/NS-2302_BK_2.webp?v=1786613576",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/NS-2302_BK_4.webp?v=1786613620",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/NS-2302_BK.webp?v=1786613618",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/NS-2302_BK_3.webp?v=1786613618",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/NS-2302_BK_5.webp?v=1786613618"
+    ],
+    "overview": "The Black Layan Crepe Abaya, crafted from crepe fabric, features a clean, streamlined silhouette and a striking focal point of hand-placed beads and crystals. The sparkling embellishments are concentrated in two beautifully curved, paisley-inspired shapes on the front, adding a touch of glamour to t",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213586210947",
+    "name": "Black Farasha Crepe Custom Abaya with Front Vibrant Floral Scatter Embroidery",
+    "category": "Embroidered Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 555,
+    "originalPriceAED": 694,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 29,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/80EC4FC5-0836-41CE-83DB-48DCFA551024.webp?v=1786613330",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DC214885-64FE-454F-AAFE-F9048D0A6A1D.webp?v=1786613330",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/3234D9E5-1F16-4C61-9266-4F90761B32AC.webp?v=1786613330",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/D0E61E79-C14B-4B67-9B2D-365E272C83E6.webp?v=1786613331",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/44B9B837-702D-4E67-B375-46C27519650E.webp?v=1786613331"
+    ],
+    "overview": "This black abaya is beautifully adorned with vibrant, scattered floral embroidery on the front and sleeves. Crafted from Crepe, it offers a perfect blend of comfort and style, making it an ideal choice for evening gatherings or special occasions.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213586112643",
+    "name": "Black Classic Nada Custom Abaya with Ethnic Beadwork Detail",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 885,
+    "originalPriceAED": 1106,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 30,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA07766_da6c6d7d-6f45-4206-a76f-dbc644bce263.png?v=1786612938",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA07733_2687a8f8-96e0-48ca-85c1-c437187d8bfe.png?v=1786612966",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA07723_3eefb1bc-1bda-4389-b357-5846e190dabf.png?v=1786612968",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA07742_7f12d2dc-e78e-4dc3-ae60-ce8b560d4fec.png?v=1786612966",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA07770_0ef21f3e-2533-491a-a395-2845d4f0fa73.png?v=1786612966"
+    ],
+    "overview": "Designed for effortless elegance, the Black Classic Nada Abaya blends timeless sophistication with intricate detailing. Crafted from Nada fabric in a flowing Klosh cut, this abaya falls beautifully, creating a graceful and modest silhouette. The highlight of this design is the ethnic beadwork adorni",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213557407875",
+    "name": "Black Emarati Crepe Custom Abaya, Front Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 779,
+    "originalPriceAED": 974,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 31,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260559_1211d164-84cd-40a7-a6ad-0c1998f56318.jpg?v=1786612369",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260551_8e0d5666-a31f-4bbb-87c3-656ed628206a.jpg?v=1786612393",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260553_cdb95131-6971-44da-9adb-4319e40a402a.jpg?v=1786612393",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260568_4f7f44c7-14ce-4624-be05-34da3dd3bdcb.jpg?v=1786612394",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260566_f87eb1b4-c242-426f-9f73-3f3e8d4b1de4.jpg?v=1786612394"
+    ],
+    "overview": "A black abaya designed for work and social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from emarati crepe fabric with a lightweight feel, easy-care properties, and a structure that supports detailed handwork, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213557309571",
+    "name": "Black Wave Crepe Custom Abaya, Front Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 649,
+    "originalPriceAED": 811,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 32,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260748_1.jpg?v=1786611927",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260743_1.jpg?v=1786611927",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260744_1.jpg?v=1786611927",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260756_1.jpg?v=1786611879",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260753_1.jpg?v=1786611904"
+    ],
+    "overview": "A black abaya designed for work and social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from wave crepe fabric with a lightweight feel and easy-care properties. Suitable for work and social occasions and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213557211267",
+    "name": "Black plain organza Custom Abaya, Front Beadwork Detail",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 799,
+    "originalPriceAED": 999,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "French Crushed Organza",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 33,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260617copy_da8bdca9-d8f7-4a86-ae1d-1c264dbf34b7.jpg?v=1786610780",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260610copy_9a658f0c-8630-4b70-a8e7-e7639f72a178.jpg?v=1786610798",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260611copy_8a6dd146-511b-4a35-92d2-0886724a77e2.jpg?v=1786610798",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260618copy_8b2a6054-b5ff-4f4d-abd6-0d01718ff1ff.jpg?v=1786610798",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260613copy_1ca79fa7-262e-47b6-92a3-c11bdac0c848.jpg?v=1786610798"
+    ],
+    "overview": "Soft beadwork detail adds a clean highlight to the front. The black color gives an elegant look, suitable for evening events and Eid occasions. Lightweight and comfortable with a flowing klosh shape, including a matching shaila",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213557178499",
+    "name": "Black Wave Crepe Custom Abaya, Front Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 689,
+    "originalPriceAED": 861,
+    "badge": "EID EDITION",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 34,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABYA_13-_MAY-20260573_33734724-5352-4ebf-8c90-81ae7fe0f8b4.jpg?v=1786610430",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260567copy_889a66a2-138d-4d41-a215-79ac939749cb.jpg?v=1786610454",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260568copy_6f59e0fb-3ef5-4011-b5da-6a32e0994448.jpg?v=1786610454",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260577copy_fff7f754-c699-4db4-9ea2-5b87780b7ecd.jpg?v=1786610455",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260576copy_12c81f0e-25c0-40ae-ac31-20f05bd36d20.jpg?v=1786610455"
+    ],
+    "overview": "A black semi-formal abaya suitable for work and social gatherings. Features an A-line silhouette with comfortable movement and beadwork detailing. Crafted from wave crepe fabric with a lightweight feel for comfortable all-day wear. Comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213557112963",
+    "name": "Black plain organza Custom Abaya, Front Beadwork Detail",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 795,
+    "originalPriceAED": 994,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "French Crushed Organza",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 35,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260548copy_9eaa2065-dd9f-46f9-8c73-5ccb0c2da91c.jpg?v=1786609509",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260542copy_c1e0c89b-10d3-469a-8bd7-26799d5fc7de.jpg?v=1786609531",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260545copy_a7d493e6-4aed-4b6b-b9a8-0aad5e2a6830.jpg?v=1786609531",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260544copy_df0450e2-7d1f-463c-b2b1-af4581ddc1ad.jpg?v=1786609531",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260551copy_5c64b967-149e-4b0e-8a58-d245cf728259.jpg?v=1786609532"
+    ],
+    "overview": "Clean beadwork detail adds a subtle highlight to the front. The black color gives a structured and elegant look, suitable for evening events and Eid occasions. Lightweight and comfortable with a flowing klosh shape, including a matching shaila",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213557080195",
+    "name": "Black malika chiffon Custom Abaya, Front Beadwork Detail",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 809,
+    "originalPriceAED": 1011,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 36,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260539copy_aed11a76-7392-4188-b1f1-0384fae6db49.jpg?v=1786609288",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260527copy_63aa285f-a187-4dd5-8b6e-f89e00e19b90.jpg?v=1786609321",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260529copy_6d36587e-86a1-4587-b495-ce0134301bee.jpg?v=1786609321",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260532copy_4e45d832-1c37-49a2-9e53-89dab1a9a187.jpg?v=1786609321",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260531copy_f027e39d-4565-4fe2-9391-76fe79dae978.jpg?v=1786609321"
+    ],
+    "overview": "Soft beadwork detail adds a subtle highlight to the front. The black color gives a clean and elegant look, suitable for evening events and Eid occasions. Lightweight and comfortable with a flowing klosh shape, including a matching shaila",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213557047427",
+    "name": "Black malika chiffon Custom Abaya, Front Beadwork Detail",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 829,
+    "originalPriceAED": 1036,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 37,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20260440_dfda287e-eb64-46c1-bb6d-458e77ae4e33.jpg?v=1786609117",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20260444_7ff2f558-23b9-49d9-a1fb-78a699fba4bd.jpg?v=1786609149",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20260429_fae429fb-e1eb-44fb-b128-9159e9ae3a41.jpg?v=1786609149",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20260448_37b12bf7-29ff-4aef-a202-1435f0bf30aa.jpg?v=1786609149",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20260431_d62a8ec2-9c0c-4006-bc7f-3ce3880cb87c.jpg?v=1786609149"
+    ],
+    "overview": "Elegant beadwork detail adds a soft highlight to the front. The black color gives a polished look, suitable for evening events, Eid occasions, and social gatherings. Lightweight and comfortable with a flowing klosh shape, including a matching shaila",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213556981891",
+    "name": "Black malika chiffon Custom Abaya, Front Beadwork Detail",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 769,
+    "originalPriceAED": 961,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 38,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20260326_51fcc16e-63bd-4f50-8622-d1355517813f.jpg?v=1786608435",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20260324_c7c5e644-2530-4d9a-b93f-3bbbacf306f1.jpg?v=1786608458",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20260314_2ba6b991-04d8-4881-bdfc-5d5b97eeb306.jpg?v=1786608460",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20260316_20932d03-94ea-46cf-8f38-47179f0b6cc1.jpg?v=1786608458",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20260325_0462cc6b-16fc-4deb-801e-fb12b4b0e2c2.jpg?v=1786608458"
+    ],
+    "overview": "Soft beadwork detail adds a subtle highlight to the front. The black color gives a clean and elegant look, suitable for evening events and special occasions. Lightweight and comfortable with a flowing klosh shape, including a matching shaila",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213556949123",
+    "name": "Black malika chiffon Custom Abaya, Front Beadwork Detail",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 809,
+    "originalPriceAED": 1011,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 39,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2317047_c3080fe6-07b5-4971-82c3-e26ab703fe78.jpg?v=1786608156",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23170421_2d78f4b2-ed7e-40bb-b4fb-0e70ecabb9ce.jpg?v=1786608187",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2317027_64b8225d-3d62-4e56-b56d-780e6667acfc.jpg?v=1786608187",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23170511_e2b70b0f-5a8d-48d8-b10d-356caae91819.jpg?v=1786608187",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23170331_fe4ee686-58c7-401b-aa1e-7f743a06c503.jpg?v=1786608187"
+    ],
+    "overview": "Soft beadwork detail adds a subtle highlight to the front. The black color gives an elegant and balanced look, suitable for evening events, Ramadan, and Eid occasions. Lightweight and comfortable with a flowing klosh shape, including a matching shaila.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213556916355",
+    "name": "Black Jaime Crepe Custom Abaya, Front Beadwork Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 689,
+    "originalPriceAED": 861,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 40,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23165761_ddeda8a4-99f1-4a2d-ae60-0a9d83ec94cf.jpg?v=1786607522",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316571_db1e0a13-eba1-41fb-82ba-7e7a96a81eee.jpg?v=1786607545",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23165701_1d43a90e-c872-490f-a3de-bfced2e35e56.jpg?v=1786607544",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23165781_4750a429-e2a9-4dff-b078-2b66b49574ae.jpg?v=1786607544",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316580_9c11a972-7573-4b6a-b747-3d56e154701c.jpg?v=1786607545"
+    ],
+    "overview": "Refined beadwork detail creates a clean and elegant look. Black color gives a deep and polished finish, suitable for social gatherings and work settings. Comfortable structure with easy movement, includes a matching shaila for a complete and balanced appearance.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213556883587",
+    "name": "Black Jaime Crepe Custom Abaya, Front Panel Beadwork Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 679,
+    "originalPriceAED": 849,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 41,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316211_4c2f65bd-195d-4e57-bace-8bcd943a7198.jpg?v=1786607350",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316211_1.jpg?v=1786607379",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23162061_ab84a176-ab18-4fbe-acf8-1d745a2360e3.jpg?v=1786607379",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23162221_87d95189-f91e-482a-9357-02d5d01d5a2a.jpg?v=1786607377",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316209_af50d520-3284-495d-aa49-125353aa4fa0.jpg?v=1786607379"
+    ],
+    "overview": "jaime crepe offers a smooth surface and lightweight structure that provides comfort for extended wear. The fabric maintains a clean appearance and supports a refined silhouette suitable for evening gatherings and special occasions. The black color enhances the overall elegance of the garment, allowi",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213556850819",
+    "name": "Black Malika Chiffon Custom Abaya, Front and Sleeve Beadwork Detail",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 815,
+    "originalPriceAED": 1019,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 42,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2317071-2_1.jpg?v=1786606874",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2317079_1.jpg?v=1786606915",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2317055_1.jpg?v=1786606918",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2317082_1.jpg?v=1786606915",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2317063_1.jpg?v=1786606917"
+    ],
+    "overview": "malika chiffon offers a lightweight and airy feel that supports comfort during long hours of occasion wear. The fabric sits softly on the body and maintains a clean and refined appearance throughout the day. The black color gives a timeless and elegant look, making it suitable for weddings, Ramadan ",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213556818051",
+    "name": "Black Malika Chiffon Custom Abaya, Side and Sleeve Beadwork Detail",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 825,
+    "originalPriceAED": 1031,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 43,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316832-2_a1511153-58c7-46b5-a6fa-a040b392901c.jpg?v=1786553277",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23168231_d642c215-3000-4e3a-a48f-7f659ce568c1.jpg?v=1786553403",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23168291_ef2a0c5f-a728-41bc-9bb6-c793c6250a5a.jpg?v=1786553403",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23168361-2_22c7e5c0-a2f8-40e8-ae89-a9d7670018c8.jpg?v=1786553401",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316817_d2708366-7a6d-4219-a42d-3dd90798c3d3.jpg?v=1786553403"
+    ],
+    "overview": "malika chiffon offers a lightweight and airy feel with a smooth surface suited for extended occasion wear. The fabric sits softly on the body and maintains a clean and elegant appearance throughout long events. The black color gives a timeless and refined look, making it suitable for weddings, Ramad",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213556719747",
+    "name": "Black Malika Chiffon Custom Abaya, Front Panel and Sleeve Beadwork Detail",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 739,
+    "originalPriceAED": 924,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 44,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23166691-2_9f8c3cb3-233b-4124-9e11-800a732749b4.jpg?v=1786552681",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316674_24b1b782-569d-4236-bf33-a58cd0378bf2.jpg?v=1786552853",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316674_1.jpg?v=1786552850",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316654_9276a172-5233-486d-9dc9-1de910454518.jpg?v=1786552852",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316663-2_e34e461b-9f64-4d12-ab83-e394b4f4f023.jpg?v=1786552849"
+    ],
+    "overview": "malika chiffon offers a lightweight and airy feel with a smooth surface that supports comfort during extended occasion wear. The fabric sits softly on the body and maintains a clean and elegant appearance throughout long events. The black color gives a timeless and refined look, making it suitable f",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213556686979",
+    "name": "Black Plain Organza Custom Abaya, Front Panel and Sleeve Beadwork Detail",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 719,
+    "originalPriceAED": 899,
+    "badge": "EID EDITION",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "French Crushed Organza",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 45,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23163821_63094513-8152-4145-9d82-95dc201e7912.jpg?v=1786552371",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23163821_1.jpg?v=1786552428",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316367_e5f29079-21a8-4176-b9d7-2bc65366face.jpg?v=1786552431",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23163871_f2cfcfb0-dd1c-44af-b010-29cf9f29f104.jpg?v=1786552428",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316373_60130f3b-a79b-4a7e-a99d-f97fb530fcb4.jpg?v=1786552432"
+    ],
+    "overview": "plain organza offers a lightweight and sheer feel with a crisp surface that creates a refined layered appearance. The fabric sits lightly on the body while maintaining a clean and structured silhouette. The black color gives a timeless and elegant look, making it suitable for Eid Al Adha, Ramadan ev",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213556654211",
+    "name": "Black Plain Organza Custom Abaya, Side and Sleeve Beadwork Detail",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 749,
+    "originalPriceAED": 936,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "French Crushed Organza",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 46,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23164341_12b4379c-331c-498c-a4f7-f436cf979571.jpg?v=1786552052",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316444_4ce6ba71-5301-4c9f-96c8-23190e080e89.jpg?v=1786552219",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316425_01232ed3-f81c-4d5e-b431-09693c19ba56.jpg?v=1786552221",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23164381_f323f3f1-ba4d-49e8-b9b6-d35af47b6094.jpg?v=1786552219",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23164421_e08dc88b-90f9-432c-a9f1-266fb3eacac5.jpg?v=1786552219"
+    ],
+    "overview": "plain organza offers a lightweight and sheer feel with a crisp surface that creates a refined layered appearance. The fabric sits lightly on the body while maintaining a clean and structured silhouette. The black color gives a timeless and elegant look, making it suitable for Eid Al Adha, Ramadan ev",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213556621443",
+    "name": "Black Plain Organza Custom Abaya , Side Panel and Sleeve Beadwork Detail",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 777,
+    "originalPriceAED": 971,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "French Crushed Organza",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 47,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316604_70da7161-f9c7-4185-8280-32a92ef2db53.jpg?v=1786524656",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316598_bb112a4d-704e-4a0c-b0f4-6e7e747ce8db.jpg?v=1786524677",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316592_09928353-933a-41c9-a2cc-bb33c00e0327.jpg?v=1786524677",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316596_d891d685-e2a6-4e62-897f-76c070d7d631.jpg?v=1786524678",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316623_24996deb-73f2-40c3-92de-5acf61a972a9.jpg?v=1786524676"
+    ],
+    "overview": "plain organza offers a lightweight and sheer feel with a smooth surface that creates a refined layered appearance. The fabric sits lightly on the body and maintains a clean and structured look throughout extended occasion wear. The black color gives a timeless and elegant presence, making it suitabl",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213556588675",
+    "name": "Black jaime crepe Custom Abaya, Front Beadwork Pintuck Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 649,
+    "originalPriceAED": 811,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 48,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct15001_fabea145-e7fc-4117-b244-168e15037779.jpg?v=1786524309",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14985_f2ea9fa5-6f13-43e8-b301-79ae3a2d87df.jpg?v=1786524406",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14987_5ffecf5f-f0b4-4b97-bb90-b288a7ed7147.jpg?v=1786524409",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14989_f55b362d-9e38-4bbc-ab27-9bb17eb05d90.jpg?v=1786524407",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14992_1d0c5cca-a564-48f0-9125-5f06c1428b04.jpg?v=1786524404"
+    ],
+    "overview": "Jaime crepe offers a smooth and comfortable feel, making this abaya suitable for extended wear across workdays and festive occasions. The black color gives a refined and polished appearance that works well for Eid, Ramadan, and professional settings. The fabric maintains a neat look throughout the d",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213556555907",
+    "name": "Black farasha crepe Custom Abaya, Front Beadwork Pintuck Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 719,
+    "originalPriceAED": 899,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 49,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14396_5656ffb9-6185-4798-8994-bc61dcc019ed.jpg?v=1786523935",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14392_b18883be-0ada-4db7-9cf8-0df7aadbad61.jpg?v=1786524054",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14404_58b0666a-1ab5-4533-a563-0a402f216fd5.jpg?v=1786524054",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14404_1.jpg?v=1786524049",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14405_eb7f2ace-b257-4d0e-b17e-0d1e1afff935.jpg?v=1786524049"
+    ],
+    "overview": "Farasha crepe offers a smooth and lightweight feel, making this abaya comfortable for extended wear across work and social occasions. The black color gives a refined and elegant appearance, suitable for both everyday use and festive settings. Beadwork is placed along the centre front, creating a dec",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213556523139",
+    "name": "Black jaime crepe Custom Abaya, Front Beadwork Pintuck Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 679,
+    "originalPriceAED": 849,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 50,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12871_bef94534-a58a-45eb-a1fb-a6d882f5c096.jpg?v=1786523554",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12865_5ee54b34-4fb3-47cc-a27b-dffe7c03f775.jpg?v=1786523554",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12874_47d5da88-88c0-48a5-980a-307eb66188c3.jpg?v=1786523552",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12876_83ef3bea-8a75-46f7-b6ea-d96f15782d51.jpg?v=1786523553",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12877_cdcabb47-b148-4a3e-a5c5-43ac3e1a85c5.jpg?v=1786523552"
+    ],
+    "overview": "Jaime crepe provides a smooth and comfortable feel, making this abaya suitable for long hours of wear across work and social occasions. The black color gives a refined and elegant appearance that works well for back-to-work settings as well as festive gatherings. Beadwork is placed along the centre ",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213426827395",
+    "name": "Black Reem Nada Custom Abaya with Black Lacework",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 636,
+    "originalPriceAED": 795,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 51,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1848_cc9d21dc-3379-49e7-bd69-de9ab5f428e1.jpg?v=1786523103",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC04442_13217adf-061f-490a-9227-9a6e05b9934f.jpg?v=1786523139",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC04451_3d4983a1-e0b2-4645-aaca-88b2cb66d099.jpg?v=1786523139",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1836_05af3108-e338-44e4-bf54-84977f173067.jpg?v=1786523136",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1838_17909d11-ad6f-4fd9-8462-349f46475530.jpg?v=1786523136"
+    ],
+    "overview": "Delicate black lace graces the princess seam and sleeves, adding soft structure and femininity to this Klosh-cut silhouette. Crafted from breathable Nada Crepe, the fabric offers comfort and polish for year-round wear. The center front is finished with discreet snap buttons, while the neckline and h",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213426794627",
+    "name": "Jet Black Reem Nada Custom Abaya with Shoulder Lace and Sleeve Tyre Detail",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 816,
+    "originalPriceAED": 1020,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 52,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA7979_5e285ffa-de68-4546-96e4-908340989b3f.jpg?v=1786522394",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA7983_6eff384a-369e-49c8-afc9-092e820b5c7e.jpg?v=1786522667",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA7967_6fa6b350-bdee-475f-bf4e-630a3c090164.jpg?v=1786522667",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA7992_92418748-52f8-4a32-9131-7b134af9c7af.jpg?v=1786522665",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA7993_608dc34f-70ae-4e5a-9986-d1b8ae94f467.jpg?v=1786522665"
+    ],
+    "overview": "This jet black abaya is tailored in breathable Reem Nada fabric, known for its smooth finish and soft structure. Designed in a flowing KLOSH silhouette, it features delicate lacework starting at the shoulders and extending seamlessly along the front. The sleeves are finished with tyre-style embroide",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213426761859",
+    "name": "Black Reem Nada Custom Abaya with Subtle Lace Accents",
+    "category": "Luxury Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 836,
+    "originalPriceAED": 1045,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 53,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA7824_c18ebec1-603f-44f0-8dfd-4ca8f72920c2.jpg?v=1786521843",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC03592_e566077e-259e-4e4d-8661-ee5742f1a3c4.jpg?v=1786521981",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC03586_018a3b1f-b238-4296-b6d7-c77765336d6c.jpg?v=1786521903",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA7822_7b7956ba-81f4-4161-947e-69f820e193ee.jpg?v=1786521901",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA7816_0bfaea00-36a0-4199-9bf2-c13e0b1deac8.jpg?v=1786521901"
+    ],
+    "overview": "This black abaya from our Reem Nada line is tailored from lightweight crepe and designed in the KLOSH cut, offering a modest flare from the waist for comfort and elegance. The piece features carefully placed tonal lacework along the sleeves and lower hem, creating soft contrast and depth while prese",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213426729091",
+    "name": "Black Mario Crepe Custom Abaya with Double Layer Sleeves and Contemporary Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 636,
+    "originalPriceAED": 795,
+    "badge": "LIMITED",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 54,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA07694_1.png?v=1786477351",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA07690_ac07fe88-dfdb-461f-957e-8a6e4d333f82.png?v=1786477398",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA07682_989ae4d2-f30a-4fb2-bb07-e90f4c2c1718.png?v=1786477396",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA07693_1f89af57-7563-4c79-8cc3-8afb69942030.png?v=1786477400",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA07695_37be7ab5-f67a-4748-891b-a142a188f37c.png?v=1786477401"
+    ],
+    "overview": "This Klosh-cut abaya offers a beautifully flowing silhouette, combining elegance with modern sophistication. Designed in lightweight Mario Crepe, it flows effortlessly for a flattering fit. The double-layer sleeves with intricate contemporary beadwork add a unique touch, blending tradition with arti",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213426696323",
+    "name": "Black Aria Crepe Custom Abaya with Front Pleats with Beaded Front Panel and Flared Sleeves",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 600,
+    "originalPriceAED": 750,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 55,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/590CF8E5-39DD-4BE6-B41A-0E27FB98E950.webp?v=1786477043",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/0A9272E7-15F1-4E25-814D-83D6C5DC0A84.webp?v=1786477070",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/15AD115E-FE7A-486B-9C91-1E78282CDB40.webp?v=1786477070",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/7473166F-E847-4254-A95D-FBCD739E95E6.webp?v=1786477070",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/3690053C-1CFF-4A9B-B9A2-55BEBC11850E.webp?v=1786477070"
+    ],
+    "overview": "Turn heads with this sleek black abaya, featuring crystal beadwork and pleats on the front for a touch of modern luxe. Made from soft Crepe, it drapes comfortably, while flared, pleated sleeves add movement. An ideal pick for social events or evening gatherings.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213426663555",
+    "name": "Black Layan Crepe Custom Abaya with Crystal Beadwork Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 778,
+    "originalPriceAED": 973,
+    "badge": "EID EDITION",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 56,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/1ADFD51F-68A0-439F-9715-2FF3FDCC4D5D.webp?v=1786476805",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/0A034D62-7EBC-4BB0-9A5F-BE7025FBAFA2.webp?v=1786476839",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/A72A8F1D-73BF-4E24-9127-5939B7A06BA9.webp?v=1786476839",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/C40F6DF5-DF33-4E58-B827-1054EC19B0AE.webp?v=1786476865",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/CFDB0340-F80C-4A83-AD37-E3C6F11F1D0F.webp?v=1786476839"
+    ],
+    "overview": "This elegant black abaya is crafted from Layan crepe, known for its beautiful drape and subtle texture. The timeless design is embellished with delicate crystal beadwork detailing on the front and the sleeves, adding a touch of sparkle and sophistication. This abaya is a perfect choice for special o",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213426630787",
+    "name": "Black Claire Crepe Custom Abaya with Klosh Cut and Minimal Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 655,
+    "originalPriceAED": 819,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 57,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9437RAW_299613cf-efac-4927-b661-dc99b5a8e231.jpg?v=1786476568",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9442RAW_3506559d-9822-44ed-89fc-5ff5a719d33f.jpg?v=1786476601",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9444RAW_e44fa3ba-c2a8-4795-a55b-e5aa6a6737fb.jpg?v=1786476602",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9450RAW_7dc0c5da-e0af-4b4f-9c35-59640122653b.jpg?v=1786476604",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9450RAW_1.jpg?v=1786476603"
+    ],
+    "overview": "This black abaya is crafted from Claire Crepe, a breathable medium-weight fabric with a smooth matte finish. It offers full coverage, modest structure, and long-wearing comfort. The design features a flowing klosh cut that widens from the shoulders, creating graceful movement and ease. Minimal beadw",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213426598019",
+    "name": "Black Tokyo Crepe Custom Abaya with Collar and Beadwork on Sleeves",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 647,
+    "originalPriceAED": 809,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 58,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/73639B29-13D6-4038-B665-181160A8B18C.webp?v=1786476364",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/E6041A94-E7B5-4081-A4BC-E4322049CA93.webp?v=1786476390",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/0749975D-A179-4198-A924-DFE51376ED57.webp?v=1786476390",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/439A2996-2543-40A0-BE0E-928280B315E2.webp?v=1786476391",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/439A2996-2543-40A0-BE0E-928280B315E2_1.webp?v=1786476389"
+    ],
+    "overview": "The beadwork adds subtle sparkle, while the straight cut ensures graceful movement. A balanced drape from Medium Crepe makes this abaya suitable for both casual and formal moments.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213426565251",
+    "name": "Black Tokyo Crepe Custom Abaya with Sleeves Embelishments",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 652,
+    "originalPriceAED": 815,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 14,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/EDA10775-7812-47A7-B1CE-9C3BC651DB3E.webp?v=1786476099",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/5C1036C0-8A14-4D74-8C2D-47A3CEFC1223.webp?v=1786476126",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/5F9EE413-DE07-420F-B7C8-23A4896BE540.webp?v=1786476126",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/038AAD49-F3A7-4BE5-BD07-2C85FB387ACC.webp?v=1786476126",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/0E2599E1-8B3D-48A6-8A3D-4564A90202F2.webp?v=1786476126"
+    ],
+    "overview": "Artful threadwork brings texture and depth, while the straight cut ensures an elegant, confident look. Light Crepe ensures a soft, breathable feel that enhances the silhouette.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213426532483",
+    "name": "Black Tiana Crepe Custom Abaya with Front Beaded Pintuck",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 524,
+    "originalPriceAED": 655,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 15,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/1E42FBAF-9C58-4052-9C93-BC478F7C9447.webp?v=1786475893",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/9612DC8B-70FF-4184-9F71-77AC3CC0820B.webp?v=1786475911",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/60BEBE08-04ED-42FE-850B-EA925773E15E.webp?v=1786475912",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/1B5D2941-34BF-430E-8AC9-66B81C69B7BE.webp?v=1786475914",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/F7222F22-0DC3-4670-A44F-B212C6DF2E8F.webp?v=1786475913"
+    ],
+    "overview": "Beadwork details make this abaya stand out, combined with the Light Crepe fabric and a flowing straight cut. Light Crepe ensures a soft, breathable feel that enhances the silhouette.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213426466947",
+    "name": "Black Tiana Crepe Custom Abaya with Front Art Lines Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 608,
+    "originalPriceAED": 760,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 16,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/5110C3E5-2ED3-4360-8406-D499D6502A19.webp?v=1786475580",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/5110C3E5-2ED3-4360-8406-D499D6502A19_c48f9fb3-ceaa-4803-81d6-d6c191eb5196.webp?v=1786475604",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/10C47CDF-4BD4-476A-8673-BE79DF619154.webp?v=1786475604",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/573C0E18-DCB1-4AB9-ABB1-06EE6929D9DE.webp?v=1786475607",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/6507D46F-37F2-4C3B-AA44-208CFAF5D9EB.webp?v=1786475603"
+    ],
+    "overview": "Beadwork details make this abaya stand out, combined with the Light Crepe fabric and a flowing straight cut. This fabric flows beautifully, making it great for a day that requires both comfort and elegance.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213426401411",
+    "name": "Black Tokyo Crepe Custom Abaya with Front Threadwork and Beads",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 621,
+    "originalPriceAED": 776,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 17,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/188CD9E0-9812-4B77-8BF0-BDE49837C509.webp?v=1786475301",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/59EC5930-0912-4354-9235-F7207562CBB1.webp?v=1786475317",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/1E1B67CC-48B0-4AF3-9F77-83F187FC6A11.webp?v=1786475317",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/6F2ABF24-D411-41E0-99E6-E91C3FCB236B.webp?v=1786475320",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/7D81535B-8D66-4ED9-8FDB-FA4383C2AA15.webp?v=1786475317"
+    ],
+    "overview": "Delicate Threadwork adds refined detail, complemented by the flow of the straight cut and breathable Light Crepe fabric. Light Crepe ensures a soft, breathable feel that enhances the silhouette.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213426368643",
+    "name": "Black Tokyo Crepe Custom Abaya with Front Threadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "RAMADAN EDIT",
+    "priceAED": 562,
+    "originalPriceAED": 703,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 18,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/529B438A-F227-4ADF-AE16-98F737058C92.webp?v=1786475062",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/D70DFCD9-CD51-4213-A447-8C7491A05C48.webp?v=1786475086",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/3407524F-0AFE-472A-A050-449550B5E62D.webp?v=1786475085",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/5866B807-4DA9-437A-9562-1DE204A17C25.webp?v=1786475086",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/7EF48BAF-E1A9-4853-9B4D-46ECF12C2D1C.webp?v=1786475086"
+    ],
+    "overview": "Delicate threadwork adds refined detail, complemented by the flow of the straight cut and breathable Light Crepe fabric. Light Crepe ensures a soft, breathable feel that enhances the silhouette.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213426303107",
+    "name": "Black Tokyo Crepe Custom Abaya with Side Threadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 546,
+    "originalPriceAED": 683,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 19,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/6C06DE2C-F33C-4321-A368-04B1148584A4.webp?v=1786474743",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/81A14FF4-6BF1-41EC-BA1E-D97441D97287.webp?v=1786474763",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/A21CFE98-82A8-461B-8640-A5CAEEFB23AA.webp?v=1786474767",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/A1D2B1EF-E724-4F32-A755-50FD21E27139.webp?v=1786474764",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/81CC8E3D-7256-4A1F-A0F6-0E12DBF82B49.webp?v=1786474767"
+    ],
+    "overview": "Artful threadwork brings texture and depth, while the straight cut ensures an elegant, confident look. Light Crepe ensures a soft, breathable feel that enhances the silhouette.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103758655619",
+    "name": "Beige Alya Nada Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 595,
+    "originalPriceAED": 744,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 20,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160961-2.jpg?v=1786440418",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160947-2.jpg?v=1786440418",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160948.jpg?v=1786440418",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160951-2.jpg?v=1786440418",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160957-2.jpg?v=1786440418"
+    ],
+    "overview": "A beige abaya designed for daily wear and social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from alya nada fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103758884995",
+    "name": "Blue Alya Nada Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 595,
+    "originalPriceAED": 744,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 21,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160933.jpg?v=1786438144",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160916.jpg?v=1786438144",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160918.jpg?v=1786438144",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160923.jpg?v=1786438144",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160936.jpg?v=1786438144"
+    ],
+    "overview": "A blue abaya designed for daily wear and social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from alya nada fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103758819459",
+    "name": "Black Alya Nada Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 595,
+    "originalPriceAED": 744,
+    "badge": "EID EDITION",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 22,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260681.jpg?v=1786440468",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260669.jpg?v=1786440468",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260672.jpg?v=1786440468",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260677.jpg?v=1786440468",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260686.jpg?v=1786440468"
+    ],
+    "overview": "A black abaya designed for daily wear, work, and social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from alya nada fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103759081603",
+    "name": "Purple Atlas Crepe Abaya, Lace Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 595,
+    "originalPriceAED": 744,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 23,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160913.jpg?v=1786437972",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160885.jpg?v=1786437972",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160887.jpg?v=1786437972",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160896.jpg?v=1786437972",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july160901.jpg?v=1786437973"
+    ],
+    "overview": "A purple abaya designed for daily wear and social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from atlas crepe fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213426270339",
+    "name": "Black Aria Crepe Custom Abaya with Side Floral Embroidery",
+    "category": "Embroidered Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 619,
+    "originalPriceAED": 774,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 24,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/8A66DF09-3AF8-4E43-BAB7-447F34CEAD7E_be353dba-0395-4240-9afc-38bf7c28b4a4.webp?v=1786382397",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/6C10D8B3-EF1D-426E-9C81-861A5563E83A_2ab03529-fd08-440b-bc71-7a0108857ca7.webp?v=1786382416",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/9AF99188-1716-429A-92EF-5D53327A3CB4_7469da6e-22b3-4f5f-82ce-f8ed140f7e7f.webp?v=1786382417",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/77D44604-02E3-4E74-8DCB-300092C41C8F_09a0b3c9-e358-4980-8586-6c0fe6703bf9.webp?v=1786382417",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DF2CF010-C1E5-4648-9358-42916165E73E_3f57be78-1472-46f9-b4cb-c02f36e2fa65.webp?v=1786382416"
+    ],
+    "overview": "Artful threadwork brings texture and depth, while the straight cut ensures an elegant, confident look. Light Crepe ensures a soft, breathable feel that enhances the silhouette.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213426237571",
+    "name": "Black Milan Crepe Custom Abaya with Front Intricate Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 549,
+    "originalPriceAED": 686,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 25,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1809.webp?v=1786382100",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1811.webp?v=1786382122",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1816.webp?v=1786382122",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1817.webp?v=1786382121",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_0683-min.webp?v=1786382123"
+    ],
+    "overview": "Beadwork details make this abaya stand out, combined with the Light Crepe fabric and a flowing straight cut. Light Crepe ensures a soft, breathable feel that enhances the silhouette.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213426204803",
+    "name": "Flora Threadwork & Bead Sleeve Black Custom Abaya",
+    "category": "Luxury Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 573,
+    "originalPriceAED": 716,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 26,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89732.webp?v=1786381835",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89726.webp?v=1786381856",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89740.webp?v=1786381857",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89741.webp?v=1786381857",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/untitledsession89742.webp?v=1786381856"
+    ],
+    "overview": "Fabric name: Milan Crepe Semi-formal abaya featuring a V neck, highlighted with beautiful Handwork on sleeves, made from a medium weighted crepe . Ideal for all seasons.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213346447491",
+    "name": "Black Claire Crepe Custom  Abaya with Front Pintuck Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 697,
+    "originalPriceAED": 871,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 27,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1864_f7fee007-bcad-47d8-8d08-a3d8e0eee0e1.jpg?v=1786381084",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC04382-2_d4e2be51-7eb4-4c71-aaca-605ded2712bb.jpg?v=1786381184",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1860_23cae5ab-f8c7-4b08-af46-6ffeb09a4508.jpg?v=1786381186",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1875_55e43b24-a2d5-4055-af98-3a47d6b8c5e6.jpg?v=1786381184",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1877_a67839b3-6c28-4982-912c-c0e0a902d56f.jpg?v=1786381184"
+    ],
+    "overview": "This black abaya is crafted from Claire Crepe, a light and breathable fabric ideal for year-round wear. The abaya features a clean straight cut that gives it a timeless silhouette, perfect for both professional and social settings. What sets this abaya apart is the fine pintuck detailing at the fron",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213334913155",
+    "name": "Black Reya Crepe Custom Abaya with Klosh Cut and Hand Beadwork Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 687,
+    "originalPriceAED": 859,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 28,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA8000_7c981e05-8811-445e-a9c7-f217ee70c094.jpg?v=1786380143",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA8008_19fac501-85b5-4b90-865c-034b4de05d32.jpg?v=1786380163",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA8014_5c7f7a17-f6f2-40df-ab44-86a3f6627079.jpg?v=1786380163",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA8022_6b39717d-1910-4735-afc4-7efd013a2d14.jpg?v=1786380161",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA8025_f3ea5fbb-6725-4ffe-8e52-772d0181f3f4.jpg?v=1786380165"
+    ],
+    "overview": "This black abaya is crafted from Reya Crepe, a lightweight fabric chosen for softness and breathability. The fabric offers gentle structure and a smooth silhouette that suits warm weather. The klosh cut softly widens from shoulder to hem, creating graceful movement without bulk. Hand-applied beadwor",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213334880387",
+    "name": "Black Lio Crepe Custom Abaya with Delicate Bead Embellishment",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 662,
+    "originalPriceAED": 828,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 29,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA7946_328b2c41-d6e6-4f7c-8709-994a2ca51271.jpg?v=1786379368",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA7959_f96ae942-5c1b-4812-aa8f-2900f11f30de.jpg?v=1786379446",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA7949_be66a1a9-969c-42b0-93c8-932b74346382.jpg?v=1786379445",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA7959_1.jpg?v=1786379443",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA7964_6cf93df1-30f1-4163-aa74-d6b2d361371e.jpg?v=1786379443"
+    ],
+    "overview": "Crafted from lightweight Lio Crepe, this abaya offers a sleek silhouette with breathable comfort. The KLOSH cut adds graceful flow while maintaining full modesty, ideal for refined day-to-night elegance. The front features subtle bead detailing, carefully placed for a soft, luxurious finish. This pi",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213334847619",
+    "name": "Black Reya Crepe Custom Abaya with Beadwork Panels",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 668,
+    "originalPriceAED": 835,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 30,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1819_1.jpg?v=1786378969",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1822_a306eb3c-e0fa-4e59-ada5-fdcb118d549a.jpg?v=1786378929",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1812_687eaf49-5c4d-4ae1-ab6e-6ea084148ce2.jpg?v=1786378928",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1814_f8c5b3a8-5523-4d95-98f8-e4a1c5c80ddf.jpg?v=1786378928",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1826_d61adef0-bb03-4bee-b574-8de9a3f5224e.jpg?v=1786378930"
+    ],
+    "overview": "Crafted in a straight silhouette from lightweight Reya Crepe, this abaya blends professional minimalism with subtle embellishment. A clean V-neckline flows into a concealed snap-button closure, keeping the front line uninterrupted. The standout design feature lies in the side panels: tonal beadwork ",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213334749315",
+    "name": "Black Melanie Crepe Custom Abaya with Front Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 689,
+    "originalPriceAED": 861,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 31,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9869HIRES_be31729b-dc17-455e-a264-a91f08bbcdbd.jpg?v=1786307385",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9875HIRES_4fd764a1-5062-46a5-be8f-77b93d351901.jpg?v=1786307420",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9882HIRES_2da7e854-f512-4617-9241-2dbfa38180ee.jpg?v=1786307419",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9884HIRES_cd3c2ec2-0e02-4e19-9012-5cba3665eb34.jpg?v=1786307420",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9887HIRES_73eeeed0-8af8-4e23-8aae-6c1faf34dbb3.jpg?v=1786307421"
+    ],
+    "overview": "Crafted in black Melanie Crepe, this abaya features detailed beadwork on the front bodice — combining black Poth beads, brown resham thread, and cutdana accents. The result is a soft, textured embellishment that elevates the overall minimal silhouette. Designed in a STRAIGHT cut, this piece maintain",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213334683779",
+    "name": "Black Claire Crepe Custom Abaya with Gathered Front Panels and Crystal Bead Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 529,
+    "originalPriceAED": 661,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 32,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9587HIRES_8d60266d-2304-48f1-ad3c-1b94796f1324.jpg?v=1786306608",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9587HIRES_1.jpg?v=1786306641",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9584HIRES_80586ecb-7320-4397-b9e3-b61d43a79059.jpg?v=1786306641",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9606HIRES_585eb810-50e3-4964-b9c3-355cb32bb67f.jpg?v=1786306645",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9613HIRES_bf7f8f59-1139-4d10-a41f-19d76d141591.jpg?v=1786306651"
+    ],
+    "overview": "This black abaya is made from Claire Crepe, a lightweight fabric known for its smooth matte surface and breathable comfort. The material provides gentle structure, offering a modest and refined silhouette. The design features softly gathered front panels, adding subtle volume and flow. A line of cry",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213334651011",
+    "name": "Black Melanie Crepe Custom Abaya with Front Pleats and Mixed Bead Embellishment",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 679,
+    "originalPriceAED": 849,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 33,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9411HIRES_c15f1a7e-4d98-4461-ac66-e1b84912a2d2.jpg?v=1786287372",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9421HIRES_2eaf0d61-dd18-4826-aa5d-12e03120e0fa.jpg?v=1786287573",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9427HIRES_57fe7981-a885-442d-9694-53d65ed14598.jpg?v=1786287579",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9408HIRES_2f89bd65-6e2b-46e2-8489-113ad002e641.jpg?v=1786287577",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9424HIRES_d5ca94df-4797-49db-a5ff-a1b68a17b7b0.jpg?v=1786287579"
+    ],
+    "overview": "This black abaya is crafted from Melanie Crepe, a lightweight, soft-touch fabric known for its elegant matte surface and breathable comfort. The fabric provides gentle structure and ease of wear, ideal for modest yet refined daily or occasion looks. The front of the abaya features fine pintuck pleat",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213334618243",
+    "name": "Black Claire Crepe Custom Abaya with Overlap Pleats and Mixed Beadwork on Chiffon Sleeves",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 619,
+    "originalPriceAED": 774,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 34,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9548HIRES_20751562-b657-4d1b-a5e9-efeeef5cd0b7.jpg?v=1786286706",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9525HIRES_e3ee3872-15be-409b-b60e-7cbc24507c49.jpg?v=1786286729",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9536HIRES_ac6279a4-a8cb-4f3a-ba12-a8529ae8615f.jpg?v=1786286729",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9539HIRES_1076dd84-1f19-46cc-b1fa-f1aed2922c8c.jpg?v=1786286728",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9540HIRES_acc3a41d-9a42-4af8-b455-ede22479b407.jpg?v=1786286728"
+    ],
+    "overview": "This black abaya is made from Claire Crepe, a lightweight fabric with a smooth texture and breathable feel. It offers gentle structure and comfort for long hours of wear while maintaining a clean, modest silhouette. The standout feature is its soft overlap pleats on the front, giving the abaya shape",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213334552707",
+    "name": "Black Aria Crepe Custom  Abaya with Organza Trim and Mixed Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 689,
+    "originalPriceAED": 861,
+    "badge": "LIMITED",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "French Crushed Organza",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 35,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9810HIRES_87b4f6ba-6336-47d9-931d-1d4fca36d7d2.jpg?v=1786286343",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9803HIRES_4c8e7951-e554-4bbb-9b1a-970367f2481c.jpg?v=1786286365",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9800HIRES_bc3f0019-63d8-4186-8936-c70214a42fac.jpg?v=1786286365",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9812HIRES_99b57088-6524-4fce-9b10-ae4bfc87e2b3.jpg?v=1786286363",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II9815HIRES_2cb74045-27e1-482f-9053-af648e59159f.jpg?v=1786286364"
+    ],
+    "overview": "This black abaya is made from Aria Crepe, a lightweight fabric known for its soft handfeel and smooth finish. It offers breathable comfort and light structure, creating an elegant, modest silhouette. The standout detail is the use of black organza trim on the bottom and sleeve edges, creating a laye",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213334519939",
+    "name": "Black Farah Crepe Custom Abaya with Front Multi-Line Beadwork and V-Neck Finish",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 639,
+    "originalPriceAED": 799,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 36,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR4775HIRES_a8898463-d3c4-4964-9f2b-c3a7d3cf8403.jpg?v=1786285791",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR4762HIRES_71c69cdb-5105-46c5-a479-a06dcedbe14e.jpg?v=1786285822",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR4770HIRES_d178926d-13ba-46c5-a11a-89f75fb4a596.jpg?v=1786285822",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR4777HIRES_d1e28f81-251e-4c16-9b5c-dc28fa091d26.jpg?v=1786285813",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR4778HIRES_bf28fdaf-ce53-493e-a41a-b04705de66cd.jpg?v=1786285813"
+    ],
+    "overview": "This black abaya is made from lightweight Farah Crepe, known for its smooth feel and soft, matte surface. The fabric offers breathable comfort while maintaining a clean, modest silhouette. The front features vertical lines of beadwork using Japani and matt black beads. These multiple lines create so",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213334487171",
+    "name": "Black Amara Crepe Custom Abaya with Self-Color Beadwork on Front and Sleeves",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 689,
+    "originalPriceAED": 861,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 37,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08138_dc7f61be-bf29-4ea8-981c-1fcf2eb3058b.png?v=1785750738",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08140_b4bce63b-cc52-4cbb-ba14-04657fd84d22.png?v=1785750737",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08144_64f88b28-2d5a-4e0d-bc86-001a51872a83.png?v=1785750738",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08146_08334a80-70dc-4d4b-a037-aee4de460d22.png?v=1785750739",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08151_478a3020-20a0-404c-a209-5a55786a2da1.png?v=1785750739"
+    ],
+    "overview": "Designed for elegance and versatility, this straight-cut light crepe abaya features delicate self-color beadwork on the front and sleeves, adding a refined touch to its minimalistic design. Perfect for all-day wear, social gatherings, and formal occasions, this abaya offers a seamless blend of sophi",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213334454403",
+    "name": "Black Naya Crepe Custom Abaya with Side Bead Line and Hand Embellishment",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 659,
+    "originalPriceAED": 824,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 38,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR4880HIRES_a05e1bf6-e5c4-4b8c-9a8c-2f7ce35594c3.jpg?v=1785750366",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR4889HIRES_bd5b326f-268f-4fff-be57-adbb61edcdb9.jpg?v=1785750410",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR4889HIRES_1.jpg?v=1785750405",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR4890HIRES_5e2ab11d-640e-4d1f-8352-be68b4d13d4e.jpg?v=1785750406",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR4893HIRES_074c34ff-875e-4298-aef0-4e587cefdb49.jpg?v=1785750408"
+    ],
+    "overview": "This black abaya is crafted from lightweight Naya Crepe, known for its soft feel and smooth matte surface. It offers breathable comfort and full coverage with a clean, modest silhouette. The design features a hand-embellished bead line along the side. Using fine black double-shade beads, the line ad",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213334421635",
+    "name": "Black Aria Crepe Custom Abaya with Minimal Beadwork Detail on Buttons",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 579,
+    "originalPriceAED": 724,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 39,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08078_e639f1ea-745f-4485-a4b2-daa5c57d47f0.png?v=1785750134",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08084_89c857ee-2e81-462c-8301-d087866f75cf.png?v=1785750186",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08087_95596183-221a-49bd-9a16-c9af695dd289.png?v=1785750186",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08091_11763e18-bcd5-4cd4-8287-c25e778f43a9.png?v=1785750187",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA08097_368ca833-6cc9-4b1f-afd8-b5078c15430c.png?v=1785750186"
+    ],
+    "overview": "Subtle elegance meets everyday sophistication in the Black Aria Crepe Abaya. Crafted from light crepe fabric with a straight cut, this abaya offers a sleek, structured look that is both comfortable and effortlessly stylish. Designed for all-day wear, social gatherings, and Ramadan occasions, it feat",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213334356099",
+    "name": "Black Farah Crepe Custom Abaya with Asymmetrical Closure",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 590,
+    "originalPriceAED": 738,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 40,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II8964HIRES_1b40e6bc-9337-4298-9ed5-136aa4061643.jpg?v=1785749795",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II8971HIRES_fa7696f2-3d88-45f4-858e-936d0e261784.jpg?v=1785749873",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II8961HIRES_3052df03-d29f-48f6-9b41-91fac0c5855c.jpg?v=1785749874",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II8974HIRES_75fa93dc-dd13-41be-a39b-b562c6aa90d0.jpg?v=1785749874",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHAPRIL30II8975HIRES_3427247f-8672-48f4-b4f9-73c4b57e4ff6.jpg?v=1785749874"
+    ],
+    "overview": "This black abaya is a sophisticated and contemporary take on modest wear. Crafted from crepe fabric, this elegant abaya features a unique asymmetrical front closure accented with a hand-worked fabric button embellished with a cluster of crystals. This abaya is suitable for a range of occasions, from",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213334323331",
+    "name": "Black Amara Crepe Custom Abaya with Hand Beadwork Accents",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 676,
+    "originalPriceAED": 845,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 41,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR4662HIRES_922b2fe6-049e-4845-a467-16b4c470d634.jpg?v=1785749502",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR4649HIRES_9ff52a40-cb49-4a0a-bf94-d122bde91ffc.jpg?v=1785749533",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR4655HIRES_39ea358e-4dc8-4933-b98a-4a7528a2ed84.jpg?v=1785749534",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR4668HIRES_fc64dbf6-5de5-45bc-b8cd-1c027f30514c.jpg?v=1785749532",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH20MAR4669HIRES_7450fd29-30a1-4caf-bb84-4b1463438fc8.jpg?v=1785749532"
+    ],
+    "overview": "This black abaya is tailored from lightweight Amara Crepe and features carefully placed beadwork details that bring quiet luxury to everyday wear. The embroidery is concentrated near the pocket areas, combining resham thread, fine crystals, and metallic elements in subtle patterns that catch the lig",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9213334290563",
+    "name": "Black Maya Crepe Custom Abaya with Floral Threadwork on Sleeves",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 737,
+    "originalPriceAED": 921,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 42,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA07714_a1bb38ba-38db-4aab-ab10-4c859f28d63d.png?v=1785749188",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA07716_ef123830-6b47-4e94-8100-733ffb4f5599.png?v=1785749214",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA07699_b7f5790a-19ad-4edc-8a8c-5d50cfa14aae.png?v=1785749213",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA07709_42e27b4a-a7f4-4394-be48-e707ee1c4bde.png?v=1785749213",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/OMA07718_c81911cf-07cd-4ada-a794-0365b206c069.png?v=1785749215"
+    ],
+    "overview": "A straight-cut light crepe abaya should feature intricate floral threadwork on the sleeves, adding a refined and artistic touch. Designed for elegance and versatility, it should be suitable for social gatherings and special occasions, offering effortless sophistication in both Beige and Black.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9212653961347",
+    "name": "Black Aria Crepe Custom Abaya, Side Panel Beadwork Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 749,
+    "originalPriceAED": 936,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 43,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316325_38d88f1c-3fc4-4e82-970e-1aaaa78a3ca8.jpg?v=1785748734",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316316_d6553673-44f4-4e7c-9f98-0484403ed52c.jpg?v=1785748755",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316337_843decd1-6d46-4d65-9c62-fcbed5750a27.jpg?v=1785748753",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23163191-2_0bbab48e-2c8d-45ff-ada2-623fa8aae2e3.jpg?v=1785748753",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23163181_1e5f3353-801f-4bbe-8952-76c6303ab1ed.jpg?v=1785748755"
+    ],
+    "overview": "aria crepe offers a soft and smooth surface with a lightweight structure that provides comfort throughout the day. The fabric maintains a neat appearance and allows easy movement, making it suitable for both work settings and social occasions. The black color enhances the refined look, allowing the ",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9212653928579",
+    "name": "Black Nova Crepe Custom Abaya, Front and Sleeve Beadwork Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 689,
+    "originalPriceAED": 861,
+    "badge": "EID EDITION",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 44,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14903_491d9f82-af0f-43bd-bfe5-b22f3ce6f204.jpg?v=1785748364",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14894_e4c533c9-6a05-4c47-a4fc-ded289ba45be.jpg?v=1785748408",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14904_3634fda0-06fa-447b-b559-a7fe352e6e47.jpg?v=1785748405",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14886_eeb16601-33d1-4157-bb16-30c60bba652d.jpg?v=1785748409",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14899_8ad02749-9171-4363-afd5-4dce07465109.jpg?v=1785748409"
+    ],
+    "overview": "nova crepe offers a smooth and lightweight feel that supports comfort during extended wear. The fabric sits neatly on the body and maintains a clean, structured appearance throughout the day. The black color gives a refined and elegant look, making it suitable for festive occasions as well as work-f",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9212653863043",
+    "name": "Black Aria Crepe Custom Abaya, Multi Beadwork Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 669,
+    "originalPriceAED": 836,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 45,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct15099_dfcb9aa4-c71b-4fae-a12e-32e9d6e1d38b.jpg?v=1785746763",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct15090_2c66c7f2-99b4-4dea-a911-dd7b0498aaa7.jpg?v=1785746786",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct15092_1a530254-0064-4dcf-a3c5-402f25747a8f.jpg?v=1785746786",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct15107_c106e33d-fcca-4a46-9683-21f424d4b1b1.jpg?v=1785746785",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct15108_a28da79b-af7f-49cf-8d25-9582669a59a9.jpg?v=1785746784"
+    ],
+    "overview": "Aria crepe provides a smooth and lightweight feel, making this abaya suitable for extended wear across festive occasions and work settings. The black color presents a refined and polished appearance that works well for Eid, Ramadan, and professional environments. The fabric feels comfortable on the ",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9212653830275",
+    "name": "Black Aria Crepe Custom Abaya, Beadwork Pintuck Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 639,
+    "originalPriceAED": 799,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 46,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct15022_0263f858-ef1f-49de-a135-e13d21bf7c52.jpg?v=1785746429",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct15014_0877a8cf-dada-4d96-8647-6d2abcd5e00c.jpg?v=1785746463",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct15023_5555b76d-0297-4b54-89d6-33a08b48662e.jpg?v=1785746464",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct15030_c89437be-e9f6-4365-9f44-030f25bb1615.jpg?v=1785746459",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct15031_a72510fc-c423-40ec-a12e-015586ab49a7.jpg?v=1785746458"
+    ],
+    "overview": "Aria crepe offers a smooth and lightweight feel, making this abaya comfortable for extended wear during festive occasions and social gatherings. The black color gives a refined and elegant appearance suitable for Eid, Ramadan, and all-day wear. Beadwork is applied along the sleeves, paired with pint",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9212653797507",
+    "name": "Black Shafa Crepe Custom Abaya , Sleeve and Side Beadwork Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 659,
+    "originalPriceAED": 824,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 47,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14662_754823c1-3101-4549-99b2-4e0bd6705987.jpg?v=1785746121",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14662_1.jpg?v=1785746146",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14661_a4d7b787-3124-4e8e-9f28-9be01ee78c9a.jpg?v=1785746148",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14664_f88b900f-d5e2-47c7-ae8a-4fb448ae1e87.jpg?v=1785746146",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14667_3d1cd3c4-cc98-45c8-ba01-b9f4651cb40f.jpg?v=1785746146"
+    ],
+    "overview": "shafa crepe offers a smooth and lightweight feel that supports comfort during extended wear. The fabric sits neatly on the body and maintains a clean and refined appearance throughout the day. The black color gives a polished and elegant look, making it suitable for festive occasions and social gath",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9212653731971",
+    "name": "CUSTOM NS-2386/BK",
+    "category": "Luxury Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 667,
+    "originalPriceAED": 834,
+    "badge": "LIMITED",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 48,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC05781_daaf6f52-362b-4cfe-97ff-e3b9b906be71.jpg?v=1785745277",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12960_5df7ecf9-1f72-4c24-afc6-025062847da4.jpg?v=1785745312",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12967_b11fe464-a2cb-41ad-898d-1a8c20f7a632.jpg?v=1785745312",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12972_5f7a1175-f558-4f86-9495-3da30c2cc944.jpg?v=1785745312",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12977_197a7e4e-4df4-4460-b491-bc4cdfdeee4e.jpg?v=1785745312"
+    ],
+    "overview": "Crafted in lightweight Shafa Crepe, this abaya blends timeless tailoring with artisanal craftsmanship. Designed in a flowing KLOSH silhouette, the piece offers a soft drape that moves gracefully while maintaining structure. The neckline features a clean V-cut with a concealed placket, complemented b",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9212653699203",
+    "name": "Black Shafa Crepe Custom Abaya with Beaded Vine Detailing",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 689,
+    "originalPriceAED": 861,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 49,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC05350_8f0e3f95-1686-4e00-8538-634a3c996d1b.jpg?v=1785744896",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC05354_b6665676-4024-4293-8c0f-0d828fd2b0e2.jpg?v=1785744899",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA_AUG282727_2205e7ad-c572-4874-aeea-c72949307897.jpg?v=1785744894",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA_AUG282732_99afa834-2c48-4ec3-86d8-2ea8c459c8bb.jpg?v=1785744894",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA_AUG282744-2_6d827326-63ec-4b98-977e-d34d6e781f83_1.jpg?v=1785744889"
+    ],
+    "overview": "A refined black abaya crafted from soft Shafa Crepe and shaped in a flowing KLOSH silhouette that moves effortlessly with the body. The clean round neckline and straight front create a minimal and elegant base that feels timeless and sophisticated. The standout feature of this design is the delicate",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9212653666435",
+    "name": "Black Reya Crepe Custom Abaya with Starburst Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 702,
+    "originalPriceAED": 878,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 50,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA_AUG282677_c82db57b-289a-41be-9e89-77ef59b51a11.jpg?v=1785744500",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA_AUG282662_70f8f80e-f87a-479c-9280-a942710ec885.jpg?v=1785744498",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA_AUG282674_85cee5a6-3065-435a-b732-32f15f92873c.jpg?v=1785744498",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA_AUG282674_1.jpg?v=1785744497",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA_AUG282680_02fc311c-fbaf-4e26-aa0b-1d2b9596271a.jpg?v=1785744497"
+    ],
+    "overview": "An elegant abaya designed in lightweight Reya Crepe, shaped into a fluid KLOSH silhouette that offers movement and poise. The neckline is tailored into a clean V, with a concealed snap-button placket to maintain a refined and uninterrupted front. The highlight of the design lies in its celestial-ins",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9212653633667",
+    "name": "Black Shafa Crepe Custom Abaya with Beaded Sleeve Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 643,
+    "originalPriceAED": 804,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 51,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC05079_99144ff8-8c22-4de0-b236-917125f6c7e4.jpg?v=1785743862",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA_AUG282751_aabb9796-31db-4937-a0c1-a5c18680cb7c.jpg?v=1785743859",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA_AUG282759_32beea57-ec4a-4961-af21-f2b1c6933867.jpg?v=1785743859",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA_AUG282764_c7f88026-6e06-400f-bc7e-399867249012.jpg?v=1785743860",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA_AUG282766_34c137d7-153b-4d44-a533-bb8c1f6cbdd7.jpg?v=1785743862"
+    ],
+    "overview": "A graceful black abaya crafted from soft Shafa Crepe and shaped in a flowing KLOSH silhouette. The clean V-neckline and straight front create an elegant minimal base that works beautifully for daily wear, work environments and seasonal gatherings. The sleeves feature delicate beadwork arranged in sm",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9212653568131",
+    "name": "Black Reya Crepe Custom Abaya with Beaded Trim Detailing",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 645,
+    "originalPriceAED": 806,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 52,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC05377-2_1.jpg?v=1785743201",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA_AUG282686_d0229d28-94be-433d-bf49-f47a5aab56d0.jpg?v=1785743204",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC05383_5929ec74-3d2a-4592-85e0-d6da910351bf.jpg?v=1785743205",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA_AUG282684_163a1b5a-97f7-4020-ac2b-ef4983045779.jpg?v=1785743201",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA_AUG282697_4ca5c216-6f6c-4686-b87e-5f709696fc97.jpg?v=1785743204"
+    ],
+    "overview": "An elegant abaya tailored from Reya Crepe, designed in a soft KLOSH silhouette that flows gracefully from shoulder to hem. The neckline is cut in a clean V-shape, overlapped with a concealed placket for a refined look. Along the neckline edge and sleeve cuffs, hand-applied bead trims form a delicate",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9212653535363",
+    "name": "Black Reya Crepe Custom Abaya with Scalloped Beadwork Panel",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 659,
+    "originalPriceAED": 824,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 53,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1584_4d1e0110-f91f-4b85-9f41-9c876aec14c0.jpg?v=1785742290",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1576_ddac50c6-b84d-47c1-aefb-cfc8525dbdbe.jpg?v=1785742308",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1588_674ed399-60f1-4df5-ac80-c4607b5fa047.jpg?v=1785742308",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1590_595e7613-3460-4914-bfb6-da82dcfd8a13.jpg?v=1785742308",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1592_84979960-602b-4542-9ac6-a0150f9df2e4.jpg?v=1785742308"
+    ],
+    "overview": "A refined black abaya tailored in lightweight Reya Crepe, featuring a flowing KLOSH silhouette designed for movement and poise. The neckline opens into a soft V, leading into a beautifully scalloped front panel adorned with bead detailing. Each scallop edge is accented by hand-applied tonal beads, t",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9212653469827",
+    "name": "Black Shafa Crepe Custom Abaya with Beaded Front Panels",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 719,
+    "originalPriceAED": 899,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 54,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1805_155431db-b587-418f-a9f3-a4e8ca733d85.jpg?v=1785741397",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC04528_5f4c32a8-17fd-4fd0-ac3d-bdd988ce1588.jpg?v=1785741400",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1808_b16fcbc1-d951-4d7c-b60b-c28b8977cba1.jpg?v=1785741397",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1795_f98fbf31-6dda-470f-b9aa-f4a9f2fad221.jpg?v=1785741399",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1793_87a4efff-f34b-4f0e-a4dc-8196ea84904b.jpg?v=1785741399"
+    ],
+    "overview": "Tailored in Shafa Crepe, this abaya features a flowing KLOSH silhouette that balances elegance with everyday wearability. A soft V-neckline opens into a concealed snap-button placket, keeping the front line neat and refined. What makes this design distinct is the front detailing: fine pintucks run v",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9212653764739",
+    "name": "Black nova crepe Custom Abaya, Front Beadwork Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 659,
+    "originalPriceAED": 824,
+    "badge": "EID EDITION",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 55,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12706_6b1f59ae-02a9-42ae-9e4e-639fdfd83d97.jpg?v=1785563425",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12706-2_8b26e765-1a3c-4fd7-9b88-612729e746ab.jpg?v=1785563462",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12712_e94d0b95-6a57-45fe-88d6-66b187ff3f2b.jpg?v=1785563462",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12713_11116a74-3eca-45be-86ec-9a631490ef39.jpg?v=1785563462",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12697_c4a74d12-999f-446d-b699-fb96ebfa6be6.jpg?v=1785563463"
+    ],
+    "overview": "Smooth nova crepe custom abaya gives this black abaya a refined and structured feel suitable for both work and social occasions. The fabric sits comfortably on the body and allows ease of movement throughout the day. The silhouette is modest and balanced, offering a clean appearance that works well ",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-8728488575107",
+    "name": "Black Layan Crepe Abaya with Front Overlap Loop  Details (WS)",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 609,
+    "originalPriceAED": 761,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "54",
+      "56",
+      "58",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 56,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/28F8CDCA-DE5A-47F5-83C4-DB2B2C4C3BBB.jpg?v=1740483101",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/D7BAA2F8-4CF7-4510-960B-4C960629C9ED.jpg?v=1740483102",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/73D3DF7B-5A89-491E-9FF0-009C7B1A1B85.jpg?v=1740483103",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/30997C44-C589-45BE-94AB-46232D720131.jpg?v=1740483105",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/2E728837-9A19-4E3E-884C-2C020D7C4632.jpg?v=1740483106"
+    ],
+    "overview": "Casual Black abaya with stylish overlap design and unique pintux with loop enhancement on the front and sleeves.Crafted from Crepe, it provides both comfort and style, making it perfect for everyday wear or social gatherings",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-8722595086467",
+    "name": "Black Aria Crepe, Basic Design",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 575,
+    "originalPriceAED": 719,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 57,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14923.jpg?v=1784717992",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14909.jpg?v=1784717992",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14914.jpg?v=1784717992",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14920.jpg?v=1784717992",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14927.jpg?v=1784717992"
+    ],
+    "overview": "aria crepe offers a smooth and lightweight feel designed for long hours of wear. The fabric sits comfortably on the body and maintains a clean, structured appearance throughout the day. The black color gives a professional and polished look, making it suitable for work environments and daily routine",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9212654125187",
+    "name": "Black Shafa Crepe Custom Abaya, Front Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 825,
+    "originalPriceAED": 1031,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 58,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260575-2_142db769-67bf-421d-a79d-6925e27484cb.jpg?v=1785228092",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260572_8b6ce65a-866c-4536-96b0-cee55cb740d5.jpg?v=1785228162",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260578_1dabdeeb-0e11-49e6-888b-def68b04882b.jpg?v=1785228162",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260570_9defe393-5a61-43e7-be2f-7b0ba4de52a8.jpg?v=1785228162",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260574_293df041-0e14-49b9-b079-537396fda823.jpg?v=1785228162"
+    ],
+    "overview": "A black custom abaya designed for social gatherings and special occasions. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from shafa crepe fabric with a lightweight feel, easy-care properties, and a structure that supports detailed handwork, and comes with ",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9212654092419",
+    "name": "Black Aria Crepe Custom Abaya, Front Panel Beadwork Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 739,
+    "originalPriceAED": 924,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 14,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316527_5adf0bbe-668e-4e0d-9bde-5fc3fdfc0ff2.jpg?v=1785228747",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23165301_ef98f384-4d5d-4faa-9791-a0b9520404d9.jpg?v=1785228784",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23165321_c1ae667a-b736-49d3-82da-a61249fc1d3f.jpg?v=1785228783",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23165331_e260ad23-e9d2-497a-8429-43b59d2e8d69.jpg?v=1785228783",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23165051_b07c10ce-0ead-43a2-bdee-3b911df266af.jpg?v=1785228785"
+    ],
+    "overview": "aria crepe custom abaya offers a smooth texture and lightweight structure that allows comfortable wear throughout the day and evening. The fabric maintains a clean appearance and supports a refined silhouette, making it suitable for formal gatherings and festive occasions. The black color enhances t",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9212654026883",
+    "name": "Black Nova Crepe Custom Abaya, Front Beadwork Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 679,
+    "originalPriceAED": 849,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 15,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23164631_f092bf94-a531-4a0c-9d3b-738e9d28230d.jpg?v=1785229425",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316452_9288ba23-f0b4-46a8-949a-5cd712ac745d.jpg?v=1785229455",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316454_5140ee52-b5d3-4220-8fa4-d03670abee3f.jpg?v=1785229456",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23164691_4137b6cd-b83f-4c7e-bb12-a1476a2265e1.jpg?v=1785229456",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316470_1e073e2c-7356-4901-8ebf-d95d602c95ac.jpg?v=1785229456"
+    ],
+    "overview": "Clean beadwork custom abaya detail gives a refined and balanced look. Black color makes it suitable for social gatherings and Eid occasions. Lightweight and comfortable for long wear, includes a matching shaila for a complete and polished appearance.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9208002707587",
+    "name": "Black Aria Crepe Custom Abaya, Front Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 705,
+    "originalPriceAED": 881,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 16,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260718_3ce82472-f26a-4713-bfea-5e5783723adc.jpg?v=1785145372",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260708_d2af4b1b-dd6d-40be-88e7-14adf6e231f2.jpg?v=1785145399",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260711_debb57fd-6613-44f2-88d1-28cb06114555.jpg?v=1785145399",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260713_f950534b-ef8d-4a79-b41a-ce51da32aa62.jpg?v=1785145399",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260714_b759c3a5-f511-4e5f-8bf3-34c5e3741515.jpg?v=1785145399"
+    ],
+    "overview": "A black custom abaya designed for work and social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from aria crepe fabric with a lightweight feel and easy-care properties, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9207982653571",
+    "name": "Bloom Beaded Black Custom Abaya",
+    "category": "Luxury Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 726,
+    "originalPriceAED": 908,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 17,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/BF9A102D-954A-4D10-95D8-C120BEA2EDCD_1.webp?v=1785144457",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/3780934D-3441-4633-ACBB-70497A96E36E_1.webp?v=1785144546",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/7099F972-3DFF-4EA8-A7F9-ACB5E8486779_1.webp?v=1785144544",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/CC39068B-78EA-4197-B1C6-EDBA1E97B289_1.webp?v=1785144545",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/CCED85F8-33F7-4451-A7CE-58469E9447EC_1.webp?v=1785144545"
+    ],
+    "overview": "Fabric name: Organza formal evening flared custom abaya, adorned with semi-floral black hand-beaded lines . made of lightweight organza, it's perfect for year-round wear, combining elegance and comfort seamlessly.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9207973183619",
+    "name": "Beaded Elegance Flare Black Custom Abaya",
+    "category": "Luxury Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 655,
+    "originalPriceAED": 819,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 18,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/F96B4D22-83B1-4FAB-AD87-F73DB996AB2B.webp?v=1785143845",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/1EBFA39F-6E4B-44C9-860B-D4868E40E19B.webp?v=1785143887",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/74D56687-3608-4D8C-859E-5E8904B20909.webp?v=1785143886",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_4095.webp?v=1785143886",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_4099.webp?v=1785143886"
+    ],
+    "overview": "Formal evening flared custom abaya, It's adorned with stunning semi-line abstract black hand-beaded patterns that gracefully flow from shoulder to hem and sleeves. Made from lightweight organza, this piece is perfect for year-round wear, effortlessly marrying elegance with comfort.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9207968202883",
+    "name": "Black Aries Crepe Custom Abaya, Front and Sleeve Beadwork Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 619,
+    "originalPriceAED": 774,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 19,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14977_fb1f5c3f-f423-4659-9f27-12787d171938.jpg?v=1785141970",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14960_2d639359-d247-4fbb-a36d-f95917edc63b.jpg?v=1785142007",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14962_a72f360f-17be-49a3-8543-a9fe90b95fb1.jpg?v=1785142007",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14970_8ee42648-d6bf-495e-bca5-96ef5d404cfd.jpg?v=1785142007",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/Posh_Oct14971_5e397ab4-9ea5-4e4b-8ecf-43b054c16dfe.jpg?v=1785142007"
+    ],
+    "overview": "aries crepe custom abaya offers a smooth and lightweight feel that supports comfort during long hours of wear. The fabric sits neatly on the body and maintains a clean, structured appearance throughout the day. The black color gives a refined and versatile look, making it suitable for work environme",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9207966597251",
+    "name": "Black Layan Custom Crepe, Overlap Front and Sleeve Beadwork Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 739,
+    "originalPriceAED": 924,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 20,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23163591_c481c4b0-b138-4afe-a056-10fff16c445f.jpg?v=1785141247",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23163421_a3c6e11f-8bcc-4223-88d6-52114c443ada.jpg?v=1785141271",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23163431_0ef8d7f3-61a3-40a8-a2fa-9814b6f46f99.jpg?v=1785141272",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23163561_6700112a-d69e-4ed7-8ab8-0a4c8b7a9a2a.jpg?v=1785141271",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316360_7bccc14b-1866-4646-ad50-99265174452a.jpg?v=1785141270"
+    ],
+    "overview": "layan crepe custom abaya offers a smooth and lightweight feel that supports comfort during extended wear. The fabric sits neatly on the body and maintains a clean and structured appearance throughout the day and evening. The black color gives a refined and timeless look, suitable for Eid Al Adha, Ra",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9207963189379",
+    "name": "Black Lyra Crepe Custom Abaya with Front Beadwork Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 659,
+    "originalPriceAED": 824,
+    "badge": "EID EDITION",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 21,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316562_cccd4ffe-a2bf-49a4-a847-6e73dd0a9282.jpg?v=1785140440",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23165401_7f0d9341-1f2f-4f9e-bc6b-45a1d5c3c85e.jpg?v=1785140475",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23165431_5bd4deaa-a107-410a-b605-a4f2319a40e9.jpg?v=1785140475",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316549_07ca86c5-22c4-4397-a1e6-4d4b9432510b.jpg?v=1785140476",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316563_303ca582-8916-4889-94a0-5531fe9dae49.jpg?v=1785140476"
+    ],
+    "overview": "Smooth lyra fabric with a refined finish custom abaya and structured A-line silhouette. Black color gives a clean and polished look, with beadwork detail on the front adding subtle elegance. Includes a matching shaila, suitable for social gatherings and easy movement with a comfortable feel.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9207956177027",
+    "name": "Black Layan Crepe Custom Abaya, Front Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 695,
+    "originalPriceAED": 869,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 22,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260446copy_6ea5d516-4dc9-4068-a821-b9bb8736ad37.jpg?v=1785138760",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260438copy_d19b919d-439f-46bf-8352-7e71bf7a20a3.jpg?v=1785138787",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260440copy_6bd6ffc4-f55d-4e0e-84d3-1db8608da3a7.jpg?v=1785138795",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260447copy_39f68e1f-1f6b-4dad-983d-a06751ce6db7.jpg?v=1785138804",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260444copy_ab11ef88-80b3-4fcc-8a36-2dd952f81322.jpg?v=1785138813"
+    ],
+    "overview": "A black custom abaya designed for work and social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from layan crepe fabric with a lightweight feel, easy-care properties, and wrinkle-resistant performance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9207822614659",
+    "name": "Black Atlas Crepe Custom Abaya, Threadwork Details",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 689,
+    "originalPriceAED": 861,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 23,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260662_7aaaa256-6103-4f9c-953c-caa9f02d1256.jpg?v=1785133929",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260653_8cff6d5a-2a0d-473c-b360-dbd9c9b11a38.jpg?v=1785133961",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260655_e346dfcf-93ba-4baa-afb6-e7b4b27b90b0.jpg?v=1785133975",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260660_cdf0d024-c4a2-429b-9e54-f17498d65b04.jpg?v=1785133987",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260658_7348915d-a390-4f30-ada2-4123f2f4c4ac.jpg?v=1785133998"
+    ],
+    "overview": "A black custom abaya designed for social gatherings and special occasions. Features an A-line cut that provides comfortable movement throughout the day. Crafted from atlas crepe fabric with a lightweight feel and easy-care properties. Suitable for social occasions and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-7714045886595",
+    "name": "Black Chiffon Flared Custom Abaya with Lines Beadwork",
+    "category": "Luxury Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 535,
+    "originalPriceAED": 669,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "Custom"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 24,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/products/DF2EDE70-3261-4AA3-AC4D-C42A0DA814ED_e9af93f2-e0cf-42be-a629-3688a1dd87a2.jpg?v=1740473296",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/products/B52CC368-23CC-4E62-9033-74EFB848E8F1_977cc375-0fa4-4242-a67b-73832e52d6f3.jpg?v=1740473299",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/products/2263FD1B-EAB9-4ECD-98E7-6043EFC6023A.jpg?v=1740473300",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/products/A263EE8A-59D5-4F21-BBB7-B45BEB2F07F9.jpg?v=1740473302",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/products/65128099-7879-44A3-86A3-0DC5C6231757.jpg?v=1740473303"
+    ],
+    "overview": "The beadwork adds subtle sparkle, while the Klosh cut ensures graceful movement. Chiffon's airy nature keeps this abaya light and stylish, ideal for layering.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103770714243",
+    "name": "Purple Maha Nada Abaya, Embroidery",
+    "category": "Embroidered Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 729,
+    "originalPriceAED": 911,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 25,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july161146.jpg?v=1784718581",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july161131.jpg?v=1784718581",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july161133.jpg?v=1784718581",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july161149.jpg?v=1784718581",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/P_A_july161150.jpg?v=1784718581"
+    ],
+    "overview": "A purple abaya designed for social gatherings. Features a comfortable design suitable for extended wear. Crafted from maha nada fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103770681475",
+    "name": "Green Maha Nada Abaya, Embroidery",
+    "category": "Embroidered Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 729,
+    "originalPriceAED": 911,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 26,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260300.jpg?v=1784718609",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260288.jpg?v=1784718609",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260291.jpg?v=1784718609",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260298.jpg?v=1784718609",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260306.jpg?v=1784718610"
+    ],
+    "overview": "A green abaya designed for social gatherings. Crafted from maha nada fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103757508739",
+    "name": "Black Alya Nada Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 639,
+    "originalPriceAED": 799,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 27,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260620.jpg?v=1784718530",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260605.jpg?v=1784718530",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260610.jpg?v=1784718530",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260624.jpg?v=1784718530",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260622.jpg?v=1784718530"
+    ],
+    "overview": "A black abaya designed for daily wear and social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from alya nada fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103758590083",
+    "name": "Pink Alya Nada Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 639,
+    "originalPriceAED": 799,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 28,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260502.jpg?v=1784718460",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260491.jpg?v=1784718460",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260494.jpg?v=1784718460",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260499.jpg?v=1784718460",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260506.jpg?v=1784718461"
+    ],
+    "overview": "A pink abaya designed for social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from alya nada fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103758557315",
+    "name": "Green Reem Nada Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 639,
+    "originalPriceAED": 799,
+    "badge": "LIMITED",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 29,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260480.jpg?v=1784718493",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260472.jpg?v=1784718493",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260474.jpg?v=1784718493",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260487.jpg?v=1784718493",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260485.jpg?v=1784718493"
+    ],
+    "overview": "A green abaya designed for social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from reem nada fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103758622851",
+    "name": "Yellow Reem Nada Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 639,
+    "originalPriceAED": 799,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 30,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260525.jpg?v=1784718429",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260510.jpg?v=1784718429",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260514.jpg?v=1784718429",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260520.jpg?v=1784718429",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260518.jpg?v=1784718429"
+    ],
+    "overview": "A yellow abaya designed for social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from reem nada fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103770615939",
+    "name": "Black Emarati Crepe Abaya, Front Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 779,
+    "originalPriceAED": 974,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 31,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260559.jpg?v=1784718388",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260551.jpg?v=1784718388",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260553.jpg?v=1784718388",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260568.jpg?v=1784718388",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260566.jpg?v=1784718388"
+    ],
+    "overview": "A black abaya designed for work and social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from emarati crepe fabric with a lightweight feel, easy-care properties, and a structure that supports detailed handwork, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103757082755",
+    "name": "Black Shafa Crepe Abaya, Front Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 825,
+    "originalPriceAED": 1031,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 32,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260575-2.jpg?v=1784718341",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260570.jpg?v=1784718285",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260572.jpg?v=1784718285",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260575.jpg?v=1784718285",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260580.jpg?v=1784718285"
+    ],
+    "overview": "A black abaya designed for social gatherings and special occasions. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from shafa crepe fabric with a lightweight feel, easy-care properties, and a structure that supports detailed handwork, and comes with a match",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103770910851",
+    "name": "Blue Alya Nada Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "EVENING EDIT",
+    "priceAED": 595,
+    "originalPriceAED": 744,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 33,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260460.jpg?v=1784718214",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260444.jpg?v=1784718214",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260447.jpg?v=1784718214",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260453.jpg?v=1784718214",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260467.jpg?v=1784718215"
+    ],
+    "overview": "A blue abaya designed for daily wear and social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from alya nada fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103770943619",
+    "name": "Maroon Jouri Nada Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 595,
+    "originalPriceAED": 744,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 34,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260436.jpg?v=1784718180",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260422.jpg?v=1784718179",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260424.jpg?v=1784718180",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260428.jpg?v=1784718180",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260432.jpg?v=1784718179"
+    ],
+    "overview": "A maroon abaya designed for daily wear and social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from jouri nada fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103770878083",
+    "name": "Black Maha Nada Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 595,
+    "originalPriceAED": 744,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 35,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260597.jpg?v=1784718245",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260585.jpg?v=1784718245",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260587.jpg?v=1784718245",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260593.jpg?v=1784718245",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260602.jpg?v=1784718245"
+    ],
+    "overview": "A black abaya designed for daily wear, work, and social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from maha nada fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103754330243",
+    "name": "Purple Classic Nada Abaya, Embroidery Detail",
+    "category": "Embroidered Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 469,
+    "originalPriceAED": 586,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 36,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260061.jpg?v=1784718136",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260056.jpg?v=1784718136",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260058.jpg?v=1784718136",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260070.jpg?v=1784718136",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260066.jpg?v=1784718136"
+    ],
+    "overview": "A purple abaya designed for daily wear and outings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from classic nada fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103754297475",
+    "name": "Black Maha Nada Abaya, Embroidery Detail",
+    "category": "Embroidered Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 469,
+    "originalPriceAED": 586,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 37,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260823.jpg?v=1784718104",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260814.jpg?v=1784718104",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260817.jpg?v=1784718104",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260828.jpg?v=1784718104",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260831.jpg?v=1784718104"
+    ],
+    "overview": "A black abaya designed for daily wear and work. Features embroidered detailing that adds a refined touch while maintaining everyday comfort. Crafted from maha nada fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103754494083",
+    "name": "Black Maha Nada Abaya, Plain Design",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 565,
+    "originalPriceAED": 706,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 38,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260921.jpg?v=1784718055",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260909.jpg?v=1784718055",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260911.jpg?v=1784718055",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260926.jpg?v=1784718055",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260916.jpg?v=1784718055"
+    ],
+    "overview": "A black abaya designed for daily wear and work. Features an A-line cut that offers comfortable movement throughout the day. Crafted from maha nada fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103754559619",
+    "name": "Blue Reem Nada Abaya, Plain Design",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 565,
+    "originalPriceAED": 706,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 39,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260048.jpg?v=1784718044",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260036.jpg?v=1784718043",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260041.jpg?v=1784718044",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260054.jpg?v=1784718043",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260050.jpg?v=1784718044"
+    ],
+    "overview": "A blue abaya designed for daily wear and work. Features an A-line cut that offers comfortable movement throughout the day. Crafted from reem nada fabric with a lightweight feel, easy-care properties, and wrinkle resistance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-8650494705795",
+    "name": "Black Reem Nada Abaya with Lacework Detailing",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 488,
+    "originalPriceAED": 697,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 40,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC04386.jpg?v=1762782741",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1476.jpg?v=1762782741",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1473.jpg?v=1762782741",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC04399-2.jpg?v=1762782741",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA30JULY1481.jpg?v=1762715730"
+    ],
+    "overview": "Crafted from lightweight Reem Nada Crepe, this abaya embodies quiet elegance through its clean silhouette and intricate detailing. Cut in a flowing KLOSH shape, the piece features a soft V-neckline and concealed snap-button placket for a refined front finish. The standout feature lies in its lacewor",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-8745002631299",
+    "name": "NS-2386/BK/3372",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 667,
+    "originalPriceAED": 834,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 41,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC05781.jpg?v=1761765958",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12960.jpg?v=1761765958",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12967.jpg?v=1761765958",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12972.jpg?v=1761765958",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABAYA12977.jpg?v=1761765958"
+    ],
+    "overview": "Crafted in lightweight Shafa Crepe, this abaya blends timeless tailoring with artisanal craftsmanship. Designed in a flowing KLOSH silhouette, the piece offers a soft drape that moves gracefully while maintaining structure. The neckline features a clean V-cut with a concealed placket, complemented b",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-8339833225347",
+    "name": "NS-2242/BK/3001",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 237,
+    "originalPriceAED": 593,
+    "badge": "LIMITED",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "54",
+      "56",
+      "58",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 42,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_5423.jpg?v=1740480004",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_5421.jpg?v=1740480001",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_5419.jpg?v=1740479996",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_5420.jpg?v=1740479998",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_5426.jpg?v=1740480007"
+    ],
+    "overview": "f ormal evening abaya, adorned with floral lace and hand-beaded black details, featuring transparent organza on both sides. Made of lightweight nada fabric, it's perfect for year-round wear.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-8555701338243",
+    "name": "IN-103/BL/3478",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 199,
+    "originalPriceAED": 249,
+    "badge": "EID EDITION",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "54",
+      "56"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 43,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_20_MAR4229HIRES.jpg?v=1742559227",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_20_MAR4233HIRES.jpg?v=1742559227",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_20_MAR4236HIRES.jpg?v=1742559227",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_20_MAR4239HIRES.jpg?v=1742559227",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_20_MAR4242HIRES.jpg?v=1742559227"
+    ],
+    "overview": "Elevate your wardrobe with this Blue Underdress, featuring a flattering straight cut and cap sleeves. Made from soft, lightweight crepe, its perfect for layering under abayas and provides all-day comfort.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-8555701371011",
+    "name": "Rose Crepe Brown Abaya Underdress",
+    "category": "Modest Occasion Dresses",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 199,
+    "originalPriceAED": 249,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "54",
+      "56"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 44,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_20_MAR4195HIRES.jpg?v=1783343980",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_20_MAR4197HIRES.jpg?v=1783343983",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_20_MAR4203HIRES.jpg?v=1783343985",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_20_MAR4205HIRES.jpg?v=1783343987",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_20_MAR4201HIRES.jpg?v=1783343990"
+    ],
+    "overview": "Elevate your wardrobe with this Brown Underdress, featuring a flattering straight cut and cap sleeves. Made from soft, lightweight crepe, its perfect for layering under abayas and provides all-day comfort.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103775072387",
+    "name": "Brown Shaina Jacquar, Textured Design",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 699,
+    "originalPriceAED": 874,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 45,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABYA_13-_MAY-20260353-2.jpg?v=1783494050",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260345copy.jpg?v=1783066247",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260347copy.jpg?v=1783066247",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/COLORCHECK1copy.jpg?v=1783066247",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260350copy.jpg?v=1783066247"
+    ],
+    "overview": "A brown abaya designed for social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from shaina jacquard fabric with a lightweight, breathable feel, a soft hand feel, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103775039619",
+    "name": "Black Shaina Jacquar, Textured Design",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 699,
+    "originalPriceAED": 874,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 46,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260726copy.jpg?v=1783066309",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260719copy.jpg?v=1783066309",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260720copy.jpg?v=1783066309",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260722copy.jpg?v=1783066309",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260729copy.jpg?v=1783066309"
+    ],
+    "overview": "A black abaya designed for social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from shaina jacquard fabric with a lightweight, breathable feel, a soft hand feel, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103759540355",
+    "name": "Green Haya Nada Abaya, Front Beadwork",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 705,
+    "originalPriceAED": 881,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 47,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260215.jpg?v=1783068629",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260201.jpg?v=1783068629",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260203.jpg?v=1783068629",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260206.jpg?v=1783068629",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260216.jpg?v=1783068629"
+    ],
+    "overview": "A green abaya designed for social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from haya nada fabric with a lightweight feel, easy-care properties, and wrinkle-resistant performance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103759507587",
+    "name": "Blue Haya Nada Abaya, Front Beadwork",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 705,
+    "originalPriceAED": 881,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 48,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260280.jpg?v=1783068893",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260270.jpg?v=1783068893",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260275.jpg?v=1783068893",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260271.jpg?v=1783068893",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260277.jpg?v=1783068893"
+    ],
+    "overview": "A blue abaya designed for social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from haya nada fabric with a lightweight feel, easy-care properties, and wrinkle-resistant performance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103759474819",
+    "name": "Black Aria Crepe Abaya, Front Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 705,
+    "originalPriceAED": 881,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 49,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260718.jpg?v=1783069140",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260708.jpg?v=1783069140",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260714.jpg?v=1783069140",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260711.jpg?v=1783069140",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260719.jpg?v=1783069140"
+    ],
+    "overview": "A black abaya designed for work and social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from aria crepe fabric with a lightweight feel and easy-care properties, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103757377667",
+    "name": "Brown Isra Crepe Abaya, Lace Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 619,
+    "originalPriceAED": 774,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 50,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260125copy.jpg?v=1783064451",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260112copy.jpg?v=1783064451",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260115copy.jpg?v=1783064451",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260119copy.jpg?v=1783064451",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260123copy.jpg?v=1783064451"
+    ],
+    "overview": "A brown abaya designed for social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from isra crepe fabric with a lightweight feel, easy-care properties, and wrinkle-resistant performance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103757344899",
+    "name": "Black Layan Crepe Abaya, Lace Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 619,
+    "originalPriceAED": 774,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 51,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260691copy.jpg?v=1783064531",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260681copy.jpg?v=1783064531",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260683copy.jpg?v=1783064530",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260689copy.jpg?v=1783064530",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260686copy.jpg?v=1783064531"
+    ],
+    "overview": "A black abaya designed for work and social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from layan crepe fabric with a lightweight feel, easy-care properties, and wrinkle-resistant performance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103757475971",
+    "name": "Green Reem Nada Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 619,
+    "originalPriceAED": 774,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 52,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260129copy.jpg?v=1783066439",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260132copy.jpg?v=1783066439",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260128copy.jpg?v=1783066439",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260139copy.jpg?v=1783066439",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260134copy.jpg?v=1783066439"
+    ],
+    "overview": "A green abaya designed for daily wear and social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from reem nada fabric with a lightweight feel, easy-care properties, and wrinkle-resistant performance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103757410435",
+    "name": "Black Reya Crepe Abaya, Lace Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 619,
+    "originalPriceAED": 774,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 53,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260489copy.jpg?v=1783066480",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260478copy.jpg?v=1783066480",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260480copy.jpg?v=1783066480",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260487copy.jpg?v=1783066480",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260484copy.jpg?v=1783066480"
+    ],
+    "overview": "A black abaya designed for daily wear, work, and social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from reya crepe fabric with easy-care properties and a structured feel that holds its shape, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103757049987",
+    "name": "Green Aria Crepe Abaya, Front Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 695,
+    "originalPriceAED": 869,
+    "badge": "EID EDITION",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 54,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABYA_13-_MAY-20260235.jpg?v=1783494800",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260230copy.jpg?v=1783066574",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260231copy.jpg?v=1783066574",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260237copy.jpg?v=1783066574",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260239copy.jpg?v=1783066574"
+    ],
+    "overview": "A green abaya designed for social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from aria crepe fabric with a lightweight feel, easy-care properties, and support for detailed handwork, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103757017219",
+    "name": "Black Layan Crepe Abaya, Front Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 695,
+    "originalPriceAED": 869,
+    "badge": "LIMITED",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 55,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260446copy.jpg?v=1783066612",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260438copy.jpg?v=1783066612",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260440copy.jpg?v=1783066612",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260447copy.jpg?v=1783066614",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260444copy.jpg?v=1783066612"
+    ],
+    "overview": "A black abaya designed for work and social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from layan crepe fabric with a lightweight feel, easy-care properties, and wrinkle-resistant performance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9098519642243",
+    "name": "Pink Cool Crepe Abaya, Basic Design",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 449,
+    "originalPriceAED": 561,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 56,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260024copy.jpg?v=1780661271",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-202600181copy.jpg?v=1780661271",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260020copy.jpg?v=1780661271",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260027copy.jpg?v=1780661271",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260022copy.jpg?v=1780661271"
+    ],
+    "overview": "A pink daily abaya designed for everyday wear. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from cool crepe fabric for a lightweight feel and easy care, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-8941012975747",
+    "name": "Black Layan Crepe, Overlap Front and Sleeve Beadwork Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 739,
+    "originalPriceAED": 924,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 57,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23163591.jpg?v=1771414055",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23163561.jpg?v=1771414055",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23163431.jpg?v=1771414055",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC23163421.jpg?v=1771414055",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DEC2316360.jpg?v=1771414055"
+    ],
+    "overview": "layan crepe offers a smooth and lightweight feel that supports comfort during extended wear. The fabric sits neatly on the body and maintains a clean and structured appearance throughout the day and evening. The black color gives a refined and timeless look, suitable for Eid Al Adha, Ramadan gatheri",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-8591461679235",
+    "name": "Beige Tokyo Crepe Abaya with Klosh Cut and Front Embroidery Detail",
+    "category": "Embroidered Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 235,
+    "originalPriceAED": 588,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "54",
+      "56",
+      "58",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 58,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA7472.jpg?v=1751790975",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA7479.jpg?v=1751790975",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA7482.jpg?v=1751790976",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA7487.jpg?v=1751790975",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA7490.jpg?v=1751790975"
+    ],
+    "overview": "This beige abaya is made from Tokyo Crepe, a lightweight fabric chosen for softness and breathability. It offers full coverage and a smooth silhouette suitable for warmer weather. The klosh cut gently widens from the shoulders, creating graceful movement without bulk. Fine embroidery details in beig",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-8088196874371",
+    "name": "Thamar Abaya Spray",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 119,
+    "originalPriceAED": 149,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 14,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC00886.jpg?v=1742557887",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC00361.jpg?v=1742557887",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/DSC00882.jpg?v=1742557887",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/IMG_1059.jpg?v=1742557887"
+    ],
+    "overview": "Floral Fruity Gourmand fragrance for women. Top notes are Strawberry, Raspberry, Blackberry, Sour Cherry, Black Currant, Mandarin Orange and Lemon; middle notes are Violet and Jasmine; base notes are Musk, Vanilla, Cashmeran, Woody Notes, Amber, Oakmoss and Patchouli.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9121759658115",
+    "name": "Maroon Atlas Crepe Abaya, Lace Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 535,
+    "originalPriceAED": 669,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 15,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABYA_13-_MAY-20260069.jpg?v=1783493784",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260074copy.jpg?v=1782457632",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260076copy.jpg?v=1782457650",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260072copy.jpg?v=1782457650",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260080copy.jpg?v=1782457650"
+    ],
+    "overview": "A maroon abaya designed for daily wear and social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from atlas crepe fabric with a lightweight feel and easy-care properties, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103757181059",
+    "name": "Green Rose Crepe Abaya, Lace Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 525,
+    "originalPriceAED": 656,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 16,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260336.jpg?v=1782462363",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260346.jpg?v=1782462363",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260328.jpg?v=1782462343",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260341.jpg?v=1782462363",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260340.jpg?v=1782462343"
+    ],
+    "overview": "A green abaya designed for daily wear and outings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from rose crepe fabric with a lightweight feel, a soft hand feel, and easy-care properties, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103770845315",
+    "name": "Purple Classic Nada Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 629,
+    "originalPriceAED": 786,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 17,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260144.jpg?v=1782461634",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260132.jpg?v=1782461610",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260135.jpg?v=1782461634",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260156.jpg?v=1782461634",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260152.jpg?v=1782461610"
+    ],
+    "overview": "A purple abaya designed for daily wear and social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from classic nada fabric with a lightweight feel, easy-care properties, and wrinkle-resistant performance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103770812547",
+    "name": "Brown Reem Nada Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 629,
+    "originalPriceAED": 786,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 18,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260118.jpg?v=1782461676",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260111.jpg?v=1782461676",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260113.jpg?v=1782461676",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260122.jpg?v=1782461676",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260127.jpg?v=1782461698"
+    ],
+    "overview": "A brown abaya designed for daily wear and social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from reem nada fabric with a lightweight feel, easy-care properties, and wrinkle-resistant performance, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103770779779",
+    "name": "Blue Cool Crepe Abaya, Lace Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 629,
+    "originalPriceAED": 786,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 19,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260171.jpg?v=1782461713",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260158.jpg?v=1782461713",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260160.jpg?v=1782461738",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260165.jpg?v=1782461713",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260168.jpg?v=1782461738"
+    ],
+    "overview": "A blue abaya designed for daily wear and social gatherings. Crafted from cool crepe fabric with a lightweight feel, easy-care properties, and wrinkle-resistant performance. Suitable for everyday wear and social occasions and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103770747011",
+    "name": "Black Maha Nada Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 629,
+    "originalPriceAED": 786,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 20,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260896.jpg?v=1782461779",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260876.jpg?v=1782461755",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260889.jpg?v=1782461755",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260893.jpg?v=1782461779",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260905.jpg?v=1782461779"
+    ],
+    "overview": "A black abaya designed for daily wear, work, and social gatherings. Crafted from maha nada fabric with a lightweight feel, easy-care properties, and wrinkle-resistant performance. Suitable for long hours of wear and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103775006851",
+    "name": "Purple Butterfly Cupro Abaya, Plain Design",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 869,
+    "originalPriceAED": 1086,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 21,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20265064.jpg?v=1782458022",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20265058.jpg?v=1782458021",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20265060.jpg?v=1782458041",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20265065.jpg?v=1782458022",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20265066.jpg?v=1782458024"
+    ],
+    "overview": "A purple abaya designed for social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from butterfly cupro fabric with a lightweight, breathable feel and a soft hand feel, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103774023811",
+    "name": "Green Butterfly Cupro Abaya, Plain Design",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 869,
+    "originalPriceAED": 1086,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 22,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260342copy.jpg?v=1782457942",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260337copy.jpg?v=1782457942",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260339copy.jpg?v=1782457941",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260342copy-3.jpg?v=1782457960",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260335copy.jpg?v=1782457960"
+    ],
+    "overview": "A green abaya designed for social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from butterfly cupro fabric with a lightweight, breathable feel and a soft hand feel, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9121759264899",
+    "name": "Black Layan Crepe Abaya, Lace Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 535,
+    "originalPriceAED": 669,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 23,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABYA_13-_MAY-20260497.jpg?v=1783493876",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260491copy.jpg?v=1782457883",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260493copy.jpg?v=1782457863",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260499copy.jpg?v=1782457883",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260501copy.jpg?v=1782457883"
+    ],
+    "overview": "A black abaya designed for work, social gatherings, and daily wear. Features an A-line cut that offers comfortable movement throughout the day. Crafted from layan crepe fabric with a lightweight feel and easy-care properties, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-7878894616707",
+    "name": "Sidra",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 185,
+    "originalPriceAED": 231,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52\"",
+      "54\"",
+      "56\"",
+      "58\"",
+      "60\""
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 24,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/products/IMG_0844.jpg?v=1740475827",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/products/IMG_0844.jpg?v=1740475827"
+    ],
+    "overview": "Top notes: Leather, Amber, Warm. Heart notes: Spicy, Oud, Smoky, Metallic. Base notes: Metallic, Animalic, Musky.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9109115306115",
+    "name": "Purple Malaki Satin Abaya, Plain Design",
+    "category": "Satin & Silk Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 459,
+    "originalPriceAED": 574,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 25,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20260086.jpg?v=1782059915",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20260078_1efd1016-4159-4f4b-8652-060960585bf5.jpg?v=1782059915",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20260080_cdc5c9fe-5fc9-4b87-aefe-4c3dbc15b9b4.jpg?v=1782059915",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20260088_9c270325-8c6d-4a85-91de-b27272531ff2.jpg?v=1782059915",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABAYA-04-02-20260091.jpg?v=1782059915"
+    ],
+    "overview": "A purple abaya designed for daily wear and outings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from malaki satin fabric with a lightweight feel and easy-care properties, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9118084628611",
+    "name": "Black Wave Crepe Abaya, Front Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 649,
+    "originalPriceAED": 811,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 26,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260863.jpg?v=1782129627",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260855.jpg?v=1782129627",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260858.jpg?v=1782129627",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260870.jpg?v=1782129627",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260874.jpg?v=1782129627"
+    ],
+    "overview": "A black abaya designed for work and social gatherings. Features a comfortable silhouette suitable for long hours of wear. Crafted from wave crepe fabric with a lightweight feel and easy-care properties. Suitable for work and social occasions and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103770550403",
+    "name": "Black Wave Crepe Abaya, Front Beadwork",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 649,
+    "originalPriceAED": 811,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 27,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260748.jpg?v=1782060181",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260743.jpg?v=1782060181",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260744.jpg?v=1782060182",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260756.jpg?v=1782060182",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260753.jpg?v=1782060182"
+    ],
+    "overview": "A black abaya designed for work and social gatherings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from wave crepe fabric with a lightweight feel and easy-care properties. Suitable for work and social occasions and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103770517635",
+    "name": "Purple Atlas Crepe Abaya, Threadwork Details",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 689,
+    "originalPriceAED": 861,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 28,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260262.jpg?v=1782060064",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260250.jpg?v=1782060064",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260251.jpg?v=1782060064",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260255.jpg?v=1782060064",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260259.jpg?v=1782060065"
+    ],
+    "overview": "A purple abaya designed for social gatherings and outings. Features an A-line cut that offers comfortable movement throughout the day. Crafted from atlas crepe fabric with a lightweight feel and easy-care properties. Suitable for social occasions and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103759573123",
+    "name": "Black Atlas Crepe Abaya, Threadwork Details",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 689,
+    "originalPriceAED": 861,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 29,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260662.jpg?v=1782060108",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260653.jpg?v=1782060108",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260655.jpg?v=1782060108",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260660.jpg?v=1782060108",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/ND_JUNE18_260658.jpg?v=1782060108"
+    ],
+    "overview": "A black abaya designed for social gatherings and special occasions. Features an A-line cut that provides comfortable movement throughout the day. Crafted from atlas crepe fabric with a lightweight feel and easy-care properties. Suitable for social occasions and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103757148291",
+    "name": "Brown Reem Nada Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 525,
+    "originalPriceAED": 656,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 30,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260154copy.jpg?v=1782060026",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260145copy.jpg?v=1782060026",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260152copy.jpg?v=1782060027",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260146copy.jpg?v=1782060026",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260149copy.jpg?v=1782060026"
+    ],
+    "overview": "A brown abaya designed for daily wear and outings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from reem nada fabric with a lightweight feel and easy-care properties, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103757115523",
+    "name": "Black Mario Nada Abaya, Lace Detail",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 525,
+    "originalPriceAED": 656,
+    "badge": "EID EDITION",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 31,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260420copy.jpg?v=1782059994",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260411copy.jpg?v=1782059994",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260413copy.jpg?v=1782059993",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260421copy.jpg?v=1782059995",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260418copy.jpg?v=1782059994"
+    ],
+    "overview": "A black abaya designed for daily wear and work. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from mario nada fabric with a lightweight feel and easy-care properties, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9103756820611",
+    "name": "Black Farasha Crepe Abaya, Embroidery",
+    "category": "Embroidered Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 679,
+    "originalPriceAED": 849,
+    "badge": "NEW ARRIVAL",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 32,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABYA_13-_MAY-20260590-2.jpg?v=1783494972",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260579copy.jpg?v=1782059951",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260583copy.jpg?v=1782059951",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260592copy.jpg?v=1782059951",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260588copy.jpg?v=1782059952"
+    ],
+    "overview": "A black abaya designed for work and social gatherings. Features a straight cut that provides comfortable movement throughout the day. Crafted from farasha crepe fabric with easy-care and wrinkle-resistant properties. Suitable for long working hours and social occasions and comes with a matching shei",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9098519904387",
+    "name": "Yellow Atlas Crepe Abaya, Lace Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 599,
+    "originalPriceAED": 749,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 33,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260109copy.jpg?v=1780655493",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260099copy.jpg?v=1780655493",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260101copy.jpg?v=1780655493",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260110copy.jpg?v=1780655493",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260106copy.jpg?v=1780655493"
+    ],
+    "overview": "A yellow semi-formal abaya designed for everyday wear and social gatherings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from atlas crepe fabric with a lightweight feel and easy care, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9098519871619",
+    "name": "Purple Atlas Crepe Abaya, Lace Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 599,
+    "originalPriceAED": 749,
+    "badge": "BESTSELLER",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 5,
+    "reviewsCount": 34,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABYA_13-_MAY-20260091-2.jpg?v=1783495227",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260082copy.jpg?v=1780655525",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260085copy.jpg?v=1780655525",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260090copy.jpg?v=1780655525",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260089copy.jpg?v=1780655525"
+    ],
+    "overview": "A purple abaya designed for social gatherings and outings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from atlas crepe fabric with a lightweight feel and easy care, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": true,
+    "inStock": true
+  },
+  {
+    "id": "posh-9098519838851",
+    "name": "Black Atlas Crepe Abaya, Lace Detail",
+    "category": "Linen & Crepe Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 599,
+    "originalPriceAED": 749,
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Dubai Luxury Crepe",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.8,
+    "reviewsCount": 35,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260473copy.jpg?v=1780655563",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260465copy.jpg?v=1780655563",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260467copy.jpg?v=1780655563",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260475copy.jpg?v=1780655563",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260471copy.jpg?v=1780655563"
+    ],
+    "overview": "A black abaya designed for work, social gatherings, and evening outings. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from atlas crepe fabric with a lightweight feel and easy care, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  },
+  {
+    "id": "posh-9098519806083",
+    "name": "Purple Alya Nada Abaya, Basic Design",
+    "category": "Luxury Abayas",
+    "collection": "EVERYDAY LUXURY",
+    "priceAED": 545,
+    "originalPriceAED": 681,
+    "badge": "LIMITED",
+    "colorOptions": [
+      {
+        "name": "Classic Black",
+        "hex": "#0a0a0a"
+      }
+    ],
+    "sizes": [
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "fabric": "Japanese Royal Nida",
+    "fit": "Relaxed Modest Cut",
+    "closure": "Front-Open with Snap Buttons & Matching Belt",
+    "finishingDetails": "Complimentary Matching Sheila Scarf Included",
+    "occasion": "Casual Elegance & Special Gatherings",
+    "care": "Dry clean recommended / Cool iron on reverse",
+    "rating": 4.9,
+    "reviewsCount": 36,
+    "image": "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSH_ABYA_13-_MAY-20260003_2.jpg?v=1780656011",
+    "secondaryImages": [
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260016copy.jpg?v=1780655780",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260018copy.jpg?v=1780655781",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-202600051copy.jpg?v=1780655780",
+      "https://cdn.shopify.com/s/files/1/0381/2104/6147/files/POSHABYA13-MAY-20260008copy.jpg?v=1780655780"
+    ],
+    "overview": "A purple daily abaya designed for everyday wear. Features a flowing klosh cut that offers comfortable movement throughout the day. Crafted from alya nada fabric for a lightweight feel and easy care, and comes with a matching sheila.",
+    "isNewArrival": false,
+    "isBestseller": false,
+    "inStock": true
+  }
+];
+
+export const ALL_100_NOURA_PRODUCTS: NouraProduct[] = NOURA_PRODUCTS;
+
+export const POSH_ABAYA_PRODUCTS: NouraProduct[] = NOURA_PRODUCTS;
+
+export const NOURA_TESTIMONIALS = [
+  {
+    id: 'test-1',
+    name: 'Sheikha Maryam Al Nahyan',
+    city: 'Abu Dhabi, UAE',
+    rating: 5,
+    comment: 'The craftsmanship of the Japanese Nida abaya is exceptional. The matching Sheila and gold zari embroidery exceeded my expectations for the Eid gala.',
+    date: 'March 2026'
+  },
+  {
+    id: 'test-2',
+    name: 'Dr. Reem Al Suwaidi',
+    city: 'Dubai (Downtown), UAE',
+    rating: 5,
+    comment: 'Ordered at 10 AM, delivered to my villa in Jumeirah by 4 PM. Beautiful luxury packaging, flawless stitching, and perfect length 56".',
+    date: 'February 2026'
+  },
+  {
+    id: 'test-3',
+    name: 'Fatima Al Mansoori',
+    city: 'Sharjah, UAE',
+    rating: 5,
+    comment: 'The bespoke Farasha cut has the most elegant fall. I have received endless compliments at the gallery opening in d3.',
+    date: 'January 2026'
+  }
+];

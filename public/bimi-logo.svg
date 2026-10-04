@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny-ps" viewBox="0 0 551 551" width="551" height="551">
+  <title>WebStudio AE Official BIMI Logo</title>
+  
+  <defs>
+    <!-- Main Front Face Metallic Gradient (Rich UAE Gold) -->
+    <linearGradient id="goldFace" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#EED596"/>
+      <stop offset="25%" stop-color="#DFBE76"/>
+      <stop offset="55%" stop-color="#C5A059"/>
+      <stop offset="85%" stop-color="#A57F32"/>
+      <stop offset="100%" stop-color="#8C6524"/>
+    </linearGradient>
+
+    <!-- Top & Outer Highlight Bevels -->
+    <linearGradient id="goldHighlight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF8DC"/>
+      <stop offset="40%" stop-color="#F3E1A6"/>
+      <stop offset="100%" stop-color="#CAA65E"/>
+    </linearGradient>
+
+    <!-- Inner Shadow & Depth Facets -->
+    <linearGradient id="goldShadow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#936F28"/>
+      <stop offset="60%" stop-color="#6E5018"/>
+      <stop offset="100%" stop-color="#4C340B"/>
+    </linearGradient>
+
+    <!-- Mid Tone Bevel -->
+    <linearGradient id="goldMid" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#DFBE76"/>
+      <stop offset="50%" stop-color="#C5A059"/>
+      <stop offset="100%" stop-color="#8C6524"/>
+    </linearGradient>
+  </defs>
+
+  
+  <g id="ws-mark-exact" stroke="#684A14" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round">
+    <!-- ==================== LEFT "W" HALF ==================== -->
+    
+    <!-- 1. LEFTMOST COLUMN -->
+    <!-- Front face -->
+    <polygon points="45,198 95,143 95,372 45,402" fill="url(#goldFace)"/>
+    <!-- Top bevel highlight -->
+    <polygon points="45,198 95,143 95,150 52,202" fill="url(#goldHighlight)" stroke="none"/>
+    <!-- Right side depth -->
+    <polygon points="88,143 95,143 95,372 88,367" fill="url(#goldShadow)" stroke="none"/>
+
+    <!-- 2. MIDDLE COLUMN -->
+    <!-- Front face -->
+    <polygon points="128,143 178,91 178,320 128,350" fill="url(#goldFace)"/>
+    <!-- Top bevel highlight -->
+    <polygon points="128,143 178,91 178,98 135,147" fill="url(#goldHighlight)" stroke="none"/>
+    <!-- Right side depth -->
+    <polygon points="171,91 178,91 178,320 171,315" fill="url(#goldShadow)" stroke="none"/>
+
+    <!-- 3. RIGHT COLUMN (TALLEST PEAK OF W) -->
+    <!-- Front face -->
+    <polygon points="213,91 269,41 269,270 213,300" fill="url(#goldFace)"/>
+    <!-- Top bevel highlight -->
+    <polygon points="213,91 269,41 269,48 220,95" fill="url(#goldHighlight)" stroke="none"/>
+    <!-- Center gap depth facet -->
+    <polygon points="262,41 269,41 269,270 262,265" fill="url(#goldShadow)" stroke="none"/>
+
+    <!-- 4. BOTTOM CHEVRON BRACKET OF W -->
+    <!-- Main V bracket face -->
+    <polygon points="45,402 183,510 269,442 269,388 183,456 95,372 45,402" fill="url(#goldFace)"/>
+    <!-- Bottom outer bevel shadow -->
+    <polygon points="45,402 183,510 183,512 45,405" fill="url(#goldShadow)" stroke="none"/>
+    <polygon points="183,510 269,442 269,445 183,512" fill="url(#goldHighlight)" stroke="none"/>
+    <!-- Inner chevron bevel -->
+    <polygon points="95,372 183,456 269,388 269,382 183,450 95,366" fill="url(#goldHighlight)" stroke="none"/>
+
+
+    <!-- ==================== RIGHT "S" HALF ==================== -->
+    
+    <!-- 5. TOP HOOK & SHOULDER OF S -->
+    <!-- Top face -->
+    <polygon points="296,47 512,186 512,240 459,206 351,136 351,240 296,204 296,47" fill="url(#goldFace)"/>
+    <!-- Top outer bevel highlight -->
+    <polygon points="296,47 512,186 512,192 296,53" fill="url(#goldHighlight)" stroke="none"/>
+    <!-- Top-right shoulder outer facet -->
+    <polygon points="512,186 512,240 505,244 505,190" fill="url(#goldShadow)" stroke="none"/>
+    <!-- Top inner bevel -->
+    <polygon points="459,206 512,240 459,240" fill="url(#goldShadow)" stroke="none"/>
+
+    <!-- 6. MIDDLE DIAGONAL OF S -->
+    <!-- Front face -->
+    <polygon points="296,295 450,400 395,438 296,366 296,295" fill="url(#goldFace)"/>
+    <!-- Diagonal top highlight -->
+    <polygon points="296,295 450,400 450,406 296,301" fill="url(#goldHighlight)" stroke="none"/>
+    <!-- Diagonal bottom shadow -->
+    <polygon points="296,366 395,438 395,444 296,372" fill="url(#goldShadow)" stroke="none"/>
+
+    <!-- 7. BOTTOM HOOK & BRACKET OF S -->
+    <!-- Front face -->
+    <polygon points="296,375 459,490 387,510 296,442 296,392 387,458 459,405 342,320 296,350 296,375" fill="url(#goldFace)"/>
+    <!-- Bottom outer shadow bevel -->
+    <polygon points="387,510 459,490 512,330 505,330 454,484 387,506" fill="url(#goldShadow)" stroke="none"/>
+    <polygon points="296,442 387,510 387,512 296,445" fill="url(#goldShadow)" stroke="none"/>
+  </g>
+
+</svg>

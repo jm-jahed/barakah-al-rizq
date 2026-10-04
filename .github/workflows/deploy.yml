@@ -1,0 +1,24 @@
+name: Deploy to Contabo VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Contabo VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.CONTABO_HOST }}
+          username: ${{ secrets.CONTABO_USERNAME }}
+          key: ${{ secrets.CONTABO_SSH_KEY }}
+          passphrase: ${{ secrets.CONTABO_PASSPHRASE }}
+          script: |
+            chmod +x /var/www/webstudioae/scripts/deploy-contabo.sh 2>/dev/null || true
+            /var/www/webstudioae/scripts/deploy-contabo.sh
