@@ -112,13 +112,13 @@ export const BarakahNav: React.FC<BarakahNavProps> = ({ onOpenQuoteModal }) => {
             </Link>
 
             {/* Desktop Navigation Links */}
-            <nav className="hidden lg:flex items-center gap-6 xl:gap-7">
+            <nav className="hidden lg:flex items-center gap-5 xl:gap-7 mr-4 xl:mr-8">
               {navLinks.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
                   onClick={(e) => handleNavClick(e, link.href)}
-                  className="text-[12px] font-bold uppercase tracking-wider text-slate-700 hover:text-[#063D24] transition-colors font-sans relative py-1 group"
+                  className="text-[12px] font-bold uppercase tracking-wider text-slate-700 hover:text-[#063D24] transition-colors font-sans relative py-1 group whitespace-nowrap"
                 >
                   <span>{link.label}</span>
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#063D24] transition-all duration-200 group-hover:w-full rounded-full" />
@@ -127,7 +127,7 @@ export const BarakahNav: React.FC<BarakahNavProps> = ({ onOpenQuoteModal }) => {
             </nav>
 
             {/* Executive Action Buttons Group */}
-            <div className="hidden sm:flex items-center gap-2 xl:gap-2.5">
+            <div className="hidden sm:flex items-center gap-2.5 xl:gap-3.5 pl-2 lg:pl-4 border-l border-gray-100 lg:border-emerald-100/80">
               
               {/* 1. B2B Wholesale Procurement Cart */}
               <button
