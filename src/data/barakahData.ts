@@ -155,7 +155,7 @@ export const INITIAL_PRODUCTS: BarakahProduct[] = [
     marketStatus: "STABLE",
     lastUpdated: "1 min ago",
     origin: "UAE Greenhouse / Oman",
-    image: "https://images.unsplash.com/photo-1447175008436-084170c0e708?q=80&w=800&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1604977042946-1eecc30f269e?q=80&w=800&auto=format&fit=crop",
     description: "Hydroponic and greenhouse green cucumbers harvested early morning for crisp texture and freshness.",
     packaging: "5kg Carton / 8kg Plastic Box",
     minOrderQuantity: "300 KG"
@@ -189,7 +189,7 @@ export const INITIAL_PRODUCTS: BarakahProduct[] = [
     marketStatus: "DOWN",
     lastUpdated: "2 mins ago",
     origin: "South Africa / Turkey / Egypt",
-    image: "https://images.unsplash.com/photo-1534531141161-e4ecc2c46369?q=80&w=800&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1587486913049-53fc88980cfc?q=80&w=800&auto=format&fit=crop",
     description: "High-juice seedless and thin-skinned yellow lemons sorted by count sizes 100/120/140.",
     packaging: "15kg Telescopic Master Carton",
     minOrderQuantity: "500 KG"
@@ -342,7 +342,7 @@ export const INITIAL_PRODUCTS: BarakahProduct[] = [
     marketStatus: "DOWN",
     lastUpdated: "3 mins ago",
     origin: "UAE / Jordan",
-    image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?q=80&w=800&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1528825871115-3581a5387919?q=80&w=800&auto=format&fit=crop",
     description: "Glossy deep purple aubergines harvested at tender maturity with low seed count.",
     packaging: "6kg Wooden Box",
     minOrderQuantity: "300 KG"
