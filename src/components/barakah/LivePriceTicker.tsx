@@ -163,7 +163,7 @@ export const LivePriceTicker: React.FC<LivePriceTickerProps> = ({
             x: {
               repeat: Infinity,
               repeatType: 'loop',
-              duration: 48,
+              duration: 75,
               ease: 'linear',
             },
           }}
@@ -179,7 +179,7 @@ export const LivePriceTicker: React.FC<LivePriceTickerProps> = ({
             x: {
               repeat: Infinity,
               repeatType: 'loop',
-              duration: 48,
+              duration: 75,
               ease: 'linear',
             },
           }}
