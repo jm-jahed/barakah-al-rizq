@@ -18,31 +18,6 @@ export const BarakahHero: React.FC<BarakahHeroProps> = ({ onOpenQuoteModal }) =>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        {/* Top Emblem Header Banner */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-emerald-900/10">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="h-12 sm:h-16 w-auto p-1.5 rounded-2xl bg-white border border-emerald-200 shadow-md flex items-center justify-center shrink-0">
-              <img
-                src="/images/barakah-logo.png"
-                alt="BARAKAH AL RIZQ Official Logo"
-                className="h-10 sm:h-14 w-auto object-contain"
-              />
-            </div>
-            <div>
-              <span className="text-[10px] sm:text-xs font-mono font-bold text-emerald-800 uppercase tracking-widest block">
-                OFFICIAL TRADING LICENSE &amp; EMBLEM
-              </span>
-              <span className="text-xs sm:text-sm font-black text-[#063D24] font-sans block leading-snug">
-                BARAKAH AL RIZQ FOODSTUFF TRADING L.L.C
-              </span>
-            </div>
-          </div>
-
-          <div className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-mono text-emerald-900 bg-emerald-100/80 px-3 py-1.5 rounded-xl border border-emerald-300 shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-emerald-600 animate-ping" />
-            <span>AL AWEER MARKET SALE OFFICE ACTIVE</span>
-          </div>
-        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           

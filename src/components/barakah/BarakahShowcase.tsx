@@ -196,10 +196,8 @@ export const BarakahShowcase: React.FC<BarakahShowcaseProps> = () => {
   return (
     <div className="min-h-screen bg-[#F4F7F4] text-[#111827] selection:bg-amber-400 selection:text-black font-sans">
       <BarakahNav onOpenQuoteModal={handleOpenQuoteModal} />
-      <BarakahHero onOpenQuoteModal={handleOpenQuoteModal} />
-      <TrustStrip />
-      
-      {/* Live Market Ticker with Genuine Verified Trends & Session Info */}
+
+      {/* Top Live Market Ticker with Dual-Direction Flow */}
       <LivePriceTicker 
         items={marketPrices}
         onSelectProduct={(p) => {
@@ -230,6 +228,9 @@ export const BarakahShowcase: React.FC<BarakahShowcaseProps> = () => {
         lastSyncUAE={lastSyncUAE}
       />
 
+      <BarakahHero onOpenQuoteModal={handleOpenQuoteModal} />
+      <TrustStrip />
+      
       {/* UNIFIED PRODUCT PRICE GRID: Container & Dubai Wholesale Prices combined on same product card */}
       <UnifiedProductPriceGrid
         containerPrices={containerPrices}
