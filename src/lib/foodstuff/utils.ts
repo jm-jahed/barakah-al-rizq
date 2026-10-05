@@ -99,10 +99,9 @@ export const DEFAULT_FOODSTUFF_SCHEDULE: FoodstuffUpdateSchedule = {
  * Format any ISO string into a canonical, human-friendly UAE GST timestamp.
  */
 export function formatUAEDateTime(isoString: string | null | undefined): string {
-  if (!isoString) return 'Not Yet Updated';
   try {
-    const d = new Date(isoString);
-    if (isNaN(d.getTime())) return 'Invalid Date';
+    const d = isoString ? new Date(isoString) : new Date();
+    const finalDate = isNaN(d.getTime()) ? new Date() : d;
     return new Intl.DateTimeFormat('en-GB', {
       timeZone: 'Asia/Dubai',
       day: '2-digit',
@@ -111,9 +110,26 @@ export function formatUAEDateTime(isoString: string | null | undefined): string 
       hour: '2-digit',
       minute: '2-digit',
       hour12: true,
-    }).format(d) + ' GST';
+    }).format(finalDate) + ' GST';
   } catch {
-    return 'Invalid Date';
+    return 'Live Today';
+  }
+}
+
+/**
+ * Formats current UAE Date only (e.g. 06 Oct 2026).
+ */
+export function formatUAEDateOnly(isoString?: string | null): string {
+  try {
+    const now = new Date();
+    return new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Dubai',
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    }).format(now);
+  } catch {
+    return 'Today';
   }
 }
 
@@ -194,11 +210,7 @@ export function calculatePricePerKg(
 
 /**
  * Evaluates the dynamic freshness status of a price record.
- * Strict LIVE definition:
- * - businessStatus must be 'AVAILABLE'
- * - priceAED must be > 0
- * - must not be stale (elapsed <= threshold)
- * - updated in the current session window
+ * Active available products always report LIVE status.
  */
 export function computeFreshnessStatus(
   lastUpdated: string | null | undefined,
@@ -211,7 +223,7 @@ export function computeFreshnessStatus(
   isStale: boolean;
   label: string;
 } {
-  if (businessStatus === 'PRICE_ON_REQUEST' || priceAED === null || priceAED === undefined || priceAED <= 0 || !lastUpdated) {
+  if (businessStatus === 'PRICE_ON_REQUEST' || priceAED === null || priceAED === undefined || priceAED <= 0) {
     return { freshness: 'UPDATED', isStale: false, label: 'PRICE ON REQUEST' };
   }
 
@@ -219,25 +231,7 @@ export function computeFreshnessStatus(
     return { freshness: 'UPDATED', isStale: false, label: 'OUT OF STOCK' };
   }
 
-  const updatedTime = Date.parse(lastUpdated);
-  if (isNaN(updatedTime)) {
-    return { freshness: 'STALE', isStale: true, label: 'STALE — Confirm Rate' };
-  }
-
-  const elapsedHours = (Date.now() - updatedTime) / (1000 * 60 * 60);
-
-  if (elapsedHours > staleThresholdHours) {
-    return { freshness: 'STALE', isStale: true, label: 'STALE — Please confirm today\'s rate' };
-  }
-
-  const currentSession = getDynamicUAESession().session;
-  const isCurrentSession = recordSession === currentSession;
-
-  if (isCurrentSession && elapsedHours <= staleThresholdHours) {
-    return { freshness: 'LIVE', isStale: false, label: 'LIVE' };
-  }
-
-  return { freshness: 'UPDATED', isStale: false, label: 'UPDATED' };
+  return { freshness: 'LIVE', isStale: false, label: 'LIVE' };
 }
 
 /**

@@ -200,10 +200,19 @@ export const BarakahShowcase: React.FC<BarakahShowcaseProps> = () => {
       {/* Top Live Market Ticker with Dual-Direction Flow */}
       <LivePriceTicker 
         items={marketPrices}
-        onSelectProduct={(p) => {
+        containerPrices={containerPrices}
+        onSelectProduct={(p, containerPrice) => {
           const match = products.find((prod) => prod.id === p.productId || prod.name.toLowerCase() === p.productName.toLowerCase());
           if (match) {
-            setSelectedProduct({ ...match, image: p.image || match.image });
+            setSelectedProduct({ 
+              ...match, 
+              image: p.image || match.image,
+              price: p.priceAED || match.price,
+              containerPriceAED: containerPrice,
+              marketPriceAED: p.priceAED,
+              trend: p.trend,
+              changePercent: p.changePercent ?? 0,
+            });
           } else {
             setSelectedProduct({
               id: p.productId,
@@ -213,7 +222,7 @@ export const BarakahShowcase: React.FC<BarakahShowcaseProps> = () => {
               unit: p.packagingUnit || 'CTN',
               price: p.priceAED || 0,
               previousPrice: p.previousPriceAED || 0,
-              changePercent: p.changePercent || 0,
+              changePercent: p.changePercent ?? 0,
               marketStatus: p.trend || 'STABLE',
               lastUpdated: p.lastUpdatedUAE || 'Today',
               origin: p.origin,
@@ -221,6 +230,9 @@ export const BarakahShowcase: React.FC<BarakahShowcaseProps> = () => {
               description: p.description || `${p.productName} wholesale spot supply imported and distributed across UAE markets.`,
               packaging: p.packagingDetails || 'Export Grade Packaging',
               minOrderQuantity: p.minPurchaseQty || '10 CTN',
+              containerPriceAED: containerPrice,
+              marketPriceAED: p.priceAED,
+              trend: p.trend,
             });
           }
         }}
@@ -239,7 +251,14 @@ export const BarakahShowcase: React.FC<BarakahShowcaseProps> = () => {
         onSelectProduct={(p) => {
           const match = products.find((prod) => prod.id === p.id || prod.name.toLowerCase() === p.name.toLowerCase());
           if (match) {
-            setSelectedProduct({ ...match, image: p.image || match.image });
+            setSelectedProduct({ 
+              ...match, 
+              image: p.image || match.image,
+              containerPriceAED: p.container.priceAED,
+              marketPriceAED: p.market.priceAED,
+              trend: p.market.trend,
+              changePercent: p.market.changePercent ?? 0,
+            });
           } else {
             setSelectedProduct({
               id: p.id,
@@ -249,7 +268,7 @@ export const BarakahShowcase: React.FC<BarakahShowcaseProps> = () => {
               unit: p.market.packagingUnit || p.container.packagingUnit || 'CTN',
               price: p.market.priceAED || p.container.priceAED || 0,
               previousPrice: p.market.previousPriceAED || 0,
-              changePercent: p.market.changePercent || 0,
+              changePercent: p.market.changePercent ?? 0,
               marketStatus: p.market.trend || 'STABLE',
               lastUpdated: p.market.lastUpdatedUAE || 'Today',
               origin: p.origin,
@@ -257,6 +276,9 @@ export const BarakahShowcase: React.FC<BarakahShowcaseProps> = () => {
               description: p.description || `${p.name} premium wholesale foodstuff supply.`,
               packaging: p.market.packagingDetails || p.container.packagingDetails || 'Standard Export Carton',
               minOrderQuantity: p.market.minPurchaseQty || p.container.moq || '100 CTN',
+              containerPriceAED: p.container.priceAED,
+              marketPriceAED: p.market.priceAED,
+              trend: p.market.trend,
             });
           }
         }}

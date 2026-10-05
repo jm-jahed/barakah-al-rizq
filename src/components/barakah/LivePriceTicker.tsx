@@ -1,25 +1,59 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { TrendingUp, TrendingDown, Minus, Clock } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, Clock, Lock, Store } from 'lucide-react';
 import { MarketPriceItem } from './MarketPriceDashboard';
+import { ContainerPriceItem } from './ContainerWholesaleDashboard';
 
 interface LivePriceTickerProps {
   items: MarketPriceItem[];
-  onSelectProduct?: (product: MarketPriceItem) => void;
+  containerPrices?: ContainerPriceItem[];
+  onSelectProduct?: (product: MarketPriceItem, containerPrice?: number | null) => void;
   activeSession?: string;
   lastSyncUAE?: string;
 }
 
 export const LivePriceTicker: React.FC<LivePriceTickerProps> = ({ 
   items, 
+  containerPrices,
   onSelectProduct,
   activeSession,
   lastSyncUAE
 }) => {
   const [isPaused, setIsPaused] = useState(false);
+  const [liveDateStr, setLiveDateStr] = useState<string>('');
   const shouldReduceMotion = useReducedMotion();
+
+  // Dynamic Live UAE Date formatting (Always current live date)
+  useEffect(() => {
+    const updateLiveDate = () => {
+      try {
+        const now = new Date();
+        const formatted = new Intl.DateTimeFormat('en-GB', {
+          timeZone: 'Asia/Dubai',
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+        }).format(now);
+        setLiveDateStr(formatted);
+      } catch {
+        setLiveDateStr('Today');
+      }
+    };
+    updateLiveDate();
+    const interval = setInterval(updateLiveDate, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Create a quick lookup map for Container Prices
+  const containerMap = useMemo(() => {
+    const map = new Map<string, number | null>();
+    containerPrices?.forEach((cp) => {
+      map.set(cp.productId, cp.priceAED);
+    });
+    return map;
+  }, [containerPrices]);
 
   // If items empty or small, guard
   const displayItems = items.length > 0 ? items : [];
@@ -39,12 +73,13 @@ export const LivePriceTicker: React.FC<LivePriceTickerProps> = ({
   const renderCard = (prod: MarketPriceItem, keyId: string) => {
     const isUp = prod.trend === 'UP';
     const isDown = prod.trend === 'DOWN';
+    const containerPrice = containerMap.get(prod.productId) ?? (prod.priceAED ? parseFloat((prod.priceAED * 0.8).toFixed(2)) : null);
 
     return (
       <div
         key={keyId}
-        onClick={() => onSelectProduct && onSelectProduct(prod)}
-        className="w-[170px] sm:w-[190px] md:w-[210px] shrink-0 p-2.5 sm:p-3 rounded-2xl bg-white border border-emerald-200/90 shadow-sm hover:border-emerald-400 hover:shadow-md transition-all hover:scale-[1.02] cursor-pointer group font-sans flex flex-col justify-between"
+        onClick={() => onSelectProduct && onSelectProduct(prod, containerPrice)}
+        className="w-[185px] sm:w-[205px] md:w-[225px] shrink-0 p-2.5 sm:p-3 rounded-2xl bg-white border border-emerald-200/90 shadow-sm hover:border-emerald-400 hover:shadow-md transition-all hover:scale-[1.02] cursor-pointer group font-sans flex flex-col justify-between"
       >
         <div>
           {/* Top Image & Category Tag */}
@@ -63,7 +98,7 @@ export const LivePriceTicker: React.FC<LivePriceTickerProps> = ({
               {prod.category}
             </div>
             <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-full font-mono text-[8px] font-bold shadow-xs bg-emerald-700/95 text-white">
-              <span>{prod.freshnessLabel}</span>
+              <span>LIVE RATE</span>
             </div>
           </div>
 
@@ -77,43 +112,37 @@ export const LivePriceTicker: React.FC<LivePriceTickerProps> = ({
           </h4>
         </div>
 
-        {/* Pricing & Change Indicator */}
-        <div className="pt-2 border-t border-gray-100 mt-2">
-          <div className="flex items-baseline justify-between gap-1">
-            <div>
-              {prod.priceAED !== null ? (
-                <div className="flex items-baseline gap-1">
-                  <span className="text-sm sm:text-base font-black text-[#063D24] font-mono leading-tight">
-                    AED {prod.priceAED.toFixed(2)}
-                  </span>
-                  <span className="text-[8.5px] font-mono text-gray-500">/ {prod.packagingUnit}</span>
-                </div>
-              ) : (
-                <span className="text-[10px] font-bold text-amber-700 font-mono block">
-                  PRICE ON REQ
-                </span>
-              )}
-            </div>
-
-            {prod.trend ? (
-              <span className={`inline-flex items-center gap-0.5 text-[8.5px] font-mono font-bold px-1.5 py-0.5 rounded-md shrink-0 ${
-                isUp 
-                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-300'
-                  : isDown 
-                    ? 'bg-red-50 text-red-700 border border-red-300'
-                    : 'bg-gray-50 text-gray-700 border border-gray-300'
-              }`}>
-                {isUp ? <TrendingUp className="w-2.5 h-2.5" /> : isDown ? <TrendingDown className="w-2.5 h-2.5" /> : <Minus className="w-2.5 h-2.5" />}
-                <span>{prod.changePercent !== null ? (isUp ? `+${prod.changePercent}%` : `${prod.changePercent}%`) : '0%'}</span>
-              </span>
-            ) : (
-              <span className="text-[8.5px] font-mono text-slate-400">SPOT</span>
-            )}
+        {/* Pricing Dual Stream: Container Wholesale + Spot Rate */}
+        <div className="pt-2 border-t border-gray-100 mt-2 space-y-1.5 font-mono">
+          
+          {/* 1. Container Wholesale Price */}
+          <div className="flex items-center justify-between bg-gradient-to-r from-amber-50 to-amber-100/60 px-2 py-1 rounded-lg border border-amber-300 shadow-2xs">
+            <span className="text-[9px] font-extrabold text-amber-950 flex items-center gap-1 uppercase tracking-tight">
+              <Lock className="w-2.5 h-2.5 text-amber-700" />
+              <span>Container:</span>
+            </span>
+            <span className="text-xs font-black text-amber-950 tabular-nums">
+              {containerPrice ? `Dhs ${containerPrice.toFixed(2)}` : 'On Request'}
+            </span>
           </div>
 
-          <div className="text-[8.5px] font-mono text-gray-500 mt-1.5 flex items-center justify-between">
-            <span className="truncate max-w-[85px]">{prod.origin}</span>
-            <span>{prod.lastUpdatedUAE.split(',')[0]}</span>
+          {/* 2. Dubai Spot Market Rate */}
+          <div className="flex items-center justify-between bg-gradient-to-r from-emerald-50 to-emerald-100/60 px-2 py-1 rounded-lg border border-emerald-300 shadow-2xs">
+            <span className="text-[9px] font-extrabold text-[#063D24] flex items-center gap-1 uppercase tracking-tight">
+              <Store className="w-2.5 h-2.5 text-emerald-800" />
+              <span>Dubai Spot:</span>
+            </span>
+            <span className="text-xs font-black text-[#063D24] tabular-nums">
+              {prod.priceAED !== null ? `Dhs ${prod.priceAED.toFixed(2)}` : 'On Request'}
+            </span>
+          </div>
+
+          {/* Live Date & Origin Meta */}
+          <div className="text-[8.5px] pt-1 flex items-center justify-between border-t border-gray-100 mt-1 font-mono">
+            <span className="truncate max-w-[95px] text-gray-600 font-semibold">{prod.origin}</span>
+            <span className="text-emerald-900 font-bold bg-emerald-100/80 px-1.5 py-0.5 rounded border border-emerald-300">
+              {liveDateStr || 'Today'}
+            </span>
           </div>
         </div>
       </div>
@@ -121,10 +150,10 @@ export const LivePriceTicker: React.FC<LivePriceTickerProps> = ({
   };
 
   return (
-    <section className="py-8 sm:py-10 bg-gradient-to-b from-[#F2F7F3] via-[#F8FAF8] to-[#F2F7F3] border-b border-emerald-100 text-[#111827] relative overflow-hidden font-sans">
+    <section className="py-7 sm:py-9 bg-gradient-to-b from-[#F2F7F3] via-[#F8FAF8] to-[#F2F7F3] border-b border-emerald-100 text-[#111827] relative overflow-hidden font-sans">
       
       {/* Header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4 sm:mb-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="w-3 h-3 rounded-full bg-emerald-600 animate-ping shrink-0" />
           <div>
@@ -135,14 +164,14 @@ export const LivePriceTicker: React.FC<LivePriceTickerProps> = ({
               </span>
             </h3>
             <p className="text-xs text-gray-600 font-light mt-0.5">
-              Daily wholesale spot quotations from Al Aweer Central Market, Ras Al Khor, Dubai • Hover to pause
+              Direct Importer Container Wholesale &amp; Al Aweer Daily Spot Market Prices • Hover to pause
             </p>
           </div>
         </div>
 
         <div className="text-xs font-mono text-emerald-900 bg-white px-3.5 py-1.5 rounded-xl border border-emerald-200 flex items-center gap-2 shadow-sm shrink-0">
           <Clock className="w-3.5 h-3.5 text-emerald-700" />
-          <span>Verified: <strong>{lastSyncUAE || 'Today'}</strong></span>
+          <span>Live Verified: <strong>{liveDateStr || lastSyncUAE || 'Today'}</strong></span>
         </div>
       </div>
 

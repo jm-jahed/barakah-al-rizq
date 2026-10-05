@@ -20,6 +20,9 @@ export interface BarakahProduct {
   packagingUnit?: string;
   packagingDetails?: string;
   netWeightKg?: number | null;
+  containerPriceAED?: number | null;
+  marketPriceAED?: number | null;
+  trend?: 'UP' | 'DOWN' | 'STABLE' | null;
 }
 
 export interface BarakahLeader {
