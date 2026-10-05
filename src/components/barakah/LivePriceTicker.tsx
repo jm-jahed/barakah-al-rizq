@@ -198,43 +198,60 @@ export const LivePriceTicker: React.FC<LivePriceTickerProps> = ({
     <section className="py-6 sm:py-8 bg-gradient-to-b from-[#EBF3ED] via-[#F4F8F5] to-[#EBF3ED] border-b border-emerald-200/80 text-[#111827] relative overflow-hidden font-sans">
       
       {/* Header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4.5 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-        <div className="w-full md:w-auto">
-          <div className="flex items-center gap-2 flex-wrap mb-1">
-            <h3 className="text-lg sm:text-xl font-black text-[#063D24] tracking-tight flex items-center gap-2">
-              <span className="relative flex h-3 w-3 shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-700"></span>
-              </span>
-              <span>LIVE MARKET TICKER</span>
-            </h3>
-            <span className="text-[10px] font-mono text-amber-950 font-black px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-300 via-amber-400 to-amber-300 border border-amber-500/80 uppercase tracking-wide flex items-center gap-1 shadow-2xs">
-              <Crown className="w-3 h-3 text-amber-900 shrink-0 fill-amber-700/30" />
-              <span>CONTAINER &amp; SPOT FEED</span>
-            </span>
-            <span className="text-[10px] font-mono text-emerald-900 font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 border border-emerald-300 uppercase">
-              {activeSession || 'AL AWEER'} SESSION
-            </span>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4.5">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
+          {/* Left Title & Live Metadata */}
+          <div className="space-y-1">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+              {/* Title with Pulse Beacon */}
+              <div className="inline-flex items-center gap-2">
+                <span className="relative flex h-3 w-3 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-700"></span>
+                </span>
+                <h3 className="text-lg sm:text-xl font-black text-[#063D24] tracking-tight whitespace-nowrap">
+                  LIVE MARKET TICKER
+                </h3>
+              </div>
+
+              {/* Status Badges Row */}
+              <div className="inline-flex items-center gap-1.5 flex-wrap">
+                {/* Gold Crown Badge */}
+                <span className="inline-flex items-center gap-1 text-[9.5px] sm:text-[10px] font-mono text-amber-950 font-black px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-300 via-amber-400 to-amber-300 border border-amber-500/80 uppercase tracking-wide shadow-2xs shrink-0">
+                  <Crown className="w-3 h-3 text-amber-950 shrink-0 fill-amber-700/40" />
+                  <span>CONTAINER &amp; SPOT FEED</span>
+                </span>
+
+                {/* Session Pill */}
+                <span className="inline-flex items-center gap-1 text-[9.5px] sm:text-[10px] font-mono text-emerald-900 font-bold px-2.5 py-0.5 rounded-full bg-emerald-100/90 border border-emerald-300 uppercase shadow-2xs shrink-0">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse shrink-0" />
+                  <span>{activeSession || 'AL AWEER'} SESSION</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Subtitle */}
+            <p className="text-xs text-gray-600 font-medium leading-relaxed">
+              Direct Importer Container Wholesale &amp; Al Aweer Daily Spot Market Prices <span className="hidden sm:inline">• Hover to pause</span>
+            </p>
           </div>
-          <p className="text-xs text-gray-600 font-medium">
-            Direct Importer Container Wholesale &amp; Al Aweer Daily Spot Market Prices • Hover to pause
-          </p>
-        </div>
 
-        <div className="flex items-center justify-between sm:justify-end gap-2 w-full md:w-auto shrink-0 flex-nowrap">
-          {/* View All Wholesale Products Button */}
-          <a
-            href="#live-prices"
-            className="px-3.5 py-2 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl bg-[#063D24] hover:bg-[#042A18] text-amber-300 hover:text-white font-mono text-[11px] sm:text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-xs border border-emerald-600/40 hover:scale-105 active:scale-95 cursor-pointer group shrink-0 whitespace-nowrap"
-          >
-            <span>VIEW ALL</span>
-            <ArrowRight className="w-3.5 h-3.5 text-amber-300 group-hover:translate-x-0.5 transition-transform shrink-0" />
-          </a>
+          {/* Right Action Controls: View All + Live Date (Always on 1 row) */}
+          <div className="flex items-center justify-between sm:justify-end gap-2 w-full lg:w-auto shrink-0 flex-nowrap pt-0.5 lg:pt-0">
+            {/* View All Wholesale Products Button */}
+            <a
+              href="#live-prices"
+              className="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-[#063D24] hover:bg-[#042A18] text-amber-300 hover:text-amber-200 font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-md border border-amber-400/30 hover:shadow-lg hover:scale-103 active:scale-97 cursor-pointer group shrink-0 whitespace-nowrap"
+            >
+              <span>VIEW ALL</span>
+              <ArrowRight className="w-3.5 h-3.5 text-amber-300 group-hover:translate-x-1 transition-transform shrink-0" />
+            </a>
 
-          {/* Live UAE Trading Date Badge */}
-          <div className="text-[11px] sm:text-xs font-mono text-emerald-950 bg-white/95 backdrop-blur-sm px-3 py-2 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl border border-emerald-300 flex items-center gap-1.5 sm:gap-2 shadow-xs shrink-0 whitespace-nowrap">
-            <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-700 shrink-0" />
-            <span>Live Date: <strong className="text-[#063D24]">{liveDateStr || '06 Oct 2026'}</strong></span>
+            {/* Live UAE Trading Date Badge */}
+            <div className="text-[11px] sm:text-xs font-mono text-emerald-950 bg-white/95 backdrop-blur-sm px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl border border-emerald-300/90 flex items-center gap-1.5 sm:gap-2 shadow-xs shrink-0 whitespace-nowrap">
+              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-700 shrink-0" />
+              <span>Live Date: <strong className="text-[#063D24] font-bold">{liveDateStr || '06 Oct 2026'}</strong></span>
+            </div>
           </div>
         </div>
       </div>

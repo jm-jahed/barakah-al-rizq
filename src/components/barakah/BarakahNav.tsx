@@ -54,13 +54,14 @@ export const BarakahNav: React.FC<BarakahNavProps> = ({ onOpenQuoteModal }) => {
   return (
     <>
       {/* Top Persistent Executive Trade Desk Strip */}
-      <div className="bg-[#032516] text-emerald-100 text-[11px] font-mono py-1.5 px-4 sm:px-6 lg:px-8 border-b border-emerald-800/40 relative z-50">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div className="bg-[#032516] text-emerald-100 text-[10px] sm:text-[11px] font-mono py-1.5 px-3 sm:px-6 lg:px-8 border-b border-emerald-800/40 relative z-50">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
           {/* Left: Market Credential & MD info */}
-          <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-700/40 text-emerald-200 text-[10px] font-mono font-semibold tracking-wide">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>DUBAI AL AWEER CENTRAL MARKET HQ</span>
+          <div className="flex items-center gap-2 sm:gap-4 shrink min-w-0">
+            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-950/90 border border-emerald-600/40 text-emerald-200 text-[9.5px] sm:text-[10px] font-mono font-semibold tracking-wide shrink-0">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+              <span className="hidden xs:inline">DUBAI AL AWEER CENTRAL MARKET HQ</span>
+              <span className="xs:hidden">AL AWEER HQ</span>
             </div>
 
             <div className="hidden md:flex items-center gap-1.5 text-emerald-200/90 text-[11px] font-sans">
@@ -71,13 +72,14 @@ export const BarakahNav: React.FC<BarakahNavProps> = ({ onOpenQuoteModal }) => {
           </div>
 
           {/* Right: Direct Sales Trade Desk Dial */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 shrink-0">
             <a
               href={`tel:${BARAKAH_BRAND.phones[0].replace(/\s+/g, '')}`}
-              className="inline-flex items-center gap-1.5 text-[11px] font-mono font-bold text-amber-300 hover:text-white px-2.5 py-0.5 rounded-lg bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/30 transition-all tracking-tight"
+              className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-mono font-bold text-amber-300 hover:text-white px-2 sm:px-2.5 py-0.5 rounded-lg bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/30 transition-all tracking-tight whitespace-nowrap"
             >
-              <Phone className="w-3 h-3 text-amber-400" />
-              <span>SALES DESK: {BARAKAH_BRAND.phones[0]}</span>
+              <Phone className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-400 shrink-0" />
+              <span className="hidden sm:inline">SALES DESK: </span>
+              <span>{BARAKAH_BRAND.phones[0]}</span>
             </a>
           </div>
         </div>
