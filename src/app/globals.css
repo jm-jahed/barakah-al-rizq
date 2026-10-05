@@ -103,20 +103,24 @@ html.dark ::-webkit-scrollbar-thumb {
   background: #636366;
 }
 
-/* Custom Scrollbar for POS */
+/* Custom Scrollbar for POS & Admin Sidebar */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.4);
+  background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(212, 175, 55, 0.25);
+  background: rgba(52, 211, 153, 0.25);
   border-radius: 9999px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(212, 175, 55, 0.5);
+  background: rgba(52, 211, 153, 0.6);
+}
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(52, 211, 153, 0.25) transparent;
 }
 
 /* Liquid Gold Button Sheen Micro-Interaction */
