@@ -26,7 +26,6 @@ export const BarakahNav: React.FC<BarakahNavProps> = ({ onOpenQuoteModal }) => {
   const navLinks = [
     { label: 'Home', href: '#home' },
     { label: 'Live Wholesale Prices', href: '#live-prices' },
-    { label: 'Products', href: '#products' },
     { label: 'Import & Export', href: '#services' },
     { label: 'Why Choose Us', href: '#whyus' },
     { label: 'About Us', href: '#about' },
