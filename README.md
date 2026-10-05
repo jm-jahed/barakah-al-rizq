@@ -7,7 +7,7 @@ Official production web application and wholesale commodity pricing platform for
 * **Legal Entity:** Barakah Al Rizq Foodstuff Trading L.L.C.
 * **License & Origin:** Dubai, United Arab Emirates
 * **Headquarters:** Office No. M02, Building No. 3, Above Zam Zam Supermarket, Al Aweer Central Fruit & Vegetable Market, Ras Al Khor, Dubai, UAE
-* **Managing Director:** MD HABEER KHAN
+* **Managing Director:** Habeeb Khan
 * **Primary Phone:** +971 56 944 8850
 * **Official Email:** barakahalrizquae@gmail.com
 * **Official Domain:** [https://barakahalrizquae.com](https://barakahalrizquae.com)

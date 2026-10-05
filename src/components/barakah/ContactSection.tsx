@@ -29,7 +29,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenQuoteModal
             Get in Touch With Our Sales Desk
           </h2>
           <p className="text-gray-600 text-base font-light">
-            Contact Managing Director MD HABEER KHAN or our commercial trade desk for instant market quotes, contract terms, or sample requests.
+            Contact Managing Director Habeeb Khan or our commercial trade desk for instant market quotes, contract terms, or sample requests.
           </p>
         </div>
 
@@ -108,7 +108,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenQuoteModal
                   <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
                   <h4 className="text-lg font-bold text-[#063D24]">Quotation Request Received!</h4>
                   <p className="text-xs text-gray-700 font-mono">
-                    Thank you! Managing Director MD HABEER KHAN and our trade sales desk will contact you shortly with competitive market rates.
+                    Thank you! Managing Director Habeeb Khan and our trade sales desk will contact you shortly with competitive market rates.
                   </p>
                 </div>
               ) : (

@@ -50,7 +50,7 @@ export const AboutSection: React.FC = () => {
             </p>
 
             <p className="text-gray-600 text-sm leading-relaxed font-light">
-              Under the leadership of Managing Director <strong>MD HABEER KHAN</strong>, our organization has established robust global procurement networks spanning 25+ countries. We supply high-grade fresh produce, premium Basmati rice, pulses, whole spices, and dry foodstuffs to supermarket chains, hypermarkets, hotels, and commercial food service buyers across all seven Emirates and regional GCC markets.
+              Under the leadership of Managing Director <strong>Habeeb Khan</strong>, our organization has established robust global procurement networks spanning 25+ countries. We supply high-grade fresh produce, premium Basmati rice, pulses, whole spices, and dry foodstuffs to supermarket chains, hypermarkets, hotels, and commercial food service buyers across all seven Emirates and regional GCC markets.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 font-mono text-xs text-gray-800">

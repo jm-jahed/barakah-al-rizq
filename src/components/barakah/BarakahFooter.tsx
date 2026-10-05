@@ -74,7 +74,7 @@ export const BarakahFooter: React.FC = () => {
               CORPORATE &amp; LEGAL
             </h4>
             <ul className="space-y-2.5 text-xs text-gray-300 font-light">
-              <li><a href="#about" className="hover:text-white">Managing Director MD HABEER KHAN</a></li>
+              <li><a href="#about" className="hover:text-white">Managing Director Habeeb Khan</a></li>
               <li><a href="#whyus" className="hover:text-white">Dubai Municipality Compliance</a></li>
               <li><a href="#whyus" className="hover:text-white">GSO Food Safety Standards</a></li>
               <li><a href="#contact" className="hover:text-white">Contact Commercial Desk</a></li>

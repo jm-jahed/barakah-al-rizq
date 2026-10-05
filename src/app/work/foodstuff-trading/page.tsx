@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     'UAE Fruit and Vegetable Supplier',
     'Basmati Rice Wholesale Dubai',
     'Spices Importer Ras Al Khor',
-    'MD HABEER KHAN'
+    'Habeeb Khan'
   ],
   openGraph: {
     title: 'Barakah Al Rizq Foodstuff Trading L.L.C | UAE Foodstuff Importer & Wholesaler',

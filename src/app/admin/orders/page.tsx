@@ -5,7 +5,7 @@ import Image from 'next/image';
 import {
   Search, Filter, RefreshCw, Eye, MessageCircle, Printer, Download,
   CheckCircle, Clock, AlertTriangle, Package, Calendar, Phone, Mail,
-  Building2, MapPin, X, ArrowUpDown, ChevronRight, FileText, ExternalLink, TrendingUp
+  Building2, MapPin, X, ArrowUpDown, ChevronRight, FileText, ExternalLink
 } from 'lucide-react';
 import { WholesaleOrder, WholesaleOrderStatus } from '@/lib/db/types';
 
@@ -207,139 +207,100 @@ export default function AdminOrdersPage() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-12 font-sans">
       {/* Header */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0B132B] via-[#0E1B38] to-[#0A1020] border border-emerald-500/20 p-6 shadow-2xl">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
-
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex flex-wrap items-center gap-2.5">
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">Wholesale Orders CRM</h1>
-              <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
-                <Building2 className="w-3 h-3" />
-                Store Pickup Operations
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Al Aweer Live Bay
-              </span>
-            </div>
-            <p className="text-slate-300 text-xs mt-1.5 max-w-2xl">
-              Real-time B2B orders for Container Wholesale & Dubai Spot Market collection at Al Aweer Central Fruit & Vegetable Market.
-            </p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+        <div>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold tracking-tight text-white">Wholesale Orders CRM</h1>
+            <span className="bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs px-2.5 py-0.5 rounded-full font-mono">
+              Store Pickup Operations
+            </span>
           </div>
+          <p className="text-slate-400 text-xs mt-1">
+            Real-time B2B orders for Container Wholesale & Dubai Spot Market collection at Al Aweer Central Market.
+          </p>
+        </div>
 
-          <div className="flex items-center gap-2.5 flex-wrap shrink-0">
-            <button
-              onClick={fetchOrders}
-              disabled={loading}
-              className="p-2.5 bg-slate-900/90 border border-slate-700/80 hover:border-emerald-500/50 text-slate-300 hover:text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition-all shadow-md"
-              title="Refresh Order Feed"
-            >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-emerald-400' : ''}`} />
-              <span className="hidden sm:inline">Refresh Feed</span>
-            </button>
+        <div className="flex items-center gap-3 flex-wrap">
+          <button
+            onClick={fetchOrders}
+            disabled={loading}
+            className="p-2.5 bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 rounded-xl text-xs font-semibold flex items-center gap-2 transition"
+            title="Refresh Order Feed"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-emerald-400' : ''}`} />
+            <span className="hidden sm:inline">Refresh</span>
+          </button>
 
-            <button
-              onClick={handleExportCSV}
-              className="px-4 py-2.5 bg-slate-900/90 border border-slate-700/80 hover:border-emerald-500/50 text-emerald-300 hover:text-white font-semibold rounded-xl text-xs flex items-center gap-2 transition-all shadow-md"
-            >
-              <Download className="w-4 h-4 text-emerald-400" />
-              <span>Export CSV</span>
-            </button>
-          </div>
+          <button
+            onClick={handleExportCSV}
+            className="px-4 py-2.5 bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-200 font-semibold rounded-xl text-xs flex items-center gap-2 transition"
+          >
+            <Download className="w-4 h-4 text-emerald-400" />
+            <span>Export CSV</span>
+          </button>
         </div>
       </div>
 
-      {/* Luxury KPI Overview Strip (6 Grid Cards) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
-        <div className="relative overflow-hidden bg-gradient-to-b from-[#0F172A] to-[#0A0E1A] border border-slate-800 hover:border-slate-700 rounded-2xl p-4 shadow-lg transition-all group">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider">Total Orders</span>
-            <div className="w-6 h-6 rounded-lg bg-slate-800/80 flex items-center justify-center text-slate-400">
-              <Package className="w-3.5 h-3.5" />
-            </div>
-          </div>
-          <div className="text-2xl font-black text-white mt-2 font-mono tracking-tight">{metrics.totalOrders}</div>
-          <div className="text-[10px] text-slate-400 mt-1 font-mono">{metrics.totalCtn.toLocaleString()} CTN Volume</div>
+      {/* KPI Overview Strip */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
+        <div className="bg-[#0F172A] border border-slate-800 rounded-2xl p-4">
+          <div className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Total Orders</div>
+          <div className="text-2xl font-black text-white mt-1 font-mono">{metrics.totalOrders}</div>
+          <div className="text-[10px] text-slate-500 mt-1">{metrics.totalCtn.toLocaleString()} CTN Volume</div>
         </div>
 
-        <div className="relative overflow-hidden bg-gradient-to-b from-[#0F172A] to-[#0A0E1A] border border-amber-500/30 hover:border-amber-500/60 rounded-2xl p-4 shadow-lg transition-all group">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-wider">Pending Action</span>
-            <div className="w-6 h-6 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-              <Clock className="w-3.5 h-3.5" />
-            </div>
-          </div>
-          <div className="text-2xl font-black text-amber-400 mt-2 font-mono tracking-tight">{metrics.pending}</div>
-          <div className="text-[10px] text-amber-400/80 mt-1 font-sans">Awaiting approval</div>
+        <div className="bg-[#0F172A] border border-amber-500/20 rounded-2xl p-4">
+          <div className="text-[10px] font-mono text-amber-400 uppercase tracking-wider">Pending Action</div>
+          <div className="text-2xl font-black text-amber-400 mt-1 font-mono">{metrics.pending}</div>
+          <div className="text-[10px] text-amber-500/80 mt-1">Awaiting confirmation</div>
         </div>
 
-        <div className="relative overflow-hidden bg-gradient-to-b from-[#0F172A] to-[#0A0E1A] border border-blue-500/30 hover:border-blue-500/60 rounded-2xl p-4 shadow-lg transition-all group">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono font-bold text-blue-400 uppercase tracking-wider">Confirmed</span>
-            <div className="w-6 h-6 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
-              <CheckCircle className="w-3.5 h-3.5" />
-            </div>
-          </div>
-          <div className="text-2xl font-black text-blue-400 mt-2 font-mono tracking-tight">{metrics.confirmed}</div>
-          <div className="text-[10px] text-blue-400/80 mt-1 font-sans">Cold room staging</div>
+        <div className="bg-[#0F172A] border border-blue-500/20 rounded-2xl p-4">
+          <div className="text-[10px] font-mono text-blue-400 uppercase tracking-wider">Confirmed (Staging)</div>
+          <div className="text-2xl font-black text-blue-400 mt-1 font-mono">{metrics.confirmed}</div>
+          <div className="text-[10px] text-slate-500 mt-1">Cold room prepped</div>
         </div>
 
-        <div className="relative overflow-hidden bg-gradient-to-b from-[#0F172A] to-[#0A0E1A] border border-purple-500/30 hover:border-purple-500/60 rounded-2xl p-4 shadow-lg transition-all group">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono font-bold text-purple-400 uppercase tracking-wider">Ready Pickup</span>
-            <div className="w-6 h-6 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
-              <MapPin className="w-3.5 h-3.5" />
-            </div>
-          </div>
-          <div className="text-2xl font-black text-purple-400 mt-2 font-mono tracking-tight">{metrics.readyForPickup}</div>
-          <div className="text-[10px] text-purple-400/80 mt-1 font-sans">At collection bay</div>
+        <div className="bg-[#0F172A] border border-purple-500/20 rounded-2xl p-4">
+          <div className="text-[10px] font-mono text-purple-400 uppercase tracking-wider">Ready for Pickup</div>
+          <div className="text-2xl font-black text-purple-400 mt-1 font-mono">{metrics.readyForPickup}</div>
+          <div className="text-[10px] text-slate-500 mt-1">At collection bay</div>
         </div>
 
-        <div className="relative overflow-hidden bg-gradient-to-b from-[#0F172A] to-[#0A0E1A] border border-emerald-500/30 hover:border-emerald-500/60 rounded-2xl p-4 shadow-lg transition-all group">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono font-bold text-emerald-400 uppercase tracking-wider">Completed</span>
-            <div className="w-6 h-6 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-              <CheckCircle className="w-3.5 h-3.5" />
-            </div>
-          </div>
-          <div className="text-2xl font-black text-emerald-400 mt-2 font-mono tracking-tight">{metrics.completed}</div>
-          <div className="text-[10px] text-emerald-400/90 mt-1 font-mono truncate">
+        <div className="bg-[#0F172A] border border-emerald-500/20 rounded-2xl p-4">
+          <div className="text-[10px] font-mono text-emerald-400 uppercase tracking-wider">Completed Sales</div>
+          <div className="text-2xl font-black text-emerald-400 mt-1 font-mono">{metrics.completed}</div>
+          <div className="text-[10px] text-emerald-500/80 mt-1 font-mono">
             {metrics.completedSalesAED.toLocaleString()} AED
           </div>
         </div>
 
-        <div className="relative overflow-hidden bg-gradient-to-b from-[#0F172A] to-[#0A0E1A] border border-slate-800 hover:border-slate-700 rounded-2xl p-4 shadow-lg transition-all group">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider">Pipeline</span>
-            <div className="w-6 h-6 rounded-lg bg-slate-800/80 flex items-center justify-center text-amber-400">
-              <TrendingUp className="w-3.5 h-3.5" />
-            </div>
+        <div className="bg-[#0F172A] border border-slate-800 rounded-2xl p-4">
+          <div className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Pipeline Value</div>
+          <div className="text-xl font-black text-white mt-1 font-mono">
+            {metrics.totalOrderPipelineAED.toLocaleString()} <span className="text-[10px] text-emerald-400 font-sans">AED</span>
           </div>
-          <div className="text-lg font-black text-white mt-2 font-mono tracking-tight truncate">
-            AED {metrics.totalOrderPipelineAED.toLocaleString()}
-          </div>
-          <div className="text-[10px] text-slate-500 mt-1 font-sans">Active gross pipeline</div>
+          <div className="text-[10px] text-slate-500 mt-1">Total active gross</div>
         </div>
       </div>
 
       {/* Filters & Search Control */}
-      <div className="bg-[#0A0E1A] border border-slate-800/90 rounded-2xl p-4 sm:p-5 space-y-4 shadow-xl">
+      <div className="bg-[#0F172A] border border-slate-800 rounded-2xl p-4 space-y-4">
         <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
           {/* Search Box */}
           <div className="relative flex-1">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search by Order Ref, Customer Name, Company, Phone, Email, or Commodity..."
-              className="w-full pl-10 pr-8 py-2.5 bg-slate-900/90 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-400 focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition-all"
+              placeholder="Search by Order ID, Buyer Name, Company, Phone, Email, or Product..."
+              className="w-full pl-10 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
             />
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs p-1"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white text-xs"
               >
                 ✕
               </button>
@@ -348,11 +309,11 @@ export default function AdminOrdersPage() {
 
           {/* Wholesale Type Filter */}
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider shrink-0 font-bold">Type:</span>
+            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider shrink-0">Type:</span>
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
-              className="px-3 py-2.5 bg-slate-900/90 border border-slate-700/80 rounded-xl text-xs text-white focus:outline-none focus:border-emerald-400 font-medium"
+              className="px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-emerald-500"
             >
               <option value="ALL">All Wholesale Types</option>
               <option value="CONTAINER">Container Wholesale Only</option>
@@ -367,20 +328,20 @@ export default function AdminOrdersPage() {
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="px-2.5 py-2 bg-slate-900/90 border border-slate-700/80 rounded-xl text-xs text-slate-300 focus:outline-none focus:border-emerald-400 font-mono"
+              className="px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-300 focus:outline-none focus:border-emerald-500"
             />
             <span className="text-slate-500 text-xs">to</span>
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="px-2.5 py-2 bg-slate-900/90 border border-slate-700/80 rounded-xl text-xs text-slate-300 focus:outline-none focus:border-emerald-400 font-mono"
+              className="px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-300 focus:outline-none focus:border-emerald-500"
             />
             {(startDate || endDate) && (
               <button
                 onClick={() => { setStartDate(''); setEndDate(''); }}
-                className="text-xs text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800"
-                title="Clear date filters"
+                className="text-xs text-slate-500 hover:text-white p-1"
+                title="Clear dates"
               >
                 ✕
               </button>
@@ -389,37 +350,34 @@ export default function AdminOrdersPage() {
         </div>
 
         {/* Status Tabs */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs custom-scrollbar">
-          <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider shrink-0 mr-1 font-bold">Status:</span>
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+          <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider shrink-0 mr-1">Status:</span>
           {['ALL', 'PENDING', 'CONFIRMED', 'READY_FOR_PICKUP', 'COMPLETED', 'CANCELLED'].map((st) => {
             const count =
               st === 'ALL'
                 ? metrics.totalOrders
                 : st === 'PENDING'
-                ? metrics.pending
-                : st === 'CONFIRMED'
-                ? metrics.confirmed
-                : st === 'READY_FOR_PICKUP'
-                ? metrics.readyForPickup
-                : st === 'COMPLETED'
-                ? metrics.completed
-                : metrics.cancelled;
+                  ? metrics.pending
+                  : st === 'CONFIRMED'
+                    ? metrics.confirmed
+                    : st === 'READY_FOR_PICKUP'
+                      ? metrics.readyForPickup
+                      : st === 'COMPLETED'
+                        ? metrics.completed
+                        : metrics.cancelled;
 
             const active = selectedStatus === st;
             return (
               <button
                 key={st}
                 onClick={() => setSelectedStatus(st)}
-                className={`px-3.5 py-1.5 rounded-xl shrink-0 font-medium transition-all flex items-center gap-1.5 ${
-                  active
-                    ? 'bg-gradient-to-r from-emerald-400 to-teal-500 text-slate-950 font-bold shadow-md shadow-emerald-950/40'
-                    : 'bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800/80 hover:border-slate-700'
-                }`}
+                className={`px-3 py-1 rounded-lg shrink-0 font-medium transition flex items-center gap-1.5 ${active
+                    ? 'bg-emerald-500 text-slate-950 font-bold'
+                    : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+                  }`}
               >
                 <span>{st === 'ALL' ? 'All Orders' : STATUS_CONFIG[st as WholesaleOrderStatus]?.label || st}</span>
-                <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full ${active ? 'bg-slate-950/20 text-slate-950 font-bold' : 'bg-slate-800 text-slate-400'}`}>
-                  {count}
-                </span>
+                <span className="text-[10px] opacity-80 font-mono">({count})</span>
               </button>
             );
           })}
@@ -427,11 +385,11 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Main Orders Table */}
-      <div className="bg-[#0A0E1A] border border-slate-800/90 rounded-2xl overflow-hidden shadow-xl">
+      <div className="bg-[#0F172A] border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
         {loading ? (
-          <div className="p-14 text-center text-slate-400 flex flex-col items-center justify-center gap-3">
-            <span className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-            <span className="text-xs font-mono text-emerald-400/90 tracking-wider">Syncing Live Wholesale Order Records...</span>
+          <div className="p-12 text-center text-slate-400 flex flex-col items-center justify-center gap-3">
+            <span className="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+            <span className="text-xs font-mono">Loading Verified Wholesale Orders...</span>
           </div>
         ) : error ? (
           <div className="p-10 text-center text-red-400 space-y-3">
@@ -445,15 +403,11 @@ export default function AdminOrdersPage() {
             </button>
           </div>
         ) : orders.length === 0 ? (
-          <div className="p-16 text-center text-slate-400 space-y-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/80 flex items-center justify-center text-slate-500 mx-auto shadow-inner">
-              <Package className="w-7 h-7 text-emerald-500/60" />
-            </div>
-            <div>
-              <div className="text-base font-bold text-white">No Wholesale Orders Found</div>
-              <p className="text-xs text-slate-400 mt-1 max-w-md mx-auto">
-                Orders placed by B2B buyers on the wholesale cart or confirmed via Dubai Trading Desk will automatically appear in this live stream.
-              </p>
+          <div className="p-12 text-center text-slate-400 space-y-3">
+            <Package className="w-10 h-10 mx-auto text-slate-600" />
+            <div className="text-sm font-semibold text-slate-300">No wholesale orders found</div>
+            <div className="text-xs text-slate-500">
+              Orders placed by B2B buyers on the wholesale cart will automatically appear here.
             </div>
           </div>
         ) : (
@@ -517,13 +471,12 @@ export default function AdminOrdersPage() {
 
                       {/* Wholesale Tier */}
                       <td className="py-3.5 px-3">
-                        <span className={`px-2 py-0.5 rounded-lg text-[10px] font-mono border ${
-                          ord.orderType === 'CONTAINER'
+                        <span className={`px-2 py-0.5 rounded-lg text-[10px] font-mono border ${ord.orderType === 'CONTAINER'
                             ? 'bg-blue-500/10 border-blue-500/30 text-blue-400'
                             : ord.orderType === 'DUBAI_WHOLESALE'
-                            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                            : 'bg-purple-500/10 border-purple-500/30 text-purple-400'
-                        }`}>
+                              ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                              : 'bg-purple-500/10 border-purple-500/30 text-purple-400'
+                          }`}>
                           {ord.orderType === 'CONTAINER' ? 'Container Wholesale' : ord.orderType === 'DUBAI_WHOLESALE' ? 'Dubai Wholesale' : 'Mixed Consignment'}
                         </span>
                         <div className="text-[10px] text-slate-500 mt-1">
@@ -762,11 +715,10 @@ export default function AdminOrdersPage() {
                       key={st}
                       disabled={activeOrder.status === st}
                       onClick={() => setStatusModal({ open: true, order: activeOrder, targetStatus: st, notes: '' })}
-                      className={`p-2 rounded-xl text-xs font-bold border transition text-center ${
-                        activeOrder.status === st
+                      className={`p-2 rounded-xl text-xs font-bold border transition text-center ${activeOrder.status === st
                           ? 'bg-slate-800 border-slate-700 text-slate-500 cursor-not-allowed'
                           : 'bg-slate-900 border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white'
-                      }`}
+                        }`}
                     >
                       {STATUS_CONFIG[st].label}
                     </button>

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     'UAE Fruit and Vegetable Supplier',
     'Basmati Rice Wholesale Dubai',
     'Spices Importer Ras Al Khor',
-    'MD HABEER KHAN'
+    'Habeeb Khan'
   ],
   manifest: '/site.webmanifest',
   icons: {

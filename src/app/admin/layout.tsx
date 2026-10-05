@@ -284,7 +284,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
             <div className="min-w-0">
               <span className="text-xs font-bold text-white block truncate leading-tight">
-                MD HABEER KHAN
+                Habeeb Khan
               </span>
               <span className="text-[9.5px] font-mono text-emerald-400/90 block truncate">
                 Super Admin · Dubai Desk

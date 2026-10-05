@@ -25,7 +25,7 @@ export async function POST(req: Request) {
       const token = createToken({ userId: 'barakah-admin-1', email: lowerEmail, role: 'super_admin' });
       const user = {
         id: 'barakah-admin-1',
-        name: 'MD HABEER KHAN',
+        name: 'Habeeb Khan',
         email: lowerEmail,
         role: 'super_admin',
       };

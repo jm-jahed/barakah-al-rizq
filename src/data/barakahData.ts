@@ -44,7 +44,7 @@ export const BARAKAH_BRAND = {
   shortName: "BARAKAH AL RIZQ",
   tagline: "Quality You Can Trust, Service You Can Rely On.",
   subheading: "Leading UAE-based foodstuff import, export, wholesale, and bulk supply enterprise operating out of Al Aweer Vegetable Market, Ras Al Khor, Dubai.",
-  mdName: "MD HABEER KHAN",
+  mdName: "Habeeb Khan",
   mdRole: "Managing Director",
   address: "Office No. M02, Building No. 3, Above Zam Zam Supermarket, Al Aweer Veg Market, Ras Al Khor, Dubai, United Arab Emirates",
   phones: [
@@ -450,7 +450,7 @@ export const INITIAL_PRODUCTS: BarakahProduct[] = [
 
 export const BARAKAH_LEADERS: BarakahLeader[] = [
   {
-    name: "MD HABEER KHAN",
+    name: "Habeeb Khan",
     role: "Managing Director & Founder",
     experience: "20+ Yrs UAE & International Foodstuff Trading",
     specialization: "Global Produce Sourcing & Wholesale Distribution",
@@ -569,7 +569,7 @@ export const BARAKAH_FAQS = [
   },
   {
     question: "How do I request an immediate bulk wholesale quotation?",
-    answer: "Click our 'Request a Quote' button, call our sales office at +971 4 576 4169 / +971 56 944 8850, or message our Managing Director MD HABEER KHAN directly on WhatsApp."
+    answer: "Click our 'Request a Quote' button, call our sales office at +971 4 576 4169 / +971 56 944 8850, or message our Managing Director Habeeb Khan directly on WhatsApp."
   }
 ];
 export const BARAKAH_SERVICES = [
@@ -617,7 +617,7 @@ export const BARAKAH_WHY_US = [
     description: "Strategically located at the heart of Dubai's wholesale produce hub for fast order fulfillment."
   },
   {
-    title: "MD HABEER KHAN Leadership",
+    title: "Habeeb Khan Leadership",
     description: "Over 20 years of UAE foodstuff trading expertise, establishing deep international supplier relationships."
   },
   {

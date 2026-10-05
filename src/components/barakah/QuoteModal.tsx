@@ -59,7 +59,7 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose, selecte
 
             <h3 className="text-2xl font-bold mb-2 font-sans text-[#063D24]">Request Wholesale Quote</h3>
             <p className="text-xs text-gray-600 mb-6 font-light">
-              Submit your produce quantity requirements for immediate spot market pricing from Managing Director MD HABEER KHAN&apos;s team.
+              Submit your produce quantity requirements for immediate spot market pricing from Managing Director Habeeb Khan&apos;s team.
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -140,7 +140,7 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose, selecte
                   className="inline-flex items-center gap-2 text-xs font-bold text-emerald-700 hover:underline"
                 >
                   <MessageCircle className="w-4 h-4 text-emerald-700" />
-                  <span>WhatsApp MD HABEER KHAN Directly</span>
+                  <span>WhatsApp Habeeb Khan Directly</span>
                 </a>
               </div>
             </form>
