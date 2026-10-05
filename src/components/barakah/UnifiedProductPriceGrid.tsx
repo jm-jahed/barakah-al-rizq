@@ -60,6 +60,7 @@ interface UnifiedProductPriceGridProps {
   containerPrices: ContainerPriceItem[];
   marketPrices: MarketPriceItem[];
   onOpenQuoteModal: (productName?: string, orderType?: string) => void;
+  onSelectProduct?: (product: UnifiedProductCardItem) => void;
   lastSyncUAE?: string;
   activeSession?: string;
 }
@@ -68,6 +69,7 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
   containerPrices,
   marketPrices,
   onOpenQuoteModal,
+  onSelectProduct,
   lastSyncUAE,
   activeSession,
 }) => {
@@ -325,13 +327,20 @@ export const UnifiedProductPriceGrid: React.FC<UnifiedProductPriceGridProps> = (
                 key={product.id}
                 className="bg-white rounded-3xl border border-slate-200/80 hover:border-emerald-500/40 shadow-[0_4px_24px_rgba(6,61,36,0.06)] hover:shadow-[0_16px_40px_rgba(6,61,36,0.12)] transition-all duration-300 flex flex-col justify-between overflow-hidden group"
               >
-                {/* Upper Section: Image & Identifiers */}
-                <div>
+                {/* Upper Section: Image & Identifiers (Clickable for full product specifications) */}
+                <div 
+                  onClick={() => onSelectProduct && onSelectProduct(product)}
+                  className="cursor-pointer group/header block"
+                  title="Click to view full specifications & origin details"
+                >
                   {/* Image Container with Badges */}
                   <div className="relative aspect-[4/3] w-full bg-slate-900/5 overflow-hidden border-b border-gray-100">
                     <img
-                      src={product.image}
+                      src={product.image || 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?q=80&w=800&auto=format&fit=crop'}
                       alt={product.name}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?q=80&w=800&auto=format&fit=crop';
+                      }}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />

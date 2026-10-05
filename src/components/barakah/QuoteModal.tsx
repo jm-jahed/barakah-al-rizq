@@ -14,6 +14,16 @@ interface QuoteModalProps {
 
 export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose, selectedProductName, orderType }) => {
   const [submitted, setSubmitted] = useState(false);
+
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -32,11 +42,15 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose, selecte
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+      onClick={onClose}
+    >
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
+        onClick={(e) => e.stopPropagation()}
         className="max-w-xl w-full rounded-3xl bg-white border border-emerald-200 p-6 sm:p-8 text-[#111827] relative shadow-2xl overflow-hidden font-sans"
       >
         <button

@@ -203,8 +203,28 @@ export const BarakahShowcase: React.FC<BarakahShowcaseProps> = () => {
       <LivePriceTicker 
         items={marketPrices}
         onSelectProduct={(p) => {
-          const match = products.find((prod) => prod.id === p.productId);
-          if (match) setSelectedProduct(match);
+          const match = products.find((prod) => prod.id === p.productId || prod.name.toLowerCase() === p.productName.toLowerCase());
+          if (match) {
+            setSelectedProduct({ ...match, image: p.image || match.image });
+          } else {
+            setSelectedProduct({
+              id: p.productId,
+              name: p.productName,
+              arabicName: p.productArabicName,
+              category: (p.category as BarakahProduct['category']) || 'VEGETABLES',
+              unit: p.packagingUnit || 'CTN',
+              price: p.priceAED || 0,
+              previousPrice: p.previousPriceAED || 0,
+              changePercent: p.changePercent || 0,
+              marketStatus: p.trend || 'STABLE',
+              lastUpdated: p.lastUpdatedUAE || 'Today',
+              origin: p.origin,
+              image: p.image,
+              description: p.description || `${p.productName} wholesale spot supply imported and distributed across UAE markets.`,
+              packaging: p.packagingDetails || 'Export Grade Packaging',
+              minOrderQuantity: p.minPurchaseQty || '10 CTN',
+            });
+          }
         }}
         activeSession={activeSession}
         lastSyncUAE={lastSyncUAE}
@@ -215,6 +235,30 @@ export const BarakahShowcase: React.FC<BarakahShowcaseProps> = () => {
         containerPrices={containerPrices}
         marketPrices={marketPrices}
         onOpenQuoteModal={handleOpenQuoteModal}
+        onSelectProduct={(p) => {
+          const match = products.find((prod) => prod.id === p.id || prod.name.toLowerCase() === p.name.toLowerCase());
+          if (match) {
+            setSelectedProduct({ ...match, image: p.image || match.image });
+          } else {
+            setSelectedProduct({
+              id: p.id,
+              name: p.name,
+              arabicName: p.arabicName,
+              category: (p.category as BarakahProduct['category']) || 'VEGETABLES',
+              unit: p.market.packagingUnit || p.container.packagingUnit || 'CTN',
+              price: p.market.priceAED || p.container.priceAED || 0,
+              previousPrice: p.market.previousPriceAED || 0,
+              changePercent: p.market.changePercent || 0,
+              marketStatus: p.market.trend || 'STABLE',
+              lastUpdated: p.market.lastUpdatedUAE || 'Today',
+              origin: p.origin,
+              image: p.image,
+              description: p.description || `${p.name} premium wholesale foodstuff supply.`,
+              packaging: p.market.packagingDetails || p.container.packagingDetails || 'Standard Export Carton',
+              minOrderQuantity: p.market.minPurchaseQty || p.container.moq || '100 CTN',
+            });
+          }
+        }}
         lastSyncUAE={lastSyncUAE}
         activeSession={activeSession}
       />
