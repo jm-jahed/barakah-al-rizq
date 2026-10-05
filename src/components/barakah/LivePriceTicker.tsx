@@ -223,20 +223,20 @@ export const LivePriceTicker: React.FC<LivePriceTickerProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
+        <div className="flex items-center justify-between sm:justify-end gap-2 w-full md:w-auto shrink-0 flex-nowrap">
           {/* View All Wholesale Products Button */}
           <a
             href="#live-prices"
-            className="px-4 py-2 rounded-2xl bg-[#063D24] hover:bg-[#042A18] text-amber-300 hover:text-white font-mono text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm border border-emerald-600/40 hover:scale-105 active:scale-95 cursor-pointer group"
+            className="px-3.5 py-2 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl bg-[#063D24] hover:bg-[#042A18] text-amber-300 hover:text-white font-mono text-[11px] sm:text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-xs border border-emerald-600/40 hover:scale-105 active:scale-95 cursor-pointer group shrink-0 whitespace-nowrap"
           >
             <span>VIEW ALL</span>
-            <ArrowRight className="w-3.5 h-3.5 text-amber-300 group-hover:translate-x-0.5 transition-transform" />
+            <ArrowRight className="w-3.5 h-3.5 text-amber-300 group-hover:translate-x-0.5 transition-transform shrink-0" />
           </a>
 
           {/* Live UAE Trading Date Badge */}
-          <div className="text-xs font-mono text-emerald-950 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-2xl border border-emerald-300 flex items-center gap-2 shadow-xs">
-            <Clock className="w-4 h-4 text-emerald-700" />
-            <span>Live UAE Trading Date: <strong className="text-[#063D24]">{liveDateStr || '06 Oct 2026'}</strong></span>
+          <div className="text-[11px] sm:text-xs font-mono text-emerald-950 bg-white/95 backdrop-blur-sm px-3 py-2 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl border border-emerald-300 flex items-center gap-1.5 sm:gap-2 shadow-xs shrink-0 whitespace-nowrap">
+            <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-700 shrink-0" />
+            <span>Live Date: <strong className="text-[#063D24]">{liveDateStr || '06 Oct 2026'}</strong></span>
           </div>
         </div>
       </div>
