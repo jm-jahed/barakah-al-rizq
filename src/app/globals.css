@@ -74,26 +74,33 @@
   scrollbar-width: none;
 }
 
-/* Scrollbar styling */
+/* Scrollbar styling - Sleek Dark Theme matching web version */
+html {
+  scrollbar-color: #48484a #18181b;
+  scrollbar-width: auto;
+}
+
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 10px;
+  height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #18181b;
 }
 html.dark ::-webkit-scrollbar-track {
-  background: #0B0907;
+  background: #18181b;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #48484a;
   border-radius: 4px;
+  border: 1px solid #18181b;
 }
 html.dark ::-webkit-scrollbar-thumb {
-  background: #262018;
+  background: #48484a;
+  border: 1px solid #18181b;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #D97706;
+  background: #636366;
 }
 
 /* Custom Scrollbar for POS */

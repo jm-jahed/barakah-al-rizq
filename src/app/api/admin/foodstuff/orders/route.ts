@@ -1,17 +1,92 @@
 import { NextResponse } from 'next/server';
+import { getAdminSession } from '@/lib/auth/session';
 import { getWholesaleOrders, updateWholesaleOrderStatus } from '@/lib/mongodb';
 import { WholesaleOrderStatus } from '@/lib/db/types';
 
-export async function GET() {
+export async function GET(req: Request) {
+  const session = await getAdminSession();
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized', message: 'Admin authentication required' }, { status: 401 });
+  }
+
   try {
-    const orders = await getWholesaleOrders();
-    return NextResponse.json({ success: true, orders });
-  } catch (err: any) {
-    return NextResponse.json({ error: 'Failed to fetch wholesale orders' }, { status: 500 });
+    const { searchParams } = new URL(req.url);
+    const search = (searchParams.get('search') || searchParams.get('q') || '').toLowerCase().trim();
+    const status = searchParams.get('status') || 'ALL';
+    const orderType = searchParams.get('orderType') || 'ALL';
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
+
+    const allOrders = await getWholesaleOrders();
+
+    // Compute live metrics across all verified orders
+    const metrics = {
+      totalOrders: allOrders.length,
+      pending: allOrders.filter(o => o.status === 'PENDING').length,
+      confirmed: allOrders.filter(o => o.status === 'CONFIRMED').length,
+      readyForPickup: allOrders.filter(o => o.status === 'READY_FOR_PICKUP').length,
+      completed: allOrders.filter(o => o.status === 'COMPLETED').length,
+      cancelled: allOrders.filter(o => o.status === 'CANCELLED').length,
+      totalCtn: allOrders.reduce((sum, o) => sum + (o.totalCtn || 0), 0),
+      totalOrderPipelineAED: parseFloat(allOrders.reduce((sum, o) => sum + (o.totalAED || 0), 0).toFixed(2)),
+      completedSalesAED: parseFloat(allOrders.filter(o => o.status === 'COMPLETED').reduce((sum, o) => sum + (o.totalAED || 0), 0).toFixed(2)),
+    };
+
+    let filtered = allOrders;
+
+    if (status !== 'ALL') {
+      filtered = filtered.filter(o => o.status === status);
+    }
+
+    if (orderType !== 'ALL') {
+      filtered = filtered.filter(o => o.orderType === orderType);
+    }
+
+    if (startDate) {
+      const startMs = new Date(startDate).getTime();
+      if (!isNaN(startMs)) {
+        filtered = filtered.filter(o => new Date(o.createdAt).getTime() >= startMs);
+      }
+    }
+
+    if (endDate) {
+      const endMs = new Date(endDate).getTime() + (24 * 60 * 60 * 1000); // End of day
+      if (!isNaN(endMs)) {
+        filtered = filtered.filter(o => new Date(o.createdAt).getTime() <= endMs);
+      }
+    }
+
+    if (search) {
+      filtered = filtered.filter(o =>
+        o.id.toLowerCase().includes(search) ||
+        o.customerName.toLowerCase().includes(search) ||
+        (o.companyName && o.companyName.toLowerCase().includes(search)) ||
+        o.phone.includes(search) ||
+        (o.email && o.email.toLowerCase().includes(search)) ||
+        (o.items && o.items.some(item => item.productName.toLowerCase().includes(search)))
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      totalCount: allOrders.length,
+      filteredCount: filtered.length,
+      metrics,
+      orders: filtered,
+      data: filtered,
+    });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Failed to fetch wholesale orders';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
 export async function PUT(req: Request) {
+  const session = await getAdminSession();
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized', message: 'Admin authentication required' }, { status: 401 });
+  }
+
   try {
     const body = await req.json();
     const { id, status, notes } = body;
@@ -38,7 +113,8 @@ export async function PUT(req: Request) {
     }
 
     return NextResponse.json({ success: true, order: updated });
-  } catch (err: any) {
-    return NextResponse.json({ error: 'Failed to update order status' }, { status: 500 });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Failed to update order status';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

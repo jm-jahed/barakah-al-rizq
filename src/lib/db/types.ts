@@ -199,11 +199,25 @@ export type FoodstuffPriceSource =
   | 'EXCEL_IMPORT'
   | 'API_VERIFIED_FEED';
 
-export interface FoodstuffProduct {
+export interface FoodstuffCategoryItem {
   id: string;
   name: string;
+  displayName: string;
   arabicName: string;
-  category: FoodstuffCategory;
+  description?: string;
+  image?: string;
+  displayOrder: number;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FoodstuffProduct {
+  id: string;
+  slug?: string;
+  name: string;
+  arabicName: string;
+  category: FoodstuffCategory | string;
   origin: string;
   variety?: string;
   grade: 'GRADE A (PREMIUM)' | 'GRADE B (COMMERCIAL)' | 'STANDARD' | 'ORGANIC' | string;
@@ -215,6 +229,8 @@ export interface FoodstuffProduct {
   defaultNetWeightKg: number | null;
   defaultMoq: string;
   published: boolean;
+  featured?: boolean;
+  displayOrder?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -328,6 +344,82 @@ export interface WholesaleOrder {
   status: WholesaleOrderStatus;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface WholesaleCustomer {
+  id: string;
+  name: string;
+  companyName?: string;
+  phone: string;
+  email: string;
+  whatsapp?: string;
+  trn?: string;
+  notes?: string;
+  totalOrders: number;
+  totalCtn: number;
+  totalOrderValueAED: number;
+  completedOrderValueAED: number;
+  lastOrderDate?: string;
+  latestStatus?: WholesaleOrderStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type WholesalePaymentMethod = 'CASH' | 'BANK_TRANSFER' | 'CARD' | 'CHEQUE' | 'OTHER';
+export type WholesalePaymentType = 'FULL' | 'PARTIAL' | 'ADVANCE';
+export type PaymentTransactionStatus = 'VALID' | 'REVERSED' | 'REFUNDED';
+
+export interface WholesalePaymentAudit {
+  action: 'RECORDED' | 'REVERSED' | 'REFUNDED' | 'NOTE_UPDATED';
+  performedBy: string; // Admin email or ID
+  timestamp: string;
+  reason?: string;
+  previousStatus?: PaymentTransactionStatus;
+}
+
+export interface WholesalePayment {
+  id: string; // e.g. BARAKAH-PAY-YYYYMMDD-XXXX
+  orderId: string;
+  orderNumber?: string;
+  customerId?: string;
+  customerName: string;
+  companyName?: string;
+  phone: string;
+  email?: string;
+  amountAED: number;
+  paymentDate: string; // YYYY-MM-DD
+  paymentMethod: WholesalePaymentMethod;
+  paymentType: WholesalePaymentType;
+  referenceNumber?: string;
+  bankAccount?: string;
+  notes?: string;
+  status: PaymentTransactionStatus;
+  auditTrail: WholesalePaymentAudit[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OrderPaymentSummary {
+  orderId: string;
+  orderTotalAED: number;
+  totalPaidAED: number;
+  refundedAED: number;
+  netPaidAED: number;
+  outstandingBalanceAED: number;
+  paymentStatus: 'UNPAID' | 'PARTIALLY_PAID' | 'PAID';
+  paymentsCount: number;
+  lastPaymentDate?: string;
+}
+
+export interface CustomerStatementItem {
+  id: string;
+  date: string;
+  type: 'ORDER_INVOICE' | 'PAYMENT' | 'REFUND' | 'REVERSAL';
+  reference: string;
+  description: string;
+  debitAED: number;  // Increases receivables
+  creditAED: number; // Decreases receivables
+  runningBalanceAED: number;
 }
 
 

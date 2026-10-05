@@ -19,8 +19,7 @@ export async function POST(req: Request) {
     // 1. Barakah Administrator Account
     if (
       (lowerEmail === 'admin@barakahalrizquae.com' ||
-        lowerEmail === 'barakahalrizquae@gmail.com' ||
-        lowerEmail === 'admin@pos.ae') &&
+        lowerEmail === 'barakahalrizquae@gmail.com') &&
       isValidPass
     ) {
       const token = createToken({ userId: 'barakah-admin-1', email: lowerEmail, role: 'super_admin' });
@@ -29,13 +28,11 @@ export async function POST(req: Request) {
         name: 'MD HABEER KHAN',
         email: lowerEmail,
         role: 'super_admin',
-        restaurantId: null,
-        pin: '9999',
       };
       const response = NextResponse.json({
         success: true,
         message: 'Login successful',
-        data: { token, user, restaurant: null },
+        data: { token, user },
         token,
         user,
       });
@@ -58,12 +55,11 @@ export async function POST(req: Request) {
         name: dbUser.name,
         email: dbUser.email,
         role: dbUser.role === 'SUPERADMIN' ? 'super_admin' : dbUser.role,
-        pin: '9999',
       };
       const response = NextResponse.json({
         success: true,
         message: 'Login successful',
-        data: { token, user, restaurant: null },
+        data: { token, user },
         token,
         user,
       });

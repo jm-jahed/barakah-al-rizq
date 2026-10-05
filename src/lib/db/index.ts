@@ -24,9 +24,11 @@ import {
   FoodstuffUpdateSchedule,
   FoodstuffPriceSource,
   FoodstuffBusinessStatus,
+  FoodstuffCategoryItem,
 } from './types';
 import {
   DEFAULT_FOODSTUFF_SCHEDULE,
+  DEFAULT_FOODSTUFF_CATEGORIES,
   getInitialFoodstuffProducts,
   getInitialContainerPrices,
   getInitialMarketPrices,
@@ -52,6 +54,7 @@ interface DatabaseSchema {
   activityLogs: ActivityLog[];
   analyticsEvents: AnalyticsEvent[];
   foodstuffProducts?: FoodstuffProduct[];
+  foodstuffCategories?: FoodstuffCategoryItem[];
   foodstuffContainerPrices?: FoodstuffContainerPrice[];
   foodstuffMarketPrices?: FoodstuffMarketPrice[];
   foodstuffPriceHistory?: FoodstuffPriceHistory[];
@@ -218,6 +221,10 @@ function hydrateFoodstuffData(parsed: Record<string, any>, initial: DatabaseSche
     ? parsed.foodstuffMarketPrices
     : getInitialMarketPrices(foodstuffProducts);
 
+  const foodstuffCategories: FoodstuffCategoryItem[] = Array.isArray(parsed.foodstuffCategories) && parsed.foodstuffCategories.length > 0
+    ? parsed.foodstuffCategories
+    : DEFAULT_FOODSTUFF_CATEGORIES;
+
   const foodstuffPriceHistory: FoodstuffPriceHistory[] = Array.isArray(parsed.foodstuffPriceHistory)
     ? parsed.foodstuffPriceHistory
     : [];
@@ -226,6 +233,7 @@ function hydrateFoodstuffData(parsed: Record<string, any>, initial: DatabaseSche
 
   return {
     foodstuffProducts,
+    foodstuffCategories,
     foodstuffContainerPrices,
     foodstuffMarketPrices,
     foodstuffPriceHistory,
@@ -516,8 +524,38 @@ export const db = {
   },
   activity: { findMany: () => readDB().activityLogs },
   foodstuff: {
+    getCategories: () => readDB().foodstuffCategories || DEFAULT_FOODSTUFF_CATEGORIES,
+    getCategoryById: (id: string) => (readDB().foodstuffCategories || DEFAULT_FOODSTUFF_CATEGORIES).find((c) => c.id === id),
+    saveCategory: (category: FoodstuffCategoryItem, updatedBy: string = 'admin') => {
+      const data = readDB();
+      data.foodstuffCategories = data.foodstuffCategories || [...DEFAULT_FOODSTUFF_CATEGORIES];
+      const idx = data.foodstuffCategories.findIndex((c) => c.id === category.id);
+      const now = new Date().toISOString();
+      if (idx >= 0) {
+        data.foodstuffCategories[idx] = { ...data.foodstuffCategories[idx], ...category, updatedAt: now };
+      } else {
+        data.foodstuffCategories.push({ ...category, createdAt: category.createdAt || now, updatedAt: now });
+      }
+      writeDB(data);
+      logActivity(updatedBy, 'CATEGORY_SAVED', category.id);
+      return category;
+    },
     getProducts: () => readDB().foodstuffProducts || [],
     getProductById: (id: string) => (readDB().foodstuffProducts || []).find((p) => p.id === id),
+    saveProduct: (product: FoodstuffProduct, updatedBy: string = 'admin') => {
+      const data = readDB();
+      data.foodstuffProducts = data.foodstuffProducts || [];
+      const idx = data.foodstuffProducts.findIndex((p) => p.id === product.id);
+      const now = new Date().toISOString();
+      if (idx >= 0) {
+        data.foodstuffProducts[idx] = { ...data.foodstuffProducts[idx], ...product, updatedAt: now };
+      } else {
+        data.foodstuffProducts.push({ ...product, createdAt: product.createdAt || now, updatedAt: now });
+      }
+      writeDB(data);
+      logActivity(updatedBy, 'PRODUCT_SAVED', product.id);
+      return product;
+    },
     getContainerPrices: () => readDB().foodstuffContainerPrices || [],
     getMarketPrices: () => readDB().foodstuffMarketPrices || [],
     getPriceHistory: (limit: number = 100) => (readDB().foodstuffPriceHistory || []).slice(0, limit),

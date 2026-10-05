@@ -44,6 +44,83 @@
   ],
   "activityLogs": [
     {
+      "id": "act-1791158516307",
+      "user": "admin@barakahalrizquae.com",
+      "action": "PRODUCT_SAVED",
+      "entity": "test-prod-phase-e-999",
+      "timestamp": "2026-10-05T00:01:56.307Z"
+    },
+    {
+      "id": "act-1791158492251",
+      "user": "admin@barakahalrizquae.com",
+      "action": "CATEGORY_SAVED",
+      "entity": "test-cat-phase-e-999",
+      "timestamp": "2026-10-05T00:01:32.251Z"
+    },
+    {
+      "id": "act-1791157729823",
+      "user": "admin@barakahalrizquae.com",
+      "action": "PRODUCT_SAVED",
+      "entity": "test-prod-phase-e-999",
+      "timestamp": "2026-10-04T23:48:49.823Z"
+    },
+    {
+      "id": "act-1791157703591",
+      "user": "admin@barakahalrizquae.com",
+      "action": "CATEGORY_SAVED",
+      "entity": "test-cat-phase-e-999",
+      "timestamp": "2026-10-04T23:48:23.591Z"
+    },
+    {
+      "id": "act-1791157527107",
+      "user": "admin@barakahalrizquae.com",
+      "action": "PRODUCT_SAVED",
+      "entity": "test-prod-phase-e-999",
+      "timestamp": "2026-10-04T23:45:27.107Z"
+    },
+    {
+      "id": "act-1791157526804",
+      "user": "admin@barakahalrizquae.com",
+      "action": "CATEGORY_SAVED",
+      "entity": "test-cat-phase-e-999",
+      "timestamp": "2026-10-04T23:45:26.804Z"
+    },
+    {
+      "id": "act-1791157471993",
+      "user": "admin@barakahalrizquae.com",
+      "action": "PRODUCT_SAVED",
+      "entity": "test-prod-phase-e-999",
+      "timestamp": "2026-10-04T23:44:31.993Z"
+    },
+    {
+      "id": "act-1791157471529",
+      "user": "admin@barakahalrizquae.com",
+      "action": "CATEGORY_SAVED",
+      "entity": "test-cat-phase-e-999",
+      "timestamp": "2026-10-04T23:44:31.529Z"
+    },
+    {
+      "id": "act-1791154074251",
+      "user": "admin@barakahalrizquae.com",
+      "action": "PRODUCT_SAVED",
+      "entity": "test-item-1791154040650",
+      "timestamp": "2026-10-04T22:47:54.251Z"
+    },
+    {
+      "id": "act-1791154065001",
+      "user": "admin@barakahalrizquae.com",
+      "action": "PRODUCT_SAVED",
+      "entity": "test-item-1791154040650",
+      "timestamp": "2026-10-04T22:47:45.001Z"
+    },
+    {
+      "id": "act-1791154045869",
+      "user": "admin@barakahalrizquae.com",
+      "action": "PRODUCT_SAVED",
+      "entity": "test-item-1791154040650",
+      "timestamp": "2026-10-04T22:47:25.869Z"
+    },
+    {
       "id": "act-1791025928514",
       "user": "bulk-admin@webstudioae.com",
       "action": "FOODSTUFF_BULK_UPDATE",
@@ -1389,5 +1466,359 @@
     "staleThresholdHours": 8,
     "lastSyncAt": null,
     "autoFeedEnabled": false
-  }
+  },
+  "projects": [
+    {
+      "id": "p-1",
+      "slug": "property-development",
+      "title": "LUXESTATE UAE",
+      "category": "Real Estate",
+      "description": "Luxury Off-Plan Real Estate Platform",
+      "shortDescription": "Premium off-plan portal",
+      "featured": true,
+      "published": true,
+      "order": 1,
+      "heroImage": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80",
+      "createdAt": "2026-10-04T22:47:17.620Z",
+      "updatedAt": "2026-10-04T22:47:17.620Z"
+    },
+    {
+      "id": "p-2",
+      "slug": "corporate-law-firm",
+      "title": "VALOR LEGAL",
+      "category": "Corporate Law",
+      "description": "UAE Corporate Law Firm Platform",
+      "shortDescription": "Executive legal portal",
+      "featured": true,
+      "published": true,
+      "order": 2,
+      "heroImage": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1200&q=80",
+      "createdAt": "2026-10-04T22:47:17.620Z",
+      "updatedAt": "2026-10-04T22:47:17.620Z"
+    },
+    {
+      "id": "p-3",
+      "slug": "business-center-serviced-offices",
+      "title": "NEXUS WORKSPACE",
+      "category": "Business Centers",
+      "description": "Premium UAE Serviced Offices & Business Centers",
+      "shortDescription": "Turnkey private office suites",
+      "featured": true,
+      "published": true,
+      "order": 3,
+      "heroImage": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80",
+      "createdAt": "2026-10-04T22:47:17.620Z",
+      "updatedAt": "2026-10-04T22:47:17.620Z"
+    }
+  ],
+  "services": [
+    {
+      "id": "s-1",
+      "title": "Bespoke Web Application Development",
+      "slug": "web-development",
+      "description": "Custom Next.js 16 & TypeScript enterprise web applications.",
+      "icon": "Code",
+      "featured": true,
+      "published": true,
+      "order": 1,
+      "createdAt": "2026-10-04T22:47:17.620Z",
+      "updatedAt": "2026-10-04T22:47:17.620Z"
+    },
+    {
+      "id": "s-2",
+      "title": "High-Converting UI/UX System Design",
+      "slug": "ui-ux-design",
+      "description": "Architectural modern design systems tailored for UAE luxury industries.",
+      "icon": "Palette",
+      "featured": true,
+      "published": true,
+      "order": 2,
+      "createdAt": "2026-10-04T22:47:17.620Z",
+      "updatedAt": "2026-10-04T22:47:17.620Z"
+    },
+    {
+      "id": "s-3",
+      "title": "AI Agent & Workflow Integration",
+      "slug": "ai-automation",
+      "description": "Autonomous agentic workflows, dynamic prompt builders, and LLM integrations.",
+      "icon": "Cpu",
+      "featured": true,
+      "published": true,
+      "order": 3,
+      "createdAt": "2026-10-04T22:47:17.620Z",
+      "updatedAt": "2026-10-04T22:47:17.620Z"
+    }
+  ],
+  "pricingPackages": [
+    {
+      "id": "pr-1",
+      "name": "Starter Digital",
+      "slug": "starter",
+      "priceAED": 799,
+      "description": "Essential web platform for emerging startups and small businesses.",
+      "features": [
+        "Custom Next.js 16 Web App",
+        "Responsive Design",
+        "Contact Form Integration",
+        "Basic SEO Setup"
+      ],
+      "featured": false,
+      "published": true,
+      "order": 1,
+      "createdAt": "2026-10-04T22:47:17.620Z",
+      "updatedAt": "2026-10-04T22:47:17.620Z"
+    },
+    {
+      "id": "pr-2",
+      "name": "Growth Enterprise",
+      "slug": "growth",
+      "priceAED": 1499,
+      "description": "Comprehensive digital experience for growing UAE mid-size firms.",
+      "features": [
+        "Full Bespoke Architecture",
+        "Interactive Calculators / Modals",
+        "Admin CMS Portal Access",
+        "WhatsApp Lead Routing",
+        "Sub-5s Prerendering"
+      ],
+      "featured": true,
+      "published": true,
+      "order": 2,
+      "createdAt": "2026-10-04T22:47:17.620Z",
+      "updatedAt": "2026-10-04T22:47:17.620Z"
+    },
+    {
+      "id": "pr-3",
+      "name": "Bespoke Corporate",
+      "slug": "premium",
+      "priceAED": 2499,
+      "description": "Full-scale luxury digital transformation for established corporations.",
+      "features": [
+        "Multi-Branch / Multi-Tenant Support",
+        "Full Admin CMS & CRM Backend",
+        "AI Agent Workflow Automation",
+        "24/7 Dedicated SLA Support"
+      ],
+      "featured": false,
+      "published": true,
+      "order": 3,
+      "createdAt": "2026-10-04T22:47:17.620Z",
+      "updatedAt": "2026-10-04T22:47:17.620Z"
+    }
+  ],
+  "testimonials": [
+    {
+      "id": "t-1",
+      "name": "Sheikh Hamdan Al Qasimi",
+      "role": "Managing Director",
+      "company": "Apex Global Investments",
+      "message": "WebStudioAE delivered our corporate platform in record time. Sub-second load speeds and flawless execution.",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
+      "rating": 5,
+      "published": true,
+      "order": 1,
+      "createdAt": "2026-10-04T22:47:17.620Z",
+      "updatedAt": "2026-10-04T22:47:17.620Z"
+    }
+  ],
+  "blogPosts": [
+    {
+      "id": "b-1",
+      "slug": "nextjs-16-sub-5s-static-builds",
+      "title": "Architecting Sub-5s Static Prerendering with Next.js 16 App Router",
+      "excerpt": "How we achieved 0 hydration errors and lightning-fast compile times across 58 static routes.",
+      "content": "Building enterprise web applications requires strict separation of concerns, zero layout shift, and clean static prerendering...",
+      "coverImage": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1200&q=80",
+      "category": "Engineering",
+      "author": "Md Jahedul Islam",
+      "published": true,
+      "publishedAt": "2026-10-04T22:47:17.620Z",
+      "createdAt": "2026-10-04T22:47:17.620Z",
+      "updatedAt": "2026-10-04T22:47:17.620Z"
+    }
+  ],
+  "newsletterSubscribers": [],
+  "siteSettings": [
+    {
+      "id": "set-1",
+      "key": "agency_email",
+      "value": "barakahalrizquae@gmail.com",
+      "updatedAt": "2026-10-04T22:47:17.620Z"
+    },
+    {
+      "id": "set-2",
+      "key": "agency_phone",
+      "value": "+971 4 800 63987",
+      "updatedAt": "2026-10-04T22:47:17.620Z"
+    },
+    {
+      "id": "set-3",
+      "key": "agency_whatsapp",
+      "value": "https://wa.me/971480063987",
+      "updatedAt": "2026-10-04T22:47:17.620Z"
+    }
+  ],
+  "homepageContent": {
+    "heroEyebrow": "DUBAI & ABU DHABI LUXURY DIGITAL AGENCY",
+    "heroHeadline": "Architecting High-Impact Digital Experiences for UAE Leaders.",
+    "heroSubtitle": "We engineer bespoke, sub-second web platforms, enterprise AI agent integrations, and scalable Webpack production architectures for ambitious UAE brands.",
+    "heroPrimaryCtaLabel": "Book Technical Consultation",
+    "heroPrimaryCtaUrl": "#contact",
+    "heroSecondaryCtaLabel": "Explore 51 Industry Platforms",
+    "heroSecondaryCtaUrl": "#work",
+    "aboutTitle": "Engineering Discipline & Working Philosophy",
+    "aboutDescription": "Behind every high-performance web platform is a commitment to continuous learning, architectural discipline, and commercial result.",
+    "statsProjects": "51+",
+    "statsClients": "98%",
+    "statsUaeDistricts": "3 Districts",
+    "statsCompileRate": "100%",
+    "selectedProjectIds": [
+      "p-1",
+      "p-3"
+    ]
+  },
+  "navigationItems": [
+    {
+      "id": "nav-1",
+      "label": "Work",
+      "url": "#work",
+      "order": 1,
+      "visible": true
+    },
+    {
+      "id": "nav-2",
+      "label": "Services",
+      "url": "#services",
+      "order": 2,
+      "visible": true
+    },
+    {
+      "id": "nav-3",
+      "label": "Expertise",
+      "url": "#expertise",
+      "order": 3,
+      "visible": true
+    },
+    {
+      "id": "nav-4",
+      "label": "Pricing",
+      "url": "#pricing",
+      "order": 4,
+      "visible": true
+    },
+    {
+      "id": "nav-5",
+      "label": "FAQ",
+      "url": "#faq",
+      "order": 5,
+      "visible": true
+    },
+    {
+      "id": "nav-6",
+      "label": "Contact",
+      "url": "#contact",
+      "order": 6,
+      "visible": true
+    }
+  ],
+  "faqItems": [
+    {
+      "id": "faq-1",
+      "question": "How quickly can WebStudioAE deploy a standalone UAE industry platform?",
+      "answer": "Our custom Next.js 16 architectures compile to static production builds within 24 to 72 hours, with sub-5s prerendering.",
+      "category": "General",
+      "order": 1,
+      "published": true
+    },
+    {
+      "id": "faq-2",
+      "question": "Are your platforms 100% brand-isolated?",
+      "answer": "Yes. Each project features isolated color tokens, custom monograms, distinct typography, and zero agency contamination.",
+      "category": "Branding",
+      "order": 2,
+      "published": true
+    }
+  ],
+  "mediaItems": [],
+  "seoConfig": {
+    "defaultTitle": "WebStudioAE — Bespoke UAE Web Development & Digital Solutions",
+    "defaultDescription": "Architecting high-impact Next.js 16 web applications, AI workflows, and digital platforms across Dubai and Abu Dhabi.",
+    "ogImage": "https://barakahalrizquae.com/og-image.jpg",
+    "indexingEnabled": true
+  },
+  "analyticsEvents": [],
+  "foodstuffCategories": [
+    {
+      "id": "vegetables",
+      "name": "VEGETABLES",
+      "displayName": "Fresh Vegetables",
+      "arabicName": "خضروات طازجة",
+      "description": "Fresh farm-sourced and imported vegetables including tomatoes, potatoes, onions, carrots, and leafy greens.",
+      "image": "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?q=80&w=800&auto=format&fit=crop",
+      "displayOrder": 1,
+      "active": true,
+      "createdAt": "2026-10-01T00:00:00.000Z",
+      "updatedAt": "2026-10-01T00:00:00.000Z"
+    },
+    {
+      "id": "fruits",
+      "name": "FRUITS",
+      "displayName": "Fresh Fruits",
+      "arabicName": "فواكه طازجة",
+      "description": "Premium imported citrus, bananas, apples, watermelons, and seasonal exotic fruits.",
+      "image": "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?q=80&w=800&auto=format&fit=crop",
+      "displayOrder": 2,
+      "active": true,
+      "createdAt": "2026-10-01T00:00:00.000Z",
+      "updatedAt": "2026-10-01T00:00:00.000Z"
+    },
+    {
+      "id": "spices",
+      "name": "SPICES",
+      "displayName": "Spices & Seasonings",
+      "arabicName": "توابل وبهارات",
+      "description": "Whole and powdered export-grade spices including whole red chilli, black pepper, cardamom, and cumin.",
+      "image": "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=800&auto=format&fit=crop",
+      "displayOrder": 3,
+      "active": true,
+      "createdAt": "2026-10-01T00:00:00.000Z",
+      "updatedAt": "2026-10-01T00:00:00.000Z"
+    },
+    {
+      "id": "pulses",
+      "name": "PULSES",
+      "displayName": "Lentils & Pulses",
+      "arabicName": "بقوليات وعدس",
+      "description": "Commercial graded yellow lentils, red lentils, chickpeas, and white beans in 25kg & 50kg bags.",
+      "image": "https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?q=80&w=800&auto=format&fit=crop",
+      "displayOrder": 4,
+      "active": true,
+      "createdAt": "2026-10-01T00:00:00.000Z",
+      "updatedAt": "2026-10-01T00:00:00.000Z"
+    },
+    {
+      "id": "rice-grains",
+      "name": "RICE & GRAINS",
+      "displayName": "Rice & Grains",
+      "arabicName": "أرز وحبوب",
+      "description": "Premium long grain 1121 Sella Basmati rice, non-basmati varieties, and whole grain wheat.",
+      "image": "https://images.unsplash.com/photo-1586201375761-83865001e31c?q=80&w=800&auto=format&fit=crop",
+      "displayOrder": 5,
+      "active": true,
+      "createdAt": "2026-10-01T00:00:00.000Z",
+      "updatedAt": "2026-10-01T00:00:00.000Z"
+    },
+    {
+      "id": "dry-food",
+      "name": "DRY FOOD",
+      "displayName": "Dry Food & Dry Fruits",
+      "arabicName": "أغذية جافة ومكسرات",
+      "description": "Wholesale cashews, almonds, raisins, dates, and non-perishable pantry dry food items.",
+      "image": "https://images.unsplash.com/photo-1508061253366-f7da158b6d46?q=80&w=800&auto=format&fit=crop",
+      "displayOrder": 6,
+      "active": true,
+      "createdAt": "2026-10-01T00:00:00.000Z",
+      "updatedAt": "2026-10-01T00:00:00.000Z"
+    }
+  ]
 }

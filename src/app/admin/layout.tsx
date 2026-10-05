@@ -10,6 +10,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [authenticated, setAuthenticated] = useState<boolean | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const [pendingOrdersCount, setPendingOrdersCount] = useState<number>(0);
+
   useEffect(() => {
     if (pathname === '/admin/login') {
       setAuthenticated(true);
@@ -35,6 +37,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     setMobileMenuOpen(false);
   }, [pathname]);
 
+  // Fetch pending orders badge count
+  useEffect(() => {
+    if (authenticated && pathname !== '/admin/login') {
+      fetch('/api/admin/foodstuff/orders')
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data?.metrics?.pending !== undefined) {
+            setPendingOrdersCount(data.metrics.pending);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [authenticated, pathname]);
+
   if (pathname === '/admin/login') {
     return <>{children}</>;
   }
@@ -58,21 +74,41 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const navGroups = [
     {
-      group: 'OVERVIEW',
-      items: [{ label: 'Executive Overview', href: '/admin', icon: '📊' }],
-    },
-    {
-      group: 'FOODSTUFF OPERATIONS',
+      group: 'COMMERCIAL HUB',
       items: [
-        { label: 'Live Market & Container Prices', href: '/admin/foodstuff-prices', icon: '🥬' },
-        { label: 'Customer Inquiries & Leads', href: '/admin/leads', icon: '📥' },
+        { label: 'Executive Overview', href: '/admin', icon: '📊' },
+        { 
+          label: 'Wholesale Orders', 
+          href: '/admin/orders', 
+          icon: '📦', 
+          badge: pendingOrdersCount > 0 ? `${pendingOrdersCount}` : undefined 
+        },
+        { label: 'Sales History', href: '/admin/sales', icon: '📈' },
+        { label: 'Payments & Receivables', href: '/admin/payments', icon: '💳' },
+        { label: 'Sales Reports & Analytics', href: '/admin/reports', icon: '📑' },
+        { label: 'Import & Export Center', href: '/admin/import-export', icon: '🔄' },
       ],
     },
     {
-      group: 'SYSTEM',
+      group: 'CATALOG & INVENTORY',
+      items: [
+        { label: 'Products Management', href: '/admin/products', icon: '🥦' },
+        { label: 'Product Categories', href: '/admin/categories', icon: '🏷️' },
+        { label: 'Live Commodity Prices', href: '/admin/foodstuff-prices', icon: '💹' },
+      ],
+    },
+    {
+      group: 'CRM & CLIENTS',
+      items: [
+        { label: 'Clients & Buyers', href: '/admin/customers', icon: '👥' },
+        { label: 'Customer Inquiries & RFQ', href: '/admin/leads', icon: '📥' },
+      ],
+    },
+    {
+      group: 'SYSTEM & SECURITY',
       items: [
         { label: 'Admin Security', href: '/admin/account', icon: '👤' },
-        { label: 'Audit Logs', href: '/admin/activity', icon: '📜' },
+        { label: 'Audit Activity Logs', href: '/admin/activity', icon: '📜' },
       ],
     },
   ];
@@ -153,7 +189,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                       }`}
                     >
                       <span>{item.icon}</span>
-                      <span>{item.label}</span>
+                      <span className="truncate">{item.label}</span>
+                      {item.badge && (
+                        <span className="ml-auto bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-mono px-2 py-0.5 rounded-full">
+                          {item.badge}
+                        </span>
+                      )}
                     </Link>
                   );
                 })}

@@ -19,6 +19,7 @@ import {
   ActivityLog,
   AnalyticsEvent,
   FoodstuffProduct,
+  FoodstuffCategoryItem,
   FoodstuffContainerPrice,
   FoodstuffMarketPrice,
   FoodstuffPriceHistory,
@@ -27,8 +28,15 @@ import {
   WholesaleOrder,
   WholesaleOrderItem,
   WholesaleOrderStatus,
+  WholesaleCustomer,
+  WholesalePayment,
+  WholesalePaymentMethod,
+  WholesalePaymentType,
+  PaymentTransactionStatus,
+  OrderPaymentSummary,
+  CustomerStatementItem,
 } from "@/lib/db/types";
-import { getDynamicUAESession, calculatePricePerKg } from "@/lib/foodstuff/utils";
+import { getDynamicUAESession, calculatePricePerKg, DEFAULT_FOODSTUFF_CATEGORIES } from "@/lib/foodstuff/utils";
 
 try {
   if (typeof dns.setServers === "function") {
@@ -177,6 +185,55 @@ export async function getFoodstuffScheduleCollection(): Promise<Collection<Foods
   return db.collection<FoodstuffUpdateSchedule & { _id: string }>("foodstuff_schedule");
 }
 
+export async function getFoodstuffCategoriesCollection(): Promise<Collection<FoodstuffCategoryItem & { _id: string }>> {
+  const db = await getDb();
+  return db.collection<FoodstuffCategoryItem & { _id: string }>("foodstuff_categories");
+}
+
+export async function getFoodstuffCategories(): Promise<FoodstuffCategoryItem[]> {
+  try {
+    const col = await getFoodstuffCategoriesCollection();
+    const items = await col.find({}).sort({ displayOrder: 1 }).toArray();
+    if (items && items.length > 0) return items;
+  } catch (err) {
+    console.warn('MongoDB getFoodstuffCategories fallback:', (err as Error).message);
+  }
+  try {
+    const { readDB } = await import('@/lib/db/index');
+    const cats = readDB().foodstuffCategories;
+    if (cats && cats.length > 0) return cats;
+  } catch {}
+  return DEFAULT_FOODSTUFF_CATEGORIES;
+}
+
+export async function saveFoodstuffCategory(
+  category: FoodstuffCategoryItem,
+  adminEmail: string = 'admin@barakahalrizquae.com'
+): Promise<FoodstuffCategoryItem> {
+  const now = new Date().toISOString();
+  const safeCat: FoodstuffCategoryItem & { _id: string } = {
+    ...category,
+    _id: category.id,
+    updatedAt: now,
+    createdAt: category.createdAt || now,
+  };
+
+  try {
+    const col = await getFoodstuffCategoriesCollection();
+    await col.replaceOne({ _id: category.id }, safeCat, { upsert: true });
+  } catch (err) {
+    console.warn('MongoDB saveFoodstuffCategory fallback to JSON:', (err as Error).message);
+  }
+
+  try {
+    const { db } = await import('@/lib/db/index');
+    db.foodstuff.saveCategory(safeCat, adminEmail);
+  } catch {}
+
+  await logActivityToMongo(adminEmail, 'CATEGORY_SAVED', category.id);
+  return safeCat;
+}
+
 export async function getFoodstuffProducts(): Promise<FoodstuffProduct[]> {
   try {
     const col = await getFoodstuffProductsCollection();
@@ -191,6 +248,253 @@ export async function getFoodstuffProducts(): Promise<FoodstuffProduct[]> {
   } catch {
     return [];
   }
+}
+
+function syncProductToLocalJson(product: FoodstuffProduct): void {
+  try {
+    const fp = path.join(process.cwd(), 'data', 'barakah', 'foodstuff-products.json');
+    if (fs.existsSync(fp)) {
+      const raw = fs.readFileSync(fp, 'utf-8');
+      const list: FoodstuffProduct[] = JSON.parse(raw);
+      const idx = list.findIndex(p => p.id === product.id);
+      if (idx >= 0) {
+        list[idx] = product;
+      } else {
+        list.push(product);
+      }
+      fs.writeFileSync(fp, JSON.stringify(list, null, 2), 'utf-8');
+    }
+  } catch {}
+}
+
+export async function createFoodstuffProduct(
+  productData: Omit<FoodstuffProduct, 'createdAt' | 'updatedAt'>,
+  containerPricing?: { priceAED: number | null; moq?: string; packagingUnit?: string; packagingDetails?: string; netWeightKg?: number | null },
+  marketPricing?: { priceAED: number | null; minPurchaseQty?: string; packagingUnit?: string; packagingDetails?: string; netWeightKg?: number | null },
+  adminEmail: string = 'admin@barakahalrizquae.com'
+): Promise<{ product: FoodstuffProduct; containerPrice: FoodstuffContainerPrice; marketPrice: FoodstuffMarketPrice }> {
+  const existingList = await getFoodstuffProducts();
+  if (existingList.some(p => p.id.toLowerCase() === productData.id.toLowerCase())) {
+    throw new Error(`Product with ID or Slug "${productData.id}" already exists.`);
+  }
+
+  const nowISO = new Date().toISOString();
+  const newProduct: FoodstuffProduct = {
+    ...productData,
+    published: productData.published !== undefined ? productData.published : true,
+    createdAt: nowISO,
+    updatedAt: nowISO,
+  };
+
+  // 1. Save product to MongoDB
+  try {
+    const col = await getFoodstuffProductsCollection();
+    await col.insertOne({ ...newProduct, _id: newProduct.id } as any);
+  } catch (err) {
+    console.warn('MongoDB createFoodstuffProduct fallback:', (err as Error).message);
+  }
+
+  // 2. Save product to local JSON
+  try {
+    const { db } = await import('@/lib/db/index');
+    db.foodstuff.saveProduct(newProduct, adminEmail);
+    syncProductToLocalJson(newProduct);
+  } catch {}
+
+  // 3. Create Container Price Record
+  const sched = await getFoodstuffSchedule();
+  const dynamicSession = getDynamicUAESession(sched).session;
+  const containerPriceAED = containerPricing?.priceAED !== undefined ? containerPricing.priceAED : null;
+  const containerNetWeight = containerPricing?.netWeightKg !== undefined ? containerPricing.netWeightKg : newProduct.defaultNetWeightKg;
+  const containerCalcKg = calculatePricePerKg(containerPriceAED, containerNetWeight);
+
+  const newContainerPrice: FoodstuffContainerPrice = {
+    id: `cp-${newProduct.id}`,
+    productId: newProduct.id,
+    importerSupplierName: 'Barakah Direct Import Desk',
+    packagingUnit: containerPricing?.packagingUnit || newProduct.defaultPackagingUnit || 'CTN',
+    packagingDetails: containerPricing?.packagingDetails || newProduct.defaultPackagingDetails || 'Standard Wholesale Package',
+    netWeightKg: containerNetWeight,
+    priceAED: containerPriceAED,
+    calculatedPricePerKg: containerCalcKg,
+    moq: containerPricing?.moq || newProduct.defaultMoq || '100 CTN',
+    containerAvailability: 'Direct Port Delivery (Jebel Ali / Dubai Ports)',
+    portOfArrival: 'Jebel Ali Port / Dubai Ports',
+    businessStatus: containerPriceAED !== null ? 'AVAILABLE' : 'PRICE_ON_REQUEST',
+    validUntil: null,
+    lastUpdated: nowISO,
+    updateSession: dynamicSession,
+    updateSource: 'ADMIN_VERIFIED_RATE_SHEET',
+    updatedBy: adminEmail,
+  };
+
+  try {
+    const cpCol = await getFoodstuffContainerPricesCollection();
+    await cpCol.replaceOne({ _id: newContainerPrice.id }, { ...newContainerPrice, _id: newContainerPrice.id } as any, { upsert: true });
+  } catch {}
+
+  try {
+    const { readDB, writeDB } = await import('@/lib/db/index');
+    const data = readDB();
+    data.foodstuffContainerPrices = data.foodstuffContainerPrices || [];
+    const idx = data.foodstuffContainerPrices.findIndex(c => c.id === newContainerPrice.id);
+    if (idx >= 0) data.foodstuffContainerPrices[idx] = newContainerPrice;
+    else data.foodstuffContainerPrices.push(newContainerPrice);
+    writeDB(data);
+  } catch {}
+
+  // 4. Create Market Price Record
+  const marketPriceAED = marketPricing?.priceAED !== undefined ? marketPricing.priceAED : null;
+  const marketNetWeight = marketPricing?.netWeightKg !== undefined ? marketPricing.netWeightKg : newProduct.defaultNetWeightKg;
+  const marketCalcKg = calculatePricePerKg(marketPriceAED, marketNetWeight);
+
+  const newMarketPrice: FoodstuffMarketPrice = {
+    id: `mp-${newProduct.id}`,
+    productId: newProduct.id,
+    marketLocation: 'Al Aweer Central Fruit & Vegetable Market, Ras Al Khor, Dubai',
+    packagingUnit: marketPricing?.packagingUnit || newProduct.defaultPackagingUnit || 'BOX',
+    packagingDetails: marketPricing?.packagingDetails || newProduct.defaultPackagingDetails || 'Market Wholesale Packaging',
+    netWeightKg: marketNetWeight,
+    priceAED: marketPriceAED,
+    previousPriceAED: null,
+    changePercent: null,
+    trend: 'STABLE',
+    calculatedPricePerKg: marketCalcKg,
+    minPurchaseQty: marketPricing?.minPurchaseQty || '10 Units',
+    qualityGrade: newProduct.grade || 'Grade A Market Fresh',
+    marketSession: dynamicSession,
+    businessStatus: marketPriceAED !== null ? 'AVAILABLE' : 'PRICE_ON_REQUEST',
+    lastUpdated: nowISO,
+    updateSource: 'AL_AWEER_MARKET_UPDATE',
+    updatedBy: adminEmail,
+  };
+
+  try {
+    const mpCol = await getFoodstuffMarketPricesCollection();
+    await mpCol.replaceOne({ _id: newMarketPrice.id }, { ...newMarketPrice, _id: newMarketPrice.id } as any, { upsert: true });
+  } catch {}
+
+  try {
+    const { readDB, writeDB } = await import('@/lib/db/index');
+    const data = readDB();
+    data.foodstuffMarketPrices = data.foodstuffMarketPrices || [];
+    const idx = data.foodstuffMarketPrices.findIndex(m => m.id === newMarketPrice.id);
+    if (idx >= 0) data.foodstuffMarketPrices[idx] = newMarketPrice;
+    else data.foodstuffMarketPrices.push(newMarketPrice);
+    writeDB(data);
+  } catch {}
+
+  await logActivityToMongo(adminEmail, 'PRODUCT_CREATED', newProduct.id);
+  return { product: newProduct, containerPrice: newContainerPrice, marketPrice: newMarketPrice };
+}
+
+export async function updateFoodstuffProduct(
+  id: string,
+  productUpdates: Partial<FoodstuffProduct>,
+  containerUpdates?: { priceAED?: number | null; moq?: string; packagingUnit?: string; packagingDetails?: string; netWeightKg?: number | null },
+  marketUpdates?: { priceAED?: number | null; minPurchaseQty?: string; packagingUnit?: string; packagingDetails?: string; netWeightKg?: number | null },
+  adminEmail: string = 'admin@barakahalrizquae.com'
+): Promise<FoodstuffProduct | null> {
+  const existingList = await getFoodstuffProducts();
+  const existing = existingList.find(p => p.id === id);
+  if (!existing) return null;
+
+  const nowISO = new Date().toISOString();
+  const updatedProduct: FoodstuffProduct = {
+    ...existing,
+    ...productUpdates,
+    id: existing.id,
+    updatedAt: nowISO,
+  };
+
+  // 1. Update in Mongo
+  try {
+    const col = await getFoodstuffProductsCollection();
+    await col.replaceOne({ $or: [{ _id: id }, { id }] }, { ...updatedProduct, _id: id } as any, { upsert: true });
+  } catch (err) {
+    console.warn('MongoDB updateFoodstuffProduct fallback:', (err as Error).message);
+  }
+
+  // 2. Update in JSON
+  try {
+    const { db } = await import('@/lib/db/index');
+    db.foodstuff.saveProduct(updatedProduct, adminEmail);
+    syncProductToLocalJson(updatedProduct);
+  } catch {}
+
+  // 3. Update container pricing if requested
+  if (containerUpdates) {
+    const cpCol = await getFoodstuffContainerPrices();
+    const existingCp = cpCol.find(c => c.productId === id);
+    if (existingCp) {
+      await updateFoodstuffContainerPrice(existingCp.id, containerUpdates, adminEmail);
+    }
+  }
+
+  // 4. Update market pricing if requested
+  if (marketUpdates) {
+    const mpCol = await getFoodstuffMarketPrices();
+    const existingMp = mpCol.find(m => m.productId === id);
+    if (existingMp) {
+      await updateFoodstuffMarketPrice(existingMp.id, marketUpdates, adminEmail);
+    }
+  }
+
+  await logActivityToMongo(adminEmail, 'PRODUCT_UPDATED', id);
+  return updatedProduct;
+}
+
+export async function archiveFoodstuffProduct(id: string, adminEmail: string = 'admin@barakahalrizquae.com'): Promise<FoodstuffProduct | null> {
+  return updateFoodstuffProduct(id, { published: false }, undefined, undefined, adminEmail);
+}
+
+export async function activateFoodstuffProduct(id: string, adminEmail: string = 'admin@barakahalrizquae.com'): Promise<FoodstuffProduct | null> {
+  return updateFoodstuffProduct(id, { published: true }, undefined, undefined, adminEmail);
+}
+
+export async function deleteFoodstuffProduct(id: string, adminEmail: string = 'admin@barakahalrizquae.com'): Promise<{ success: boolean; reason?: string; message: string }> {
+  // 1. Check if product is referenced in any wholesale order
+  const orders = await getWholesaleOrders();
+  const hasOrders = orders.some(o => o.items && o.items.some(item => item.productId === id));
+  if (hasOrders) {
+    await archiveFoodstuffProduct(id, adminEmail);
+    return {
+      success: false,
+      reason: 'ORDER_HISTORY_EXISTS',
+      message: 'Product has historical wholesale order records. To protect order history and audit compliance, the product has been Archived instead of permanently deleted.'
+    };
+  }
+
+  // 2. Safe to delete
+  try {
+    const col = await getFoodstuffProductsCollection();
+    await col.deleteOne({ $or: [{ _id: id }, { id }] });
+  } catch {}
+
+  try {
+    const cpCol = await getFoodstuffContainerPricesCollection();
+    await cpCol.deleteMany({ productId: id });
+    const mpCol = await getFoodstuffMarketPricesCollection();
+    await mpCol.deleteMany({ productId: id });
+  } catch {}
+
+  try {
+    const { readDB, writeDB } = await import('@/lib/db/index');
+    const data = readDB();
+    data.foodstuffProducts = (data.foodstuffProducts || []).filter(p => p.id !== id);
+    data.foodstuffContainerPrices = (data.foodstuffContainerPrices || []).filter(c => c.productId !== id);
+    data.foodstuffMarketPrices = (data.foodstuffMarketPrices || []).filter(m => m.productId !== id);
+    writeDB(data);
+
+    const fp = path.join(process.cwd(), 'data', 'barakah', 'foodstuff-products.json');
+    if (fs.existsSync(fp)) {
+      const list: FoodstuffProduct[] = JSON.parse(fs.readFileSync(fp, 'utf-8'));
+      fs.writeFileSync(fp, JSON.stringify(list.filter(p => p.id !== id), null, 2), 'utf-8');
+    }
+  } catch {}
+
+  await logActivityToMongo(adminEmail, 'PRODUCT_DELETED', id);
+  return { success: true, message: 'Product successfully removed from database.' };
 }
 
 export async function getFoodstuffContainerPrices(): Promise<FoodstuffContainerPrice[]> {
@@ -844,7 +1148,7 @@ function getLocalOrdersFilePath(): string {
   return path.join(process.cwd(), "data", "barakah", "wholesale_orders.json");
 }
 
-function readLocalOrders(): WholesaleOrder[] {
+export function readLocalOrders(): WholesaleOrder[] {
   try {
     const fp = getLocalOrdersFilePath();
     if (fs.existsSync(fp)) {
@@ -855,7 +1159,7 @@ function readLocalOrders(): WholesaleOrder[] {
   return [];
 }
 
-function writeLocalOrders(orders: WholesaleOrder[]): void {
+export function writeLocalOrders(orders: WholesaleOrder[]): void {
   try {
     const fp = getLocalOrdersFilePath();
     fs.mkdirSync(path.dirname(fp), { recursive: true });
@@ -864,14 +1168,32 @@ function writeLocalOrders(orders: WholesaleOrder[]): void {
 }
 
 export async function getWholesaleOrders(): Promise<WholesaleOrder[]> {
+  const localOrders = readLocalOrders();
+  let mongoOrders: WholesaleOrder[] = [];
   try {
     const col = await getWholesaleOrdersCollection();
-    const items = await col.find({}).sort({ createdAt: -1 }).toArray();
-    if (items && items.length > 0) return items;
+    mongoOrders = await col.find({}).sort({ createdAt: -1 }).toArray();
   } catch (err) {
-    console.warn("MongoDB getWholesaleOrders fallback:", (err as Error).message);
+    // Mongo unreachable in this environment; safely rely on local JSON
   }
-  return readLocalOrders();
+
+  // Merge & deduplicate by ID, prioritizing the most recent updatedAt timestamp
+  const orderMap = new Map<string, WholesaleOrder>();
+  for (const o of mongoOrders) {
+    orderMap.set(o.id, o);
+  }
+  for (const o of localOrders) {
+    const existing = orderMap.get(o.id);
+    if (!existing || new Date(o.updatedAt || o.createdAt).getTime() >= new Date(existing.updatedAt || existing.createdAt).getTime()) {
+      orderMap.set(o.id, o);
+    }
+  }
+
+  const merged = Array.from(orderMap.values()).sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+
+  return merged;
 }
 
 export async function createWholesaleOrder(
@@ -982,3 +1304,642 @@ export async function updateWholesaleOrderStatus(
   return updatedOrder;
 }
 
+// ==========================================
+// B2B WHOLESALE CUSTOMERS / BUYERS CRM
+// ==========================================
+
+export async function getWholesaleCustomersCollection(): Promise<Collection<WholesaleCustomer & { _id: string }>> {
+  const db = await getDb();
+  return db.collection<WholesaleCustomer & { _id: string }>("wholesale_customers");
+}
+
+function getLocalCustomersFilePath(): string {
+  return path.join(process.cwd(), "data", "barakah", "customers.json");
+}
+
+function readLocalCustomers(): WholesaleCustomer[] {
+  try {
+    const fp = getLocalCustomersFilePath();
+    if (fs.existsSync(fp)) {
+      const raw = fs.readFileSync(fp, "utf-8");
+      return JSON.parse(raw);
+    }
+  } catch {}
+  return [];
+}
+
+function writeLocalCustomers(customers: WholesaleCustomer[]): void {
+  try {
+    const fp = getLocalCustomersFilePath();
+    fs.mkdirSync(path.dirname(fp), { recursive: true });
+    fs.writeFileSync(fp, JSON.stringify(customers, null, 2), "utf-8");
+  } catch {}
+}
+
+export function normalizePhone(phone: string): string {
+  if (!phone) return '';
+  return phone.replace(/[^\d+]/g, '').replace(/^00/, '+');
+}
+
+export async function getWholesaleCustomers(): Promise<WholesaleCustomer[]> {
+  const [orders, localSaved] = await Promise.all([
+    getWholesaleOrders(),
+    readLocalCustomers(),
+  ]);
+
+  let mongoSaved: WholesaleCustomer[] = [];
+  try {
+    const col = await getWholesaleCustomersCollection();
+    mongoSaved = await col.find({}).toArray();
+  } catch {}
+
+  // Merge saved profile overrides (notes, trn, company edits)
+  const profileOverrides = new Map<string, Partial<WholesaleCustomer>>();
+  for (const c of [...localSaved, ...mongoSaved]) {
+    const key = normalizePhone(c.phone) || c.email?.toLowerCase().trim();
+    if (key) {
+      profileOverrides.set(key, { ...(profileOverrides.get(key) || {}), ...c });
+    }
+  }
+
+  // Aggregate customers from all real orders
+  const customerMap = new Map<string, WholesaleCustomer>();
+
+  for (const order of orders) {
+    const normPhone = normalizePhone(order.phone);
+    const normEmail = (order.email || '').toLowerCase().trim();
+    const primaryKey = normPhone || normEmail;
+
+    if (!primaryKey) continue;
+
+    const existing = customerMap.get(primaryKey);
+    const orderDate = order.createdAt;
+    const isCompleted = order.status === 'COMPLETED';
+
+    if (existing) {
+      existing.totalOrders += 1;
+      existing.totalCtn += order.totalCtn;
+      existing.totalOrderValueAED = parseFloat((existing.totalOrderValueAED + order.totalAED).toFixed(2));
+      if (isCompleted) {
+        existing.completedOrderValueAED = parseFloat((existing.completedOrderValueAED + order.totalAED).toFixed(2));
+      }
+      if (!existing.lastOrderDate || new Date(orderDate) > new Date(existing.lastOrderDate)) {
+        existing.lastOrderDate = orderDate;
+        existing.latestStatus = order.status;
+      }
+      if (order.companyName && !existing.companyName) {
+        existing.companyName = order.companyName;
+      }
+    } else {
+      const override = profileOverrides.get(primaryKey) || {};
+      const newCust: WholesaleCustomer = {
+        id: override.id || `cust-${normPhone.replace(/\+/g, '') || Math.random().toString(36).substring(2, 8)}`,
+        name: override.name || order.customerName,
+        companyName: override.companyName || order.companyName || undefined,
+        phone: order.phone,
+        email: order.email,
+        whatsapp: override.whatsapp || order.phone,
+        trn: override.trn,
+        notes: override.notes,
+        totalOrders: 1,
+        totalCtn: order.totalCtn,
+        totalOrderValueAED: order.totalAED,
+        completedOrderValueAED: isCompleted ? order.totalAED : 0,
+        lastOrderDate: orderDate,
+        latestStatus: order.status,
+        createdAt: orderDate,
+        updatedAt: order.updatedAt || orderDate,
+      };
+      customerMap.set(primaryKey, newCust);
+    }
+  }
+
+  // Also include any standalone customers saved by Admin that don't have orders yet
+  for (const [key, profile] of profileOverrides.entries()) {
+    if (!customerMap.has(key) && profile.name && profile.phone) {
+      customerMap.set(key, {
+        id: profile.id || `cust-${key.replace(/\+/g, '')}`,
+        name: profile.name,
+        companyName: profile.companyName,
+        phone: profile.phone,
+        email: profile.email || '',
+        whatsapp: profile.whatsapp || profile.phone,
+        trn: profile.trn,
+        notes: profile.notes,
+        totalOrders: profile.totalOrders || 0,
+        totalCtn: profile.totalCtn || 0,
+        totalOrderValueAED: profile.totalOrderValueAED || 0,
+        completedOrderValueAED: profile.completedOrderValueAED || 0,
+        lastOrderDate: profile.lastOrderDate,
+        latestStatus: profile.latestStatus,
+        createdAt: profile.createdAt || new Date().toISOString(),
+        updatedAt: profile.updatedAt || new Date().toISOString(),
+      });
+    }
+  }
+
+  const list = Array.from(customerMap.values()).sort((a, b) => {
+    const timeA = a.lastOrderDate ? new Date(a.lastOrderDate).getTime() : 0;
+    const timeB = b.lastOrderDate ? new Date(b.lastOrderDate).getTime() : 0;
+    return timeB - timeA;
+  });
+
+  return list;
+}
+
+export async function saveWholesaleCustomer(
+  customerData: Partial<WholesaleCustomer> & { name: string; phone: string; email?: string },
+  adminEmail: string = 'admin@barakahalrizquae.com'
+): Promise<WholesaleCustomer> {
+  const normPhone = normalizePhone(customerData.phone);
+  const id = customerData.id || `cust-${normPhone.replace(/\+/g, '') || Date.now()}`;
+  const nowISO = new Date().toISOString();
+
+  const savedRecord: WholesaleCustomer = {
+    id,
+    name: customerData.name.trim(),
+    companyName: customerData.companyName?.trim() || undefined,
+    phone: customerData.phone.trim(),
+    email: (customerData.email || '').trim(),
+    whatsapp: (customerData.whatsapp || customerData.phone).trim(),
+    trn: customerData.trn?.trim() || undefined,
+    notes: customerData.notes?.trim() || undefined,
+    totalOrders: customerData.totalOrders || 0,
+    totalCtn: customerData.totalCtn || 0,
+    totalOrderValueAED: customerData.totalOrderValueAED || 0,
+    completedOrderValueAED: customerData.completedOrderValueAED || 0,
+    lastOrderDate: customerData.lastOrderDate,
+    latestStatus: customerData.latestStatus,
+    createdAt: customerData.createdAt || nowISO,
+    updatedAt: nowISO,
+  };
+
+  // 1. Sync to local JSON fallback
+  const localList = readLocalCustomers();
+  const idx = localList.findIndex(c => c.id === id || normalizePhone(c.phone) === normPhone);
+  if (idx >= 0) {
+    localList[idx] = { ...localList[idx], ...savedRecord };
+  } else {
+    localList.unshift(savedRecord);
+  }
+  writeLocalCustomers(localList);
+
+  // 2. Try MongoDB
+  try {
+    const col = await getWholesaleCustomersCollection();
+    await col.replaceOne({ $or: [{ _id: id }, { id }] }, { ...savedRecord, _id: id } as any, { upsert: true });
+  } catch (err) {
+    console.warn("MongoDB saveWholesaleCustomer fallback to JSON:", (err as Error).message);
+  }
+
+  await logActivityToMongo(adminEmail, 'CUSTOMER_UPDATED', id);
+  return savedRecord;
+}
+
+// ==========================================
+// WHOLESALE PAYMENTS & ACCOUNTS RECEIVABLE PERSISTENCE
+// ==========================================
+
+function getLocalPaymentsFilePath(): string {
+  return path.join(process.cwd(), "data", "barakah", "payments.json");
+}
+
+export function readLocalPayments(): WholesalePayment[] {
+  try {
+    const fp = getLocalPaymentsFilePath();
+    if (fs.existsSync(fp)) {
+      const raw = fs.readFileSync(fp, "utf-8");
+      return JSON.parse(raw);
+    }
+  } catch {}
+  return [];
+}
+
+export function writeLocalPayments(payments: WholesalePayment[]): void {
+  const fp = getLocalPaymentsFilePath();
+  const dir = path.dirname(fp);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  const tmpPath = `${fp}.${Date.now()}.${Math.random().toString(36).substring(2, 6)}.tmp`;
+  fs.writeFileSync(tmpPath, JSON.stringify(payments, null, 2), "utf-8");
+  fs.renameSync(tmpPath, fp);
+}
+
+export async function getWholesalePaymentsCollection(): Promise<Collection<WholesalePayment & { _id: string }>> {
+  const db = await getDb();
+  return db.collection<WholesalePayment & { _id: string }>("wholesale_payments");
+}
+
+export async function getWholesalePayments(): Promise<WholesalePayment[]> {
+  const localPayments = readLocalPayments();
+  let mongoPayments: WholesalePayment[] = [];
+  try {
+    const col = await getWholesalePaymentsCollection();
+    mongoPayments = await col.find({}).sort({ createdAt: -1 }).toArray();
+  } catch (err) {
+    // Mongo unreachable in this environment; fallback to local JSON
+  }
+
+  // Merge & deduplicate by ID, prioritizing latest updatedAt
+  const map = new Map<string, WholesalePayment>();
+  for (const p of mongoPayments) {
+    map.set(p.id, p);
+  }
+  for (const p of localPayments) {
+    const existing = map.get(p.id);
+    if (!existing || new Date(p.updatedAt || p.createdAt).getTime() >= new Date(existing.updatedAt || existing.createdAt).getTime()) {
+      map.set(p.id, p);
+    }
+  }
+
+  return Array.from(map.values()).sort(
+    (a, b) => new Date(b.paymentDate || b.createdAt).getTime() - new Date(a.paymentDate || a.createdAt).getTime()
+  );
+}
+
+export async function getOrderPaymentSummary(orderId: string): Promise<OrderPaymentSummary | null> {
+  const orders = await getWholesaleOrders();
+  const order = orders.find(o => o.id === orderId || o.id.toLowerCase() === orderId.toLowerCase());
+  if (!order) return null;
+
+  const payments = await getWholesalePayments();
+  const orderPayments = payments.filter(p => p.orderId === order.id);
+
+  const totalPaidAED = parseFloat(
+    orderPayments
+      .filter(p => p.status === 'VALID')
+      .reduce((sum, p) => sum + p.amountAED, 0)
+      .toFixed(2)
+  );
+
+  const refundedAED = parseFloat(
+    orderPayments
+      .filter(p => p.status === 'REFUNDED')
+      .reduce((sum, p) => sum + p.amountAED, 0)
+      .toFixed(2)
+  );
+
+  const netPaidAED = totalPaidAED;
+  const outstandingBalanceAED = parseFloat(Math.max(0, order.totalAED - netPaidAED).toFixed(2));
+
+  let paymentStatus: 'UNPAID' | 'PARTIALLY_PAID' | 'PAID' = 'UNPAID';
+  if (netPaidAED >= order.totalAED && order.totalAED > 0) {
+    paymentStatus = 'PAID';
+  } else if (netPaidAED > 0) {
+    paymentStatus = 'PARTIALLY_PAID';
+  }
+
+  const validPayments = orderPayments.filter(p => p.status === 'VALID');
+  const lastPaymentDate = validPayments.length > 0 ? validPayments[0].paymentDate : undefined;
+
+  return {
+    orderId: order.id,
+    orderTotalAED: order.totalAED,
+    totalPaidAED,
+    refundedAED,
+    netPaidAED,
+    outstandingBalanceAED,
+    paymentStatus,
+    paymentsCount: orderPayments.length,
+    lastPaymentDate,
+  };
+}
+
+export async function recordWholesalePayment(
+  data: {
+    orderId: string;
+    amountAED: number;
+    paymentMethod: WholesalePaymentMethod;
+    paymentType?: WholesalePaymentType;
+    paymentDate?: string;
+    referenceNumber?: string;
+    bankAccount?: string;
+    notes?: string;
+  },
+  adminEmail: string
+): Promise<{ payment: WholesalePayment; summary: OrderPaymentSummary }> {
+  // 1. Validate Amount
+  const amount = parseFloat(Number(data.amountAED).toFixed(2));
+  if (isNaN(amount) || amount <= 0) {
+    throw new Error("Payment amount must be a positive number greater than 0 AED.");
+  }
+
+  // 2. Validate Referenced Order
+  const orders = await getWholesaleOrders();
+  const order = orders.find(o => o.id === data.orderId || o.id.toLowerCase() === data.orderId.toLowerCase());
+  if (!order) {
+    throw new Error(`Referenced wholesale order "${data.orderId}" does not exist.`);
+  }
+
+  if (order.status === 'CANCELLED') {
+    throw new Error(`Cannot record payment against CANCELLED order "${order.id}".`);
+  }
+
+  // 3. Compute current balance & prevent invalid overpayment
+  const currentSummary = await getOrderPaymentSummary(order.id);
+  const currentOutstanding = currentSummary ? currentSummary.outstandingBalanceAED : order.totalAED;
+  
+  if (amount > currentOutstanding + 0.05) {
+    throw new Error(
+      `Payment amount (AED ${amount.toLocaleString()}) exceeds remaining order balance (AED ${currentOutstanding.toLocaleString()}).`
+    );
+  }
+
+  // 4. Check for duplicate submission (same order, same amount, same ref within 1 hour)
+  const existingPayments = await getWholesalePayments();
+  const normalizedRef = (data.referenceNumber || '').trim().toLowerCase();
+  const now = new Date();
+  const nowISO = now.toISOString();
+
+  const isDuplicate = existingPayments.some(p => {
+    if (p.orderId !== order.id || p.amountAED !== amount || p.status !== 'VALID') return false;
+    const diffMs = now.getTime() - new Date(p.createdAt).getTime();
+    if (diffMs > 60 * 60 * 1000) return false; // More than an hour ago
+    if (normalizedRef && p.referenceNumber && p.referenceNumber.trim().toLowerCase() === normalizedRef) {
+      return true;
+    }
+    return diffMs < 30 * 1000; // Accidental double click within 30 seconds
+  });
+
+  if (isDuplicate) {
+    throw new Error("Duplicate payment submission detected. Please verify transaction history before submitting again.");
+  }
+
+  // 5. Generate Unique Payment ID
+  const dateStr = nowISO.slice(0, 10).replace(/-/g, "");
+  const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
+  const paymentId = `BARAKAH-PAY-${dateStr}-${rand}`;
+
+  // Determine payment type
+  let derivedType: WholesalePaymentType = data.paymentType || 'PARTIAL';
+  if (amount >= currentOutstanding - 0.05) {
+    derivedType = 'FULL';
+  } else if (currentOutstanding === order.totalAED) {
+    derivedType = data.paymentType || 'PARTIAL';
+  }
+
+  const paymentRecord: WholesalePayment = {
+    id: paymentId,
+    orderId: order.id,
+    orderNumber: order.id,
+    customerName: order.customerName,
+    companyName: order.companyName,
+    phone: order.phone,
+    email: order.email,
+    amountAED: amount,
+    paymentDate: data.paymentDate ? data.paymentDate.slice(0, 10) : nowISO.slice(0, 10),
+    paymentMethod: data.paymentMethod,
+    paymentType: derivedType,
+    referenceNumber: data.referenceNumber ? data.referenceNumber.trim() : undefined,
+    bankAccount: data.bankAccount ? data.bankAccount.trim() : undefined,
+    notes: data.notes ? data.notes.trim() : undefined,
+    status: 'VALID',
+    auditTrail: [
+      {
+        action: 'RECORDED',
+        performedBy: adminEmail,
+        timestamp: nowISO,
+        reason: 'Payment recorded by administrator',
+      },
+    ],
+    createdAt: nowISO,
+    updatedAt: nowISO,
+  };
+
+  // 6. Durable Write to Local JSON
+  const localPayments = readLocalPayments();
+  localPayments.unshift(paymentRecord);
+  writeLocalPayments(localPayments);
+
+  // 7. Sync to MongoDB
+  try {
+    const col = await getWholesalePaymentsCollection();
+    await col.insertOne({ ...paymentRecord, _id: paymentId } as any);
+  } catch (err) {
+    console.warn("MongoDB recordWholesalePayment fallback to JSON:", (err as Error).message);
+  }
+
+  await logActivityToMongo(adminEmail, 'PAYMENT_RECORDED', paymentId);
+
+  // 8. Re-calculate Summary
+  const updatedSummary = (await getOrderPaymentSummary(order.id))!;
+  return { payment: paymentRecord, summary: updatedSummary };
+}
+
+export async function reverseOrRefundPayment(
+  paymentId: string,
+  action: 'REVERSED' | 'REFUNDED',
+  reason: string,
+  adminEmail: string
+): Promise<{ payment: WholesalePayment; summary: OrderPaymentSummary }> {
+  if (!reason || !reason.trim()) {
+    throw new Error(`A valid reason is required to ${action.toLowerCase()} a payment.`);
+  }
+
+  const allPayments = await getWholesalePayments();
+  const payment = allPayments.find(p => p.id === paymentId);
+  if (!payment) {
+    throw new Error(`Payment "${paymentId}" not found.`);
+  }
+
+  if (payment.status !== 'VALID') {
+    throw new Error(`Cannot ${action.toLowerCase()} payment "${paymentId}" because its status is already ${payment.status}.`);
+  }
+
+  const nowISO = new Date().toISOString();
+  const previousStatus = payment.status;
+  payment.status = action;
+  payment.updatedAt = nowISO;
+  payment.auditTrail.push({
+    action,
+    performedBy: adminEmail,
+    timestamp: nowISO,
+    reason: reason.trim(),
+    previousStatus,
+  });
+
+  // 1. Update Local JSON
+  const localPayments = readLocalPayments();
+  const idx = localPayments.findIndex(p => p.id === paymentId);
+  if (idx >= 0) {
+    localPayments[idx] = payment;
+  } else {
+    localPayments.unshift(payment);
+  }
+  writeLocalPayments(localPayments);
+
+  // 2. Update MongoDB
+  try {
+    const col = await getWholesalePaymentsCollection();
+    await col.replaceOne({ $or: [{ _id: paymentId }, { id: paymentId }] }, { ...payment, _id: paymentId } as any, { upsert: true });
+  } catch (err) {
+    console.warn(`MongoDB ${action} fallback to JSON:`, (err as Error).message);
+  }
+
+  await logActivityToMongo(adminEmail, `PAYMENT_${action}`, paymentId);
+
+  const updatedSummary = (await getOrderPaymentSummary(payment.orderId))!;
+  return { payment, summary: updatedSummary };
+}
+
+export async function getCustomerAccountStatement(customerIdentifier: string): Promise<{
+  customerInfo: { name: string; companyName?: string; phone: string; email?: string };
+  statementItems: CustomerStatementItem[];
+  totals: {
+    totalBilledAED: number;
+    totalPaidAED: number;
+    totalRefundedAED: number;
+    netPaidAED: number;
+    outstandingReceivablesAED: number;
+  };
+} | null> {
+  const normTarget = normalizePhone(customerIdentifier) || customerIdentifier.toLowerCase().trim();
+  const [orders, payments] = await Promise.all([
+    getWholesaleOrders(),
+    getWholesalePayments(),
+  ]);
+
+  const matchingOrders = orders.filter(o => {
+    return (
+      (o.id && o.id.toLowerCase() === normTarget) ||
+      (o.phone && normalizePhone(o.phone) === normTarget) ||
+      (o.email && o.email.toLowerCase().trim() === normTarget) ||
+      (o.customerName && o.customerName.toLowerCase().trim() === normTarget) ||
+      (o.companyName && o.companyName.toLowerCase().trim() === normTarget)
+    );
+  });
+
+  const matchingPayments = payments.filter(p => {
+    return (
+      matchingOrders.some(o => o.id === p.orderId) ||
+      (p.phone && normalizePhone(p.phone) === normTarget) ||
+      (p.email && p.email.toLowerCase().trim() === normTarget) ||
+      (p.customerName && p.customerName.toLowerCase().trim() === normTarget)
+    );
+  });
+
+  if (matchingOrders.length === 0 && matchingPayments.length === 0) {
+    return null;
+  }
+
+  const primary = matchingOrders[0] || matchingPayments[0];
+  const customerInfo = {
+    name: primary.customerName,
+    companyName: primary.companyName,
+    phone: primary.phone,
+    email: primary.email,
+  };
+
+  // Build Chronological Ledger
+  type RawEntry = {
+    date: string;
+    timestamp: number;
+    id: string;
+    type: 'ORDER_INVOICE' | 'PAYMENT' | 'REFUND' | 'REVERSAL';
+    reference: string;
+    description: string;
+    debitAED: number;
+    creditAED: number;
+  };
+
+  const rawEntries: RawEntry[] = [];
+
+  // Add Orders as Invoices (Debits)
+  for (const o of matchingOrders) {
+    if (o.status !== 'CANCELLED') {
+      rawEntries.push({
+        date: o.pickupDate || o.createdAt.slice(0, 10),
+        timestamp: new Date(o.createdAt).getTime(),
+        id: o.id,
+        type: 'ORDER_INVOICE',
+        reference: o.id,
+        description: `Wholesale Order #${o.id} (${o.totalCtn} CTN - ${o.orderType})`,
+        debitAED: o.totalAED,
+        creditAED: 0,
+      });
+    }
+  }
+
+  // Add Payments (Credits) and Adjustments
+  for (const p of matchingPayments) {
+    if (p.status === 'VALID') {
+      rawEntries.push({
+        date: p.paymentDate || p.createdAt.slice(0, 10),
+        timestamp: new Date(p.createdAt).getTime(),
+        id: p.id,
+        type: 'PAYMENT',
+        reference: p.referenceNumber || p.id,
+        description: `Payment Received [${p.paymentMethod}] (${p.paymentType}) - Ref: ${p.referenceNumber || 'N/A'}`,
+        debitAED: 0,
+        creditAED: p.amountAED,
+      });
+    } else if (p.status === 'REFUNDED') {
+      rawEntries.push({
+        date: p.paymentDate || p.createdAt.slice(0, 10),
+        timestamp: new Date(p.createdAt).getTime(),
+        id: p.id,
+        type: 'REFUND',
+        reference: p.id,
+        description: `Payment Refunded - ${p.auditTrail[p.auditTrail.length - 1]?.reason || 'Admin Refund'}`,
+        debitAED: p.amountAED, // Increases balance again
+        creditAED: 0,
+      });
+    } else if (p.status === 'REVERSED') {
+      rawEntries.push({
+        date: p.paymentDate || p.createdAt.slice(0, 10),
+        timestamp: new Date(p.createdAt).getTime(),
+        id: p.id,
+        type: 'REVERSAL',
+        reference: p.id,
+        description: `Payment Reversed - ${p.auditTrail[p.auditTrail.length - 1]?.reason || 'Admin Reversal'}`,
+        debitAED: p.amountAED, // Increases balance again
+        creditAED: 0,
+      });
+    }
+  }
+
+  // Sort Chronologically
+  rawEntries.sort((a, b) => a.timestamp - b.timestamp);
+
+  let runningBalance = 0;
+  const statementItems: CustomerStatementItem[] = [];
+  let totalBilledAED = 0;
+  let totalPaidAED = 0;
+  let totalRefundedAED = 0;
+
+  for (const entry of rawEntries) {
+    runningBalance += entry.debitAED - entry.creditAED;
+    totalBilledAED += entry.debitAED;
+    totalPaidAED += entry.creditAED;
+    if (entry.type === 'REFUND' || entry.type === 'REVERSAL') {
+      totalRefundedAED += entry.debitAED;
+    }
+
+    statementItems.push({
+      id: entry.id,
+      date: entry.date,
+      type: entry.type,
+      reference: entry.reference,
+      description: entry.description,
+      debitAED: entry.debitAED,
+      creditAED: entry.creditAED,
+      runningBalanceAED: parseFloat(runningBalance.toFixed(2)),
+    });
+  }
+
+  const netPaidAED = parseFloat((totalPaidAED - totalRefundedAED).toFixed(2));
+  const outstandingReceivablesAED = parseFloat(Math.max(0, runningBalance).toFixed(2));
+
+  return {
+    customerInfo,
+    statementItems,
+    totals: {
+      totalBilledAED: parseFloat(totalBilledAED.toFixed(2)),
+      totalPaidAED: parseFloat(totalPaidAED.toFixed(2)),
+      totalRefundedAED: parseFloat(totalRefundedAED.toFixed(2)),
+      netPaidAED,
+      outstandingReceivablesAED,
+    },
+  };
+}
