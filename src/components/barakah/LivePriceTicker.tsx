@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Clock, Lock, Store, Sparkles } from 'lucide-react';
+import { Clock, Lock, Store, Sparkles, ArrowRight } from 'lucide-react';
 import { MarketPriceItem } from './MarketPriceDashboard';
 import { ContainerPriceItem } from './ContainerWholesaleDashboard';
 import { INITIAL_PRODUCTS } from '@/data/barakahData';
@@ -223,9 +223,21 @@ export const LivePriceTicker: React.FC<LivePriceTickerProps> = ({
           </div>
         </div>
 
-        <div className="text-xs font-mono text-emerald-950 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-2xl border border-emerald-300 flex items-center gap-2 shadow-xs shrink-0">
-          <Clock className="w-4 h-4 text-emerald-700" />
-          <span>Live UAE Trading Date: <strong className="text-[#063D24]">{liveDateStr || '06 Oct 2026'}</strong></span>
+        <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
+          {/* View All Wholesale Products Button */}
+          <a
+            href="#live-prices"
+            className="px-4 py-2 rounded-2xl bg-[#063D24] hover:bg-[#042A18] text-amber-300 hover:text-white font-mono text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm border border-emerald-600/40 hover:scale-105 active:scale-95 cursor-pointer group"
+          >
+            <span>VIEW ALL</span>
+            <ArrowRight className="w-3.5 h-3.5 text-amber-300 group-hover:translate-x-0.5 transition-transform" />
+          </a>
+
+          {/* Live UAE Trading Date Badge */}
+          <div className="text-xs font-mono text-emerald-950 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-2xl border border-emerald-300 flex items-center gap-2 shadow-xs">
+            <Clock className="w-4 h-4 text-emerald-700" />
+            <span>Live UAE Trading Date: <strong className="text-[#063D24]">{liveDateStr || '06 Oct 2026'}</strong></span>
+          </div>
         </div>
       </div>
 

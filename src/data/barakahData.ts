@@ -121,7 +121,7 @@ export const INITIAL_PRODUCTS: BarakahProduct[] = [
     marketStatus: "DOWN",
     lastUpdated: "3 mins ago",
     origin: "India / Egypt / Turkey",
-    image: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cf?q=80&w=800&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1508747703725-719777637510?q=80&w=800&auto=format&fit=crop",
     description: "Firm, pungency-graded red and white onions selected for long storage stability and bulk commercial use.",
     packaging: "10kg Mesh Bag / 20kg Mesh Bag",
     minOrderQuantity: "1,000 KG"
@@ -189,7 +189,7 @@ export const INITIAL_PRODUCTS: BarakahProduct[] = [
     marketStatus: "DOWN",
     lastUpdated: "2 mins ago",
     origin: "South Africa / Turkey / Egypt",
-    image: "https://images.unsplash.com/photo-1587486913049-53fc88980cfc?q=80&w=800&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1590502593747-42a996133562?q=80&w=800&auto=format&fit=crop",
     description: "High-juice seedless and thin-skinned yellow lemons sorted by count sizes 100/120/140.",
     packaging: "15kg Telescopic Master Carton",
     minOrderQuantity: "500 KG"
