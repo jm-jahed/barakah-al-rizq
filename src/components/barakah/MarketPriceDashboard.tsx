@@ -240,7 +240,7 @@ export const MarketPriceDashboard: React.FC<MarketPriceDashboardProps> = ({
                       <td className="py-4 px-4 font-bold text-sm">
                         {item.priceAED !== null ? (
                           <div className="text-[#063D24]">
-                            <span>AED {item.priceAED.toFixed(2)}</span>
+                            <span>Dhs {item.priceAED.toFixed(2)}</span>
                             <span className="text-[10px] text-gray-500 font-normal ml-1">
                               / {item.packagingUnit}
                             </span>
@@ -255,7 +255,7 @@ export const MarketPriceDashboard: React.FC<MarketPriceDashboardProps> = ({
                       {/* Calculated Per KG */}
                       <td className="py-4 px-4 text-xs font-semibold text-gray-700">
                         {item.calculatedPricePerKg !== null ? (
-                          <span>AED {item.calculatedPricePerKg.toFixed(2)} / KG</span>
+                          <span>Dhs {item.calculatedPricePerKg.toFixed(2)} / KG</span>
                         ) : (
                           <span className="text-gray-400 font-normal">—</span>
                         )}

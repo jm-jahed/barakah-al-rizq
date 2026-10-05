@@ -247,7 +247,7 @@ export const ContainerWholesaleDashboard: React.FC<ContainerWholesaleDashboardPr
                       {item.priceAED !== null ? (
                         <div>
                           <span className="text-lg font-black text-emerald-400">
-                            AED {item.priceAED.toFixed(2)}
+                            Dhs {item.priceAED.toFixed(2)}
                           </span>
                           <span className="text-xs text-slate-400 ml-1">
                             / {item.packagingUnit}
@@ -266,7 +266,7 @@ export const ContainerWholesaleDashboard: React.FC<ContainerWholesaleDashboardPr
                     <div className="flex items-center justify-between text-[11px] font-mono border-t border-slate-800/80 pt-1.5 text-slate-300">
                       <span className="text-slate-400">Calculated Per KG:</span>
                       <span className="text-slate-200 font-semibold">
-                        AED {item.calculatedPricePerKg.toFixed(2)} / KG
+                        Dhs {item.calculatedPricePerKg.toFixed(2)} / KG
                       </span>
                     </div>
                   )}

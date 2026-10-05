@@ -30,7 +30,7 @@ export const FloatingCartButton: React.FC = () => {
             <span className="text-amber-300">({totalCtn} CTN)</span>
           </div>
           <div className="text-sm font-black text-white">
-            AED {totalAED.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+            Dhs {totalAED.toLocaleString('en-US', { minimumFractionDigits: 2 })}
           </div>
         </div>
 

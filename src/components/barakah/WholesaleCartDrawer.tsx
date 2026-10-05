@@ -295,7 +295,7 @@ export const WholesaleCartDrawer: React.FC = () => {
                             <div className="pt-2 border-t border-emerald-100/80 flex items-center justify-between gap-2 flex-wrap">
                               <div className="flex items-center gap-2">
                                 <span className="text-xs font-mono font-semibold text-gray-600">
-                                  AED {item.pricePerCtn.toFixed(2)} / CTN
+                                  Dhs {item.pricePerCtn.toFixed(2)} / CTN
                                 </span>
                               </div>
 
@@ -348,7 +348,7 @@ export const WholesaleCartDrawer: React.FC = () => {
                                   Line Total
                                 </span>
                                 <span className="text-xs sm:text-sm font-black font-mono text-[#063D24]">
-                                  AED {lineTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                                  Dhs {lineTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                                 </span>
                               </div>
                             </div>
@@ -404,11 +404,11 @@ export const WholesaleCartDrawer: React.FC = () => {
                           <div className="truncate max-w-[200px]">
                             <span className="font-bold text-[#063D24] block truncate">{it.productName}</span>
                             <span className="text-[10px] text-gray-500">
-                              {it.quantityCtn} CTN × AED {it.pricePerCtn.toFixed(2)} ({it.orderType === 'CONTAINER' ? 'Container' : 'Dubai Spot'})
+                              {it.quantityCtn} CTN × Dhs {it.pricePerCtn.toFixed(2)} ({it.orderType === 'CONTAINER' ? 'Container' : 'Dubai Spot'})
                             </span>
                           </div>
                           <span className="font-bold text-slate-900 shrink-0">
-                            AED {(it.quantityCtn * it.pricePerCtn).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                            Dhs {(it.quantityCtn * it.pricePerCtn).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                           </span>
                         </div>
                       ))}
@@ -422,7 +422,7 @@ export const WholesaleCartDrawer: React.FC = () => {
                       <div className="text-right">
                         <span className="text-[10px] text-gray-500 block uppercase">Total Amount</span>
                         <strong className="text-base text-[#063D24] font-black">
-                          AED {totalAED.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                          Dhs {totalAED.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                         </strong>
                       </div>
                     </div>
@@ -597,9 +597,9 @@ export const WholesaleCartDrawer: React.FC = () => {
                       <strong className="text-gray-900">{lastPlacedOrder.totalCtn} CTN</strong>
                     </div>
                     <div className="flex justify-between pb-2 border-b border-emerald-200">
-                      <span className="text-gray-500">Total Estimated AED:</span>
+                      <span className="text-gray-500">Total Estimated:</span>
                       <strong className="text-[#063D24] text-sm font-black">
-                        AED {lastPlacedOrder.totalAED.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        Dhs {lastPlacedOrder.totalAED.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                       </strong>
                     </div>
                     <div className="flex justify-between pb-2 border-b border-emerald-200">
@@ -619,7 +619,7 @@ export const WholesaleCartDrawer: React.FC = () => {
                   {/* WhatsApp Direct Confirmation Button */}
                   <a
                     href={`https://wa.me/971503735786?text=${encodeURIComponent(
-                      `Hello Barakah Al Rizq Foodstuff Trading,\n\nI have placed Wholesale Pickup Order #${lastPlacedOrder.id}.\nCustomer: ${lastPlacedOrder.customerName}${lastPlacedOrder.companyName ? ` (${lastPlacedOrder.companyName})` : ''}\nPhone: ${lastPlacedOrder.phone}\nTotal Volume: ${lastPlacedOrder.totalCtn} CTN\nTotal: AED ${lastPlacedOrder.totalAED.toFixed(2)}\nPickup Date: ${lastPlacedOrder.pickupDate}\nPickup Location: Store Pickup (Al Aweer)\n\nPlease confirm availability and staging.`
+                      `Hello Barakah Al Rizq Foodstuff Trading,\n\nI have placed Wholesale Pickup Order #${lastPlacedOrder.id}.\nCustomer: ${lastPlacedOrder.customerName}${lastPlacedOrder.companyName ? ` (${lastPlacedOrder.companyName})` : ''}\nPhone: ${lastPlacedOrder.phone}\nTotal Volume: ${lastPlacedOrder.totalCtn} CTN\nTotal: Dhs ${lastPlacedOrder.totalAED.toFixed(2)}\nPickup Date: ${lastPlacedOrder.pickupDate}\nPickup Location: Store Pickup (Al Aweer)\n\nPlease confirm availability and staging.`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -657,9 +657,9 @@ export const WholesaleCartDrawer: React.FC = () => {
                         <span className="text-sm font-extrabold text-slate-800">{totalCtn} CTN</span>
                       </div>
                       <div className="text-right">
-                        <span className="text-[10px] text-gray-500 block uppercase font-bold">Total Amount (AED)</span>
+                        <span className="text-[10px] text-gray-500 block uppercase font-bold">Total Amount</span>
                         <span className="text-xl sm:text-2xl font-black text-[#063D24]">
-                          AED {totalAED.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                          Dhs {totalAED.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                         </span>
                       </div>
                     </div>
