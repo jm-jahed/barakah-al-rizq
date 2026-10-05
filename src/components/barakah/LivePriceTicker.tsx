@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Clock, Lock, Store, Sparkles, ArrowRight } from 'lucide-react';
+import { Clock, Lock, Store, Crown, ArrowRight } from 'lucide-react';
 import { MarketPriceItem } from './MarketPriceDashboard';
 import { ContainerPriceItem } from './ContainerWholesaleDashboard';
 import { INITIAL_PRODUCTS } from '@/data/barakahData';
@@ -199,28 +199,26 @@ export const LivePriceTicker: React.FC<LivePriceTickerProps> = ({
       
       {/* Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4.5 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="relative flex h-3.5 w-3.5 shrink-0">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-700"></span>
-          </div>
-          <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-lg sm:text-xl font-black text-[#063D24] tracking-tight flex items-center gap-2">
-                <span>● LIVE MARKET TICKER</span>
-              </h3>
-              <span className="text-[10px] font-mono text-amber-950 font-black px-2.5 py-0.5 rounded-full bg-amber-300/80 border border-amber-400 uppercase tracking-wide flex items-center gap-1 shadow-2xs">
-                <Sparkles className="w-2.5 h-2.5 text-amber-800" />
-                <span>CONTAINER &amp; SPOT FEED</span>
+        <div className="w-full md:w-auto">
+          <div className="flex items-center gap-2 flex-wrap mb-1">
+            <h3 className="text-lg sm:text-xl font-black text-[#063D24] tracking-tight flex items-center gap-2">
+              <span className="relative flex h-3 w-3 shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-700"></span>
               </span>
-              <span className="text-[10px] font-mono text-emerald-900 font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 border border-emerald-300 uppercase">
-                {activeSession || 'AL AWEER'} SESSION
-              </span>
-            </div>
-            <p className="text-xs text-gray-600 font-medium mt-0.5">
-              Direct Importer Container Wholesale &amp; Al Aweer Daily Spot Market Prices • Hover to pause
-            </p>
+              <span>LIVE MARKET TICKER</span>
+            </h3>
+            <span className="text-[10px] font-mono text-amber-950 font-black px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-300 via-amber-400 to-amber-300 border border-amber-500/80 uppercase tracking-wide flex items-center gap-1 shadow-2xs">
+              <Crown className="w-3 h-3 text-amber-900 shrink-0 fill-amber-700/30" />
+              <span>CONTAINER &amp; SPOT FEED</span>
+            </span>
+            <span className="text-[10px] font-mono text-emerald-900 font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 border border-emerald-300 uppercase">
+              {activeSession || 'AL AWEER'} SESSION
+            </span>
           </div>
+          <p className="text-xs text-gray-600 font-medium">
+            Direct Importer Container Wholesale &amp; Al Aweer Daily Spot Market Prices • Hover to pause
+          </p>
         </div>
 
         <div className="flex items-center justify-between sm:justify-end gap-2 w-full md:w-auto shrink-0 flex-nowrap">
