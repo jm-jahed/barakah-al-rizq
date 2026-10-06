@@ -7,6 +7,7 @@ import {
   ShieldCheck, X, AlertTriangle, Users
 } from 'lucide-react';
 import { WholesaleCustomer, WholesaleOrder } from '@/lib/db/types';
+import { CustomerEmailModal } from '@/components/admin/CustomerEmailModal';
 
 interface CustomersApiResponse {
   success: boolean;
@@ -27,6 +28,9 @@ export default function AdminCustomersPage() {
   const [activeCustomer, setActiveCustomer] = useState<WholesaleCustomer | null>(null);
   const [customerOrders, setCustomerOrders] = useState<WholesaleOrder[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
+
+  // Email Client Modal State
+  const [emailModalCustomer, setEmailModalCustomer] = useState<WholesaleCustomer | null>(null);
 
   // Create / Edit Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -464,11 +468,25 @@ export default function AdminCustomersPage() {
                     <td className="py-3.5 px-4 text-right">
                       <div className="inline-flex items-center gap-1.5">
                         <button
+                          onClick={() => setEmailModalCustomer(cust)}
+                          disabled={!cust.email}
+                          className={`px-2.5 py-1.5 border rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+                            cust.email
+                              ? 'bg-emerald-950/50 border-emerald-700/60 hover:border-emerald-400 text-emerald-300 hover:text-white shadow-xs'
+                              : 'bg-slate-900 border-slate-800 text-slate-600 cursor-not-allowed opacity-60'
+                          }`}
+                          title={cust.email ? `Email Client (${cust.email})` : 'No email address available'}
+                        >
+                          <Mail className="w-3.5 h-3.5 text-emerald-400" />
+                          <span>Email</span>
+                        </button>
+
+                        <button
                           onClick={() => handleOpenCustomerDetails(cust)}
                           className="px-2.5 py-1.5 bg-slate-900 border border-slate-800 hover:border-slate-700 hover:text-white text-slate-300 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition"
                           title="View Order History & Profile"
                         >
-                          <Eye className="w-3.5 h-3.5 text-emerald-400" />
+                          <Eye className="w-3.5 h-3.5 text-slate-400" />
                           <span>History</span>
                         </button>
 
@@ -511,10 +529,24 @@ export default function AdminCustomersPage() {
               </div>
               <div className="flex items-center gap-2">
                 <button
+                  onClick={() => setEmailModalCustomer(activeCustomer)}
+                  disabled={!activeCustomer.email}
+                  className={`px-3 py-1.5 border rounded-xl text-xs font-semibold flex items-center gap-1.5 transition ${
+                    activeCustomer.email
+                      ? 'bg-emerald-950/70 border-emerald-600 text-emerald-300 hover:bg-emerald-900 hover:text-white shadow-xs'
+                      : 'bg-slate-900 border-slate-800 text-slate-600 cursor-not-allowed opacity-60'
+                  }`}
+                  title={activeCustomer.email ? `Email Client (${activeCustomer.email})` : 'No email address available'}
+                >
+                  <Mail className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Email Client</span>
+                </button>
+
+                <button
                   onClick={() => handleOpenEdit(activeCustomer)}
                   className="px-3 py-1.5 bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition"
                 >
-                  <Edit3 className="w-3.5 h-3.5 text-emerald-400" />
+                  <Edit3 className="w-3.5 h-3.5 text-slate-400" />
                   <span>Edit Profile</span>
                 </button>
                 <button
@@ -792,6 +824,14 @@ export default function AdminCustomersPage() {
           </div>
         </div>
       )}
+
+      {/* DIRECT CUSTOMER EMAIL COMPOSE MODAL */}
+      <CustomerEmailModal
+        isOpen={!!emailModalCustomer}
+        onClose={() => setEmailModalCustomer(null)}
+        customer={emailModalCustomer}
+        onSuccess={fetchCustomers}
+      />
     </div>
   );
 }

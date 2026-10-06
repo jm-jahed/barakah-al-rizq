@@ -15,6 +15,7 @@ import {
   Activity,
   Users,
   Inbox,
+  Mail,
   ShieldCheck,
   History,
   LogOut,
@@ -30,6 +31,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [authenticated, setAuthenticated] = useState<boolean | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [pendingOrdersCount, setPendingOrdersCount] = useState<number>(0);
+  const [unreadInboxCount, setUnreadInboxCount] = useState<number>(0);
 
   useEffect(() => {
     if (pathname === '/admin/login') {
@@ -56,7 +58,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     setMobileMenuOpen(false);
   }, [pathname]);
 
-  // Fetch pending orders badge count
+  // Fetch pending orders badge count & unread inbox messages count
   useEffect(() => {
     if (authenticated && pathname !== '/admin/login') {
       fetch('/api/admin/foodstuff/orders')
@@ -64,6 +66,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         .then((data) => {
           if (data?.metrics?.pending !== undefined) {
             setPendingOrdersCount(data.metrics.pending);
+          }
+        })
+        .catch(() => {});
+
+      fetch('/api/admin/inbox')
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data?.stats?.unread !== undefined) {
+            setUnreadInboxCount(data.stats.unread);
           }
         })
         .catch(() => {});
@@ -125,6 +136,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     {
       group: 'CRM & CLIENTS',
       items: [
+        {
+          label: 'Email Inbox',
+          href: '/admin/inbox',
+          icon: Mail,
+          badge: unreadInboxCount > 0 ? `${unreadInboxCount}` : undefined,
+        },
         { label: 'Clients & Buyers', href: '/admin/customers', icon: Users },
         { label: 'Inquiries & RFQ Leads', href: '/admin/leads', icon: Inbox },
       ],

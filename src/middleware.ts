@@ -60,24 +60,70 @@ async function verifySessionToken(token: string): Promise<SessionData | null> {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const host = request.headers.get('x-forwarded-host') || request.headers.get('host') || request.nextUrl.hostname || '';
+  const isMailSubdomain = host.startsWith('inbox.') || host.startsWith('inbox:') || host.startsWith('mail.') || host.startsWith('mail:');
 
-  // 1. Allow public admin login route
+  const token = request.cookies.get('admin_session')?.value;
+  const session = token ? await verifySessionToken(token) : null;
+
+  // -------------------------------------------------------------
+  // 1. MAIL SUBDOMAIN ROUTING (mail.barakahalrizquae.com)
+  // -------------------------------------------------------------
+  if (isMailSubdomain) {
+    // If accessing login on mail subdomain
+    if (pathname === '/login' || pathname === '/mail/login') {
+      if (session) {
+        return NextResponse.redirect(new URL('/mail', request.url));
+      }
+      return NextResponse.rewrite(new URL('/mail/login', request.url));
+    }
+
+    // If accessing root on mail subdomain
+    if (pathname === '/' || pathname === '') {
+      if (!session) {
+        return NextResponse.redirect(new URL('/mail/login', request.url));
+      }
+      return NextResponse.rewrite(new URL('/mail', request.url));
+    }
+
+    // Block non-mail admin paths on mail subdomain
+    if (pathname.startsWith('/admin')) {
+      return NextResponse.redirect(new URL('/mail', request.url));
+    }
+  }
+
+  // -------------------------------------------------------------
+  // 2. DEDICATED MAIL PORTAL PATHS (/mail & /mail/login)
+  // -------------------------------------------------------------
+  if (pathname === '/mail/login') {
+    if (session) {
+      return NextResponse.redirect(new URL('/mail', request.url));
+    }
+    return NextResponse.next();
+  }
+
+  if (pathname === '/mail' || pathname.startsWith('/mail/')) {
+    if (!session) {
+      const loginUrl = new URL('/mail/login', request.url);
+      loginUrl.searchParams.set('from', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+    return NextResponse.next();
+  }
+
+  // -------------------------------------------------------------
+  // 3. MAIN ADMIN PANEL PATHS (/admin & /admin/*)
+  // -------------------------------------------------------------
   if (pathname === '/admin/login') {
-    const token = request.cookies.get('admin_session')?.value;
-    const session = token ? await verifySessionToken(token) : null;
     if (session) {
       return NextResponse.redirect(new URL('/admin', request.url));
     }
     return NextResponse.next();
   }
 
-  // 2. Verify admin session token
-  const token = request.cookies.get('admin_session')?.value;
-  const session = token ? await verifySessionToken(token) : null;
-
-  // 3. Handle unauthenticated requests
+  // Handle unauthenticated requests
   if (!session) {
-    // If it's an API route under /api/admin/*, return 401 JSON
+    // API routes under /api/admin/* return 401 JSON
     if (pathname.startsWith('/api/admin')) {
       return NextResponse.json(
         { error: 'Unauthorized', message: 'Admin authentication required' },
@@ -85,7 +131,7 @@ export async function middleware(request: NextRequest) {
       );
     }
 
-    // If it's a page under /admin/*, redirect to /admin/login
+    // Pages under /admin/* redirect to /admin/login
     if (pathname.startsWith('/admin')) {
       const loginUrl = new URL('/admin/login', request.url);
       loginUrl.searchParams.set('from', pathname);
@@ -102,6 +148,9 @@ export default middleware;
 
 export const config = {
   matcher: [
+    '/',
+    '/login',
+    '/mail/:path*',
     '/admin/:path*',
     '/api/admin/:path*',
   ],

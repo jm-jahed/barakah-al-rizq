@@ -44,6 +44,55 @@
   ],
   "activityLogs": [
     {
+      "id": "act-1791253240630",
+      "user": "admin@barakahalrizquae.com",
+      "action": "CUSTOMER_EMAIL_ORDERS",
+      "entity": "cust-971509998877",
+      "timestamp": "2026-10-06T02:20:40.630Z"
+    },
+    {
+      "id": "act-1791252873061",
+      "user": "admin@barakahalrizquae.com",
+      "action": "CUSTOMER_EMAIL_SALES",
+      "entity": "cust-971509998877",
+      "timestamp": "2026-10-06T02:14:33.061Z"
+    },
+    {
+      "id": "act-1791252669611",
+      "user": "admin@barakahalrizquae.com",
+      "action": "CUSTOMER_EMAIL_SALES",
+      "entity": "cust-971509998877",
+      "timestamp": "2026-10-06T02:11:09.611Z"
+    },
+    {
+      "id": "act-1791252238387",
+      "user": "admin@barakahalrizquae.com",
+      "action": "CUSTOMER_EMAIL_SALES",
+      "entity": "cust-971523394001",
+      "timestamp": "2026-10-06T02:03:58.387Z"
+    },
+    {
+      "id": "act-1791250681129",
+      "user": "admin@barakahalrizquae.com",
+      "action": "CUSTOMER_EMAIL_ORDERS",
+      "entity": "cust-e2e-3",
+      "timestamp": "2026-10-06T01:38:01.129Z"
+    },
+    {
+      "id": "act-1791250679866",
+      "user": "admin@barakahalrizquae.com",
+      "action": "CUSTOMER_EMAIL_SALES",
+      "entity": "cust-e2e-2",
+      "timestamp": "2026-10-06T01:37:59.866Z"
+    },
+    {
+      "id": "act-1791250678482",
+      "user": "admin@barakahalrizquae.com",
+      "action": "CUSTOMER_EMAIL_INFO",
+      "entity": "cust-e2e-1",
+      "timestamp": "2026-10-06T01:37:58.482Z"
+    },
+    {
       "id": "act-1791158516307",
       "user": "admin@barakahalrizquae.com",
       "action": "PRODUCT_SAVED",

@@ -9,7 +9,7 @@ const config = {
 };
 
 const nginxConf = `server {
-    server_name barakahalrizquae.com www.barakahalrizquae.com;
+    server_name barakahalrizquae.com www.barakahalrizquae.com inbox.barakahalrizquae.com;
 
     location / {
         proxy_pass http://127.0.0.1:3003;
@@ -23,8 +23,30 @@ const nginxConf = `server {
         proxy_cache_bypass $http_upgrade;
     }
 
+    listen [::]:443 ssl;
+    listen 443 ssl;
+    ssl_certificate /etc/letsencrypt/live/barakahalrizquae.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/barakahalrizquae.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+}
+
+server {
+    if ($host = www.barakahalrizquae.com) {
+        return 301 https://$host$request_uri;
+    }
+    if ($host = barakahalrizquae.com) {
+        return 301 https://$host$request_uri;
+    }
+    if ($host = inbox.barakahalrizquae.com) {
+        return 301 https://$host$request_uri;
+    }
+
+    server_name barakahalrizquae.com www.barakahalrizquae.com inbox.barakahalrizquae.com;
+
     listen 80;
     listen [::]:80;
+    return 404;
 }
 `;
 

@@ -19,17 +19,20 @@ export async function GET(req: Request) {
 
     const allOrders = await getWholesaleOrders();
 
-    // Compute live metrics across all verified orders
+    // Compute live metrics across all verified orders (excluding CANCELLED from revenue and cartons)
+    const nonCancelledOrders = allOrders.filter(o => o.status !== 'CANCELLED');
+    const completedOrders = allOrders.filter(o => o.status === 'COMPLETED');
+
     const metrics = {
       totalOrders: allOrders.length,
       pending: allOrders.filter(o => o.status === 'PENDING').length,
       confirmed: allOrders.filter(o => o.status === 'CONFIRMED').length,
       readyForPickup: allOrders.filter(o => o.status === 'READY_FOR_PICKUP').length,
-      completed: allOrders.filter(o => o.status === 'COMPLETED').length,
+      completed: completedOrders.length,
       cancelled: allOrders.filter(o => o.status === 'CANCELLED').length,
-      totalCtn: allOrders.reduce((sum, o) => sum + (o.totalCtn || 0), 0),
-      totalOrderPipelineAED: parseFloat(allOrders.reduce((sum, o) => sum + (o.totalAED || 0), 0).toFixed(2)),
-      completedSalesAED: parseFloat(allOrders.filter(o => o.status === 'COMPLETED').reduce((sum, o) => sum + (o.totalAED || 0), 0).toFixed(2)),
+      totalCtn: nonCancelledOrders.reduce((sum, o) => sum + (o.totalCtn || 0), 0),
+      totalOrderPipelineAED: parseFloat(nonCancelledOrders.reduce((sum, o) => sum + (o.totalAED || 0), 0).toFixed(2)),
+      completedSalesAED: parseFloat(completedOrders.reduce((sum, o) => sum + (o.totalAED || 0), 0).toFixed(2)),
     };
 
     let filtered = allOrders;

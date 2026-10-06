@@ -27,18 +27,44 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose, selecte
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
+    email: '',
     company: '',
     quantity: orderType === 'Container Wholesale' ? '1x40ft FCL Container' : '50 Boxes / 500 KG',
     productName: selectedProductName || 'Fresh Red Tomatoes',
     orderType: orderType || 'Container Wholesale',
-    notes: ''
+    notes: '',
   });
+  const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    try {
+      await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email || 'quote-inquiry@barakahalrizquae.com',
+          phone: formData.phone,
+          company: formData.company,
+          productName: formData.productName,
+          quantity: formData.quantity,
+          orderType: formData.orderType,
+          service: 'Wholesale Produce Quotation',
+          message: `Delivery Location & Notes: ${formData.notes || 'Not specified'}. Volume: ${formData.quantity}`,
+          source: 'quote',
+        }),
+      });
+      setSubmitted(true);
+    } catch (err) {
+      console.error('Failed to submit quote request:', err);
+      setSubmitted(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -126,22 +152,35 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose, selecte
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[11px] font-mono text-gray-700 mb-1">Delivery Location &amp; Notes</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Ras Al Khor Warehouse / Dubai Supermarket Branch"
-                  value={formData.notes}
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  className="w-full py-2.5 px-3.5 rounded-xl bg-gray-50 border border-gray-200 text-[#111827] text-xs font-medium focus:outline-none focus:border-emerald-600"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[11px] font-mono text-gray-700 mb-1">Business Email (For Written Quote)</label>
+                  <input
+                    type="email"
+                    placeholder="purchase@company.ae"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full py-2.5 px-3.5 rounded-xl bg-gray-50 border border-gray-200 text-[#111827] text-xs font-medium focus:outline-none focus:border-emerald-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-mono text-gray-700 mb-1">Delivery Location &amp; Notes</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Ras Al Khor Warehouse / Dubai"
+                    value={formData.notes}
+                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                    className="w-full py-2.5 px-3.5 rounded-xl bg-gray-50 border border-gray-200 text-[#111827] text-xs font-medium focus:outline-none focus:border-emerald-600"
+                  />
+                </div>
               </div>
 
               <button
                 type="submit"
-                className="w-full py-4 rounded-xl bg-[#063D24] hover:bg-[#042A18] text-white font-extrabold text-xs font-mono uppercase tracking-wider shadow-md hover:scale-[1.01] transition-transform flex items-center justify-center gap-2 mt-2"
+                disabled={loading}
+                className="w-full py-4 rounded-xl bg-[#063D24] hover:bg-[#042A18] text-white font-extrabold text-xs font-mono uppercase tracking-wider shadow-md hover:scale-[1.01] transition-transform flex items-center justify-center gap-2 mt-2 disabled:opacity-50"
               >
-                <span className="text-amber-300">REQUEST IMMEDIATE SPOT QUOTE</span>
+                <span className="text-amber-300">{loading ? 'SUBMITTING QUOTE REQUEST...' : 'REQUEST IMMEDIATE SPOT QUOTE'}</span>
                 <ArrowRight className="w-4 h-4 text-amber-300" />
               </button>
 

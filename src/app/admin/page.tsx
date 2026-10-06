@@ -72,22 +72,29 @@ export default function AdminDashboardHome() {
         fetch('/api/admin/foodstuff/products').then((r) => (r.ok ? r.json() : null)),
       ]);
 
-      const fin = reportsRes?.financialSummary;
+      const repMetrics = reportsRes?.metrics;
       const ordMetrics = ordersRes?.metrics;
       const ordList = ordersRes?.orders || [];
       const leadList = leadsRes?.leads || [];
       const prodList = productsRes?.products || [];
 
+      const totalRevenue = ordMetrics?.totalOrderPipelineAED ?? repMetrics?.totalConfirmedOrderValueAED ?? 0;
+      const totalReceived = repMetrics?.totalValidPaymentsReceivedAED ?? 0;
+      const outstandingReceivables = repMetrics?.outstandingReceivablesAED ?? Math.max(0, totalRevenue - totalReceived);
+      const collectionRate = totalRevenue > 0
+        ? Math.min(100, (totalReceived / totalRevenue) * 100)
+        : 100;
+
       setMetrics({
-        totalRevenueAED: fin?.totalSalesVolumeAED || ordMetrics?.totalOrderPipelineAED || 0,
-        totalReceivedAED: fin?.verifiedCashReceivedAED || 0,
-        outstandingReceivablesAED: fin?.outstandingReceivablesAED || 0,
-        collectionRate: fin?.collectionRatePercent || 100,
+        totalRevenueAED: totalRevenue,
+        totalReceivedAED: totalReceived,
+        outstandingReceivablesAED: outstandingReceivables,
+        collectionRate: parseFloat(collectionRate.toFixed(1)),
         totalOrders: ordMetrics?.totalOrders || ordList.length || 0,
         pendingOrders: ordMetrics?.pending || 0,
         confirmedOrders: ordMetrics?.confirmed || 0,
         completedOrders: ordMetrics?.completed || 0,
-        totalCtnSold: ordMetrics?.totalCtn || fin?.totalCtnSold || 0,
+        totalCtnSold: ordMetrics?.totalCtn || repMetrics?.totalCtnSold || 0,
         activeProductsCount: prodList.length > 0 ? prodList.length : 22,
         activeInquiriesCount: leadList.length,
       });

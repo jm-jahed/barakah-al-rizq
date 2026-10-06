@@ -1,0 +1,42 @@
+[
+  {
+    "id": "mailbox-info",
+    "email": "info@barakahalrizquae.com",
+    "displayName": "General Inquiries",
+    "department": "Business Inquiries",
+    "channel": "info",
+    "active": true,
+    "createdAt": "2026-10-06T00:00:00.000Z",
+    "updatedAt": "2026-10-06T00:00:00.000Z"
+  },
+  {
+    "id": "mailbox-sales",
+    "email": "sales@barakahalrizquae.com",
+    "displayName": "Wholesale Sales & RFQ",
+    "department": "Sales / Quotations",
+    "channel": "sales",
+    "active": true,
+    "createdAt": "2026-10-06T00:00:00.000Z",
+    "updatedAt": "2026-10-06T00:00:00.000Z"
+  },
+  {
+    "id": "mailbox-orders",
+    "email": "orders@barakahalrizquae.com",
+    "displayName": "Website Orders",
+    "department": "Order Fulfillment",
+    "channel": "orders",
+    "active": true,
+    "createdAt": "2026-10-06T00:00:00.000Z",
+    "updatedAt": "2026-10-06T00:00:00.000Z"
+  },
+  {
+    "id": "mailbox-habeeb",
+    "email": "habeeb@barakahalrizquae.com",
+    "displayName": "Managing Director Habeeb Khan",
+    "department": "Direct / Management",
+    "channel": "habeeb",
+    "active": true,
+    "createdAt": "2026-10-06T00:00:00.000Z",
+    "updatedAt": "2026-10-06T00:00:00.000Z"
+  }
+]

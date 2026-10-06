@@ -1,1 +1,74 @@
-[]
+[
+  {
+    "customerName": "Md Jahedul Islam",
+    "companyName": "Islam",
+    "phone": "+971523394001",
+    "email": "jm.jahedmasud@gmail.com",
+    "pickupDate": "2026-10-07",
+    "pickupTime": "Morning Session (07:00 - 11:00)",
+    "pickupLocation": "Store Pickup — Barakah Al Rizq, Al Aweer Central Fruit & Vegetable Market, Ras Al Khor, Dubai",
+    "orderType": "MIXED",
+    "items": [
+      {
+        "productId": "cabbage-green",
+        "productName": "Fresh Green Drumhead Cabbage",
+        "productArabicName": "ملفوف أخضر",
+        "orderType": "CONTAINER",
+        "packagingUnit": "CTN",
+        "pricePerCtn": 22,
+        "quantityCtn": 100,
+        "lineTotalAED": 2200,
+        "moq": 100,
+        "image": "https://images.unsplash.com/photo-1594282486552-05b4d80fbb9f?q=80&w=800&auto=format&fit=crop"
+      },
+      {
+        "productId": "cabbage-green",
+        "productName": "Fresh Green Drumhead Cabbage",
+        "productArabicName": "ملفوف أخضر",
+        "orderType": "DUBAI_WHOLESALE",
+        "packagingUnit": "CTN",
+        "pricePerCtn": 28,
+        "quantityCtn": 10,
+        "lineTotalAED": 280,
+        "moq": 10,
+        "image": "https://images.unsplash.com/photo-1594282486552-05b4d80fbb9f?q=80&w=800&auto=format&fit=crop"
+      }
+    ],
+    "totalCtn": 110,
+    "totalAED": 2480,
+    "status": "CANCELLED",
+    "id": "BARAKAH-ORD-20261006-L9LX",
+    "createdAt": "2026-10-06T02:40:24.636Z",
+    "updatedAt": "2026-10-06T03:04:21.322Z"
+  },
+  {
+    "customerName": "Md Jahedul Islam",
+    "companyName": "Islam",
+    "phone": "+971523394001",
+    "email": "jm.jahedmasud@gmail.com",
+    "pickupDate": "2026-10-07",
+    "pickupTime": "24 Hours (Open 24/7 Store & Warehouse Pickup)",
+    "pickupLocation": "Container Pickup / Collection — Barakah Al Rizq Logistics & Port Warehouse, Dubai",
+    "orderType": "CONTAINER",
+    "items": [
+      {
+        "productId": "onion-red",
+        "productName": "Fresh Red & White Onion",
+        "productArabicName": "بصل أحمر وأبيض",
+        "orderType": "CONTAINER",
+        "packagingUnit": "BAG",
+        "pricePerCtn": 22,
+        "quantityCtn": 100,
+        "lineTotalAED": 2200,
+        "moq": 100,
+        "image": "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cf?q=80&w=800&auto=format&fit=crop"
+      }
+    ],
+    "totalCtn": 100,
+    "totalAED": 2200,
+    "status": "CANCELLED",
+    "id": "BARAKAH-ORD-20261006-IPAC",
+    "createdAt": "2026-10-06T01:55:48.986Z",
+    "updatedAt": "2026-10-06T02:04:56.203Z"
+  }
+]

@@ -30,7 +30,7 @@ export default function Home() {
     'name': 'Barakah Al Rizq Foodstuff Trading L.L.C',
     'image': 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?q=80&w=1200&auto=format&fit=crop',
     'telephone': '+971 56 944 8850',
-    'email': 'barakahalrizquae@gmail.com',
+    'email': 'info@barakahalrizquae.com',
     'address': {
       '@type': 'PostalAddress',
       'streetAddress': 'Office No. M02, Building No. 3, Above Zam Zam Supermarket, Al Aweer Veg Market, Ras Al Khor',

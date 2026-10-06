@@ -122,13 +122,13 @@ export default function AdminLeadsPage() {
             onClick={() => setActiveTab('LEADS')}
             className={`px-4 py-2 rounded-xl text-xs font-mono font-bold flex items-center gap-2 transition-all ${
               activeTab === 'LEADS'
-                ? 'bg-amber-400 text-slate-950 shadow-md'
+                ? 'bg-emerald-500 text-slate-950 shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
             <Users className="w-4 h-4" />
-            <span>General Inquiries</span>
-            <span className="px-1.5 py-0.2 rounded-full bg-slate-900/60 text-current text-[10px]">
+            <span>Wholesale RFQs &amp; Inquiries</span>
+            <span className="px-1.5 py-0.2 rounded-full bg-slate-900/60 text-current text-[10px] font-bold">
               {leads.length}
             </span>
           </button>
@@ -341,46 +341,68 @@ export default function AdminLeadsPage() {
                   <th className="p-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800">
-                {filteredLeads.map((lead) => (
-                  <tr key={lead.id} className="hover:bg-slate-900/50">
-                    <td className="p-4 font-bold text-white">
-                      {lead.name}
-                      {lead.company && <span className="text-slate-400 block font-normal text-[11px]">{lead.company}</span>}
-                    </td>
-                    <td className="p-4 font-mono">
-                      {lead.email}
-                      <span className="text-[10px] text-slate-500 block">{lead.phone}</span>
-                    </td>
-                    <td className="p-4">
-                      <span className="text-amber-400 font-semibold block">{lead.service}</span>
-                      <span className="text-[10px] text-slate-400 font-mono">{lead.budget}</span>
-                    </td>
-                    <td className="p-4">
-                      <select
-                        value={lead.status}
-                        onChange={(e) => handleUpdateStatus(lead.id, e.target.value)}
-                        className="bg-slate-950 border border-slate-800 text-amber-400 font-bold rounded-lg text-xs p-1.5 font-mono"
-                      >
-                        <option value="NEW">NEW</option>
-                        <option value="CONTACTED">CONTACTED</option>
-                        <option value="QUALIFIED">QUALIFIED</option>
-                        <option value="PROPOSAL">PROPOSAL</option>
-                        <option value="WON">WON</option>
-                        <option value="LOST">LOST</option>
-                      </select>
-                    </td>
-                    <td className="p-4 text-slate-500 font-mono">{new Date(lead.createdAt).toLocaleDateString()}</td>
-                    <td className="p-4 text-right">
-                      <button
-                        onClick={() => setSelectedLead(lead)}
-                        className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-mono font-bold"
-                      >
-                        View Detail
-                      </button>
+              <tbody className="divide-y divide-slate-800 font-sans">
+                {filteredLeads.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="p-8 text-center text-slate-500 font-mono text-xs">
+                      No customer quotation requests or general inquiries found.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  filteredLeads.map((lead) => (
+                    <tr key={lead.id} className="hover:bg-slate-900/50">
+                      <td className="p-4 font-bold text-white">
+                        <div className="flex items-center gap-2">
+                          <span>{lead.name}</span>
+                          {lead.source === 'quote' && (
+                            <span className="px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[9px] font-mono">
+                              SPOT QUOTE
+                            </span>
+                          )}
+                        </div>
+                        {lead.company && <span className="text-slate-400 block font-normal text-[11px]">{lead.company}</span>}
+                      </td>
+                      <td className="p-4 font-mono">
+                        <div className="text-white text-xs">{lead.email}</div>
+                        <a
+                          href={`https://wa.me/${lead.phone?.replace(/[^\d]/g, '')}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[11px] text-emerald-400 hover:underline flex items-center gap-1 mt-0.5"
+                        >
+                          💬 {lead.phone}
+                        </a>
+                      </td>
+                      <td className="p-4">
+                        <span className="text-amber-400 font-semibold block">{lead.service}</span>
+                        <span className="text-[10px] text-slate-400 font-mono">{lead.budget || lead.notes}</span>
+                      </td>
+                      <td className="p-4">
+                        <select
+                          value={lead.status}
+                          onChange={(e) => handleUpdateStatus(lead.id, e.target.value)}
+                          className="bg-slate-950 border border-slate-800 text-amber-400 font-bold rounded-lg text-xs p-1.5 font-mono"
+                        >
+                          <option value="NEW">NEW</option>
+                          <option value="CONTACTED">CONTACTED</option>
+                          <option value="QUALIFIED">QUALIFIED</option>
+                          <option value="PROPOSAL">PROPOSAL</option>
+                          <option value="WON">WON</option>
+                          <option value="LOST">LOST</option>
+                        </select>
+                      </td>
+                      <td className="p-4 text-slate-500 font-mono">{new Date(lead.createdAt).toLocaleDateString()}</td>
+                      <td className="p-4 text-right">
+                        <button
+                          onClick={() => setSelectedLead(lead)}
+                          className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-mono font-bold"
+                        >
+                          View Detail
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -528,8 +550,24 @@ export default function AdminLeadsPage() {
                 <p className="text-slate-200 leading-relaxed whitespace-pre-line">{selectedLead.message}</p>
               </div>
             </div>
-            <div className="pt-4 flex justify-end">
-              <button onClick={() => setSelectedLead(null)} className="px-5 py-2 bg-amber-500 text-slate-950 font-bold rounded-xl text-xs">
+            <div className="pt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-800">
+              <div className="flex items-center gap-2">
+                <a
+                  href={`https://wa.me/${selectedLead.phone?.replace(/[^\d]/g, '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold rounded-xl text-xs flex items-center gap-1.5 transition"
+                >
+                  💬 WhatsApp Client
+                </a>
+                <a
+                  href={`mailto:${selectedLead.email}?subject=Wholesale Produce Quotation - Barakah Al Rizq&body=Dear ${encodeURIComponent(selectedLead.name)},%0D%0A%0D%0AThank you for contacting Barakah Al Rizq Foodstuff Trading.`}
+                  className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition"
+                >
+                  ✉️ Open Email
+                </a>
+              </div>
+              <button onClick={() => setSelectedLead(null)} className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs transition">
                 Close
               </button>
             </div>

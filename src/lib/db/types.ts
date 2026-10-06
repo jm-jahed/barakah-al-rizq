@@ -422,4 +422,49 @@ export interface CustomerStatementItem {
   runningBalanceAED: number;
 }
 
+// ==========================================
+// ADMIN INCOMING EMAIL INBOX & MAILBOXES
+// ==========================================
+
+export type InboxMailbox = 'info' | 'sales' | 'orders' | 'habeeb';
+export type InboxMessageStatus = 'UNREAD' | 'READ' | 'REPLIED' | 'TRASH';
+
+export interface EmailMailbox {
+  id: string; // e.g. "mailbox-info"
+  email: string; // e.g. "info@barakahalrizquae.com"
+  displayName: string; // e.g. "General Inquiries"
+  department: string; // e.g. "Business Inquiries"
+  channel: InboxMailbox;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface InboxMessage {
+  id: string;
+  messageId: string;
+  inReplyTo?: string;
+  references?: string;
+  mailbox: InboxMailbox;
+  fromEmail: string;
+  fromName: string;
+  toEmail: string;
+  replyTo?: string;
+  subject: string;
+  previewText: string;
+  textBody: string;
+  htmlBody: string;
+  rawHtml?: string;
+  hasAttachments: boolean;
+  attachmentsCount: number;
+  status: InboxMessageStatus;
+  isSpam: boolean;
+  receivedAt: string;
+  readAt?: string;
+  repliedAt?: string;
+  deletedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 

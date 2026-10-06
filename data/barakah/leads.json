@@ -1,5 +1,21 @@
 [
   {
+    "name": "Jahed Masud",
+    "email": "jm.jahedmasud@gmail.com",
+    "phone": "0523394001",
+    "company": "Al Jahed Supermarket",
+    "service": "Wholesale Produce Quotation",
+    "budget": "Not Specified",
+    "message": "Delivery Location & Notes: Ras Al Khor Warehouse / Dubai. Volume: 50 Boxes / 500 KG",
+    "source": "quote",
+    "notes": "Received via wholesale sales / quotation desk.",
+    "_id": "lead-1791254555137-z9e6",
+    "id": "lead-1791254555137-z9e6",
+    "status": "NEW",
+    "createdAt": "2026-10-06T02:42:35.138Z",
+    "updatedAt": "2026-10-06T02:42:35.138Z"
+  },
+  {
     "id": "qa-test-lead-1",
     "name": "QA Test Client",
     "email": "qa.test@company.ae",

@@ -1,1 +1,17 @@
-[]
+[
+  {
+    "id": "cust-971509998877",
+    "name": "Barakah Test Buyer",
+    "companyName": "Barakah QA General Trading LLC",
+    "phone": "+971 50 999 8877",
+    "email": "barakahalrizquae@gmail.com",
+    "whatsapp": "+971 50 999 8877",
+    "trn": "100999888777003",
+    "totalOrders": 0,
+    "totalCtn": 0,
+    "totalOrderValueAED": 0,
+    "completedOrderValueAED": 0,
+    "createdAt": "2026-10-06T01:55:13.103Z",
+    "updatedAt": "2026-10-06T01:55:13.103Z"
+  }
+]

@@ -56,7 +56,13 @@ export const BARAKAH_BRAND = {
     "+971 4 576 4169"
   ],
   whatsapp: "https://wa.me/971569448850?text=Hello%20Barakah%20Al%20Rizq%20Foodstuff,%20I%20would%20like%20to%20inquire%20about%20wholesale%20foodstuff%20pricing.",
-  email: "barakahalrizquae@gmail.com",
+  email: "info@barakahalrizquae.com",
+  emails: {
+    info: "info@barakahalrizquae.com",
+    sales: "sales@barakahalrizquae.com",
+    orders: "orders@barakahalrizquae.com",
+    habeeb: "habeeb@barakahalrizquae.com",
+  },
   website: "barakahalrizquae.com",
   logo: "/images/barakah-logo.png",
   marketHub: "Al Aweer Vegetable Market, Ras Al Khor, Dubai",

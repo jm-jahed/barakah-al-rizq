@@ -35,6 +35,10 @@ import {
   PaymentTransactionStatus,
   OrderPaymentSummary,
   CustomerStatementItem,
+  InboxMessage,
+  InboxMailbox,
+  EmailMailbox,
+  InboxMessageStatus,
 } from "@/lib/db/types";
 import { getDynamicUAESession, calculatePricePerKg, DEFAULT_FOODSTUFF_CATEGORIES } from "@/lib/foodstuff/utils";
 
@@ -975,14 +979,53 @@ export async function getActivityLogsCollection(): Promise<Collection<ActivityLo
   return db.collection<ActivityLog & { _id: string }>("activity_logs");
 }
 
+function getLocalLeadsFilePath(): string {
+  return path.join(process.cwd(), "data", "barakah", "leads.json");
+}
+
+export function readLocalLeads(): Lead[] {
+  try {
+    const fp = getLocalLeadsFilePath();
+    if (fs.existsSync(fp)) {
+      const raw = fs.readFileSync(fp, "utf-8");
+      return JSON.parse(raw);
+    }
+  } catch {}
+  return [];
+}
+
+export function writeLocalLeads(leads: Lead[]): void {
+  try {
+    const fp = getLocalLeadsFilePath();
+    fs.mkdirSync(path.dirname(fp), { recursive: true });
+    fs.writeFileSync(fp, JSON.stringify(leads, null, 2), "utf-8");
+  } catch {}
+}
+
 export async function getLeads(): Promise<Lead[]> {
+  const localLeads = readLocalLeads();
+  let mongoLeads: Lead[] = [];
   try {
     const col = await getLeadsCollection();
-    return await col.find({}).sort({ createdAt: -1 }).toArray();
+    mongoLeads = await col.find({}).sort({ createdAt: -1 }).toArray();
   } catch (err) {
-    console.warn("MongoDB getLeads fallback:", (err as Error).message);
-    return [];
+    // Mongo fallback
   }
+
+  const map = new Map<string, Lead>();
+  for (const l of mongoLeads) {
+    map.set(l.id, l);
+  }
+  for (const l of localLeads) {
+    const existing = map.get(l.id);
+    if (!existing || new Date(l.updatedAt || l.createdAt).getTime() >= new Date(existing.updatedAt || existing.createdAt).getTime()) {
+      map.set(l.id, l);
+    }
+  }
+
+  return Array.from(map.values()).sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
 }
 
 export async function createLead(
@@ -998,6 +1041,13 @@ export async function createLead(
     createdAt: nowISO,
     updatedAt: nowISO,
   };
+
+  // 1. Always sync to local JSON fallback immediately
+  const local = readLocalLeads();
+  local.unshift(newLead);
+  writeLocalLeads(local);
+
+  // 2. Try MongoDB persistence
   try {
     const col = await getLeadsCollection();
     await col.insertOne(newLead as any);
@@ -1009,32 +1059,60 @@ export async function createLead(
 }
 
 export async function updateLead(id: string, updates: Partial<Lead>): Promise<Lead | null> {
-  const col = await getLeadsCollection();
-  const existing = await col.findOne({ $or: [{ _id: id }, { id }] });
-  if (!existing) return null;
-
   const nowISO = new Date().toISOString();
-  const updatedRecord: Lead & { _id: string } = {
-    ...existing,
-    ...updates,
-    _id: existing._id,
-    id: existing.id,
-    updatedAt: nowISO,
-  };
+  let updatedRecord: Lead | null = null;
 
-  await col.replaceOne({ _id: existing._id }, updatedRecord, { upsert: true });
-  await logActivityToMongo('admin@barakahalrizquae.com', 'LEAD_UPDATED', id);
+  try {
+    const col = await getLeadsCollection();
+    const existing = await col.findOne({ $or: [{ _id: id }, { id }] });
+    if (existing) {
+      const updated: Lead & { _id: string } = {
+        ...existing,
+        ...updates,
+        _id: existing._id,
+        id: existing.id,
+        updatedAt: nowISO,
+      };
+      await col.replaceOne({ _id: existing._id }, updated, { upsert: true });
+      updatedRecord = updated;
+      await logActivityToMongo('admin@barakahalrizquae.com', 'LEAD_UPDATED', id);
+    }
+  } catch (err) {}
+
+  const local = readLocalLeads();
+  const idx = local.findIndex(l => l.id === id);
+  if (idx !== -1) {
+    local[idx] = {
+      ...local[idx],
+      ...updates,
+      updatedAt: nowISO,
+    };
+    writeLocalLeads(local);
+    if (!updatedRecord) updatedRecord = local[idx];
+  }
+
   return updatedRecord;
 }
 
 export async function deleteLead(id: string): Promise<boolean> {
-  const col = await getLeadsCollection();
-  const res = await col.deleteOne({ $or: [{ _id: id }, { id }] });
-  if (res.deletedCount > 0) {
-    await logActivityToMongo('admin@barakahalrizquae.com', 'LEAD_DELETED', id);
-    return true;
+  let deleted = false;
+  try {
+    const col = await getLeadsCollection();
+    const res = await col.deleteOne({ $or: [{ _id: id }, { id }] });
+    if (res.deletedCount > 0) {
+      deleted = true;
+      await logActivityToMongo('admin@barakahalrizquae.com', 'LEAD_DELETED', id);
+    }
+  } catch (err) {}
+
+  const local = readLocalLeads();
+  const filtered = local.filter(l => l.id !== id);
+  if (filtered.length !== local.length) {
+    writeLocalLeads(filtered);
+    deleted = true;
   }
-  return false;
+
+  return deleted;
 }
 
 export async function getActivityLogs(limit: number = 100): Promise<ActivityLog[]> {
@@ -1375,11 +1453,14 @@ export async function getWholesaleCustomers(): Promise<WholesaleCustomer[]> {
     const existing = customerMap.get(primaryKey);
     const orderDate = order.createdAt;
     const isCompleted = order.status === 'COMPLETED';
+    const isCancelled = order.status === 'CANCELLED';
 
     if (existing) {
       existing.totalOrders += 1;
-      existing.totalCtn += order.totalCtn;
-      existing.totalOrderValueAED = parseFloat((existing.totalOrderValueAED + order.totalAED).toFixed(2));
+      if (!isCancelled) {
+        existing.totalCtn += order.totalCtn || 0;
+        existing.totalOrderValueAED = parseFloat((existing.totalOrderValueAED + order.totalAED).toFixed(2));
+      }
       if (isCompleted) {
         existing.completedOrderValueAED = parseFloat((existing.completedOrderValueAED + order.totalAED).toFixed(2));
       }
@@ -1402,8 +1483,8 @@ export async function getWholesaleCustomers(): Promise<WholesaleCustomer[]> {
         trn: override.trn,
         notes: override.notes,
         totalOrders: 1,
-        totalCtn: order.totalCtn,
-        totalOrderValueAED: order.totalAED,
+        totalCtn: isCancelled ? 0 : (order.totalCtn || 0),
+        totalOrderValueAED: isCancelled ? 0 : order.totalAED,
         completedOrderValueAED: isCompleted ? order.totalAED : 0,
         lastOrderDate: orderDate,
         latestStatus: order.status,
@@ -1942,4 +2023,397 @@ export async function getCustomerAccountStatement(customerIdentifier: string): P
       outstandingReceivablesAED,
     },
   };
+}
+
+// ==========================================
+// DYNAMIC BUSINESS EMAIL MAILBOXES
+// ==========================================
+
+export async function getEmailMailboxesCollection(): Promise<Collection<EmailMailbox & { _id: string }>> {
+  const db = await getDb();
+  return db.collection<EmailMailbox & { _id: string }>("email_mailboxes");
+}
+
+function getLocalMailboxesFilePath(): string {
+  return path.join(process.cwd(), "data", "barakah", "mailboxes.json");
+}
+
+export function readLocalMailboxes(): EmailMailbox[] {
+  try {
+    const fp = getLocalMailboxesFilePath();
+    if (fs.existsSync(fp)) {
+      const raw = fs.readFileSync(fp, "utf-8");
+      return JSON.parse(raw);
+    }
+  } catch {}
+  return [];
+}
+
+export function writeLocalMailboxes(mailboxes: EmailMailbox[]): void {
+  try {
+    const fp = getLocalMailboxesFilePath();
+    fs.mkdirSync(path.dirname(fp), { recursive: true });
+    fs.writeFileSync(fp, JSON.stringify(mailboxes, null, 2), "utf-8");
+  } catch {}
+}
+
+export async function getEmailMailboxes(): Promise<EmailMailbox[]> {
+  const localList = readLocalMailboxes();
+  let mongoList: EmailMailbox[] = [];
+  try {
+    const col = await getEmailMailboxesCollection();
+    mongoList = await col.find({}).toArray();
+  } catch (err) {
+    // Mongo fallback
+  }
+
+  const map = new Map<string, EmailMailbox>();
+  for (const m of mongoList) {
+    map.set(m.id || m.channel, m);
+  }
+  for (const m of localList) {
+    const key = m.id || m.channel;
+    const existing = map.get(key);
+    if (!existing || new Date(m.updatedAt || m.createdAt).getTime() >= new Date(existing.updatedAt || existing.createdAt).getTime()) {
+      map.set(key, m);
+    }
+  }
+
+  return Array.from(map.values());
+}
+
+export const ALLOWED_MAILBOXES: Record<string, { channel: InboxMailbox; email: string; displayName: string }> = {
+  'info@barakahalrizquae.com': { channel: 'info', email: 'info@barakahalrizquae.com', displayName: 'General Inquiries' },
+  'sales@barakahalrizquae.com': { channel: 'sales', email: 'sales@barakahalrizquae.com', displayName: 'Wholesale Sales & RFQ' },
+  'orders@barakahalrizquae.com': { channel: 'orders', email: 'orders@barakahalrizquae.com', displayName: 'Website Orders' },
+  'habeeb@barakahalrizquae.com': { channel: 'habeeb', email: 'habeeb@barakahalrizquae.com', displayName: 'Managing Director Habeeb Khan' },
+};
+
+export async function resolveMailboxByRecipient(toEmail: string): Promise<{ channel: InboxMailbox; email: string; displayName: string } | null> {
+  const cleanTo = (toEmail || '').toLowerCase().trim();
+  if (!cleanTo) return null;
+
+  // 1. Direct match on official email
+  if (ALLOWED_MAILBOXES[cleanTo]) {
+    return ALLOWED_MAILBOXES[cleanTo];
+  }
+
+  // 2. Match on prefix if sending to official domain (info, sales, orders, habeeb)
+  const prefix = cleanTo.split('@')[0] as InboxMailbox;
+  const matchEmail = `${prefix}@barakahalrizquae.com`;
+  if (ALLOWED_MAILBOXES[matchEmail]) {
+    return ALLOWED_MAILBOXES[matchEmail];
+  }
+
+  // 3. Match against stored mailboxes
+  const mailboxes = await getEmailMailboxes();
+  const match = mailboxes.find(m => m.active && (m.email.toLowerCase() === cleanTo || m.channel.toLowerCase() === prefix));
+  if (match && ['info', 'sales', 'orders', 'habeeb'].includes(match.channel)) {
+    return { channel: match.channel as InboxMailbox, email: match.email, displayName: match.displayName };
+  }
+
+  return null;
+}
+
+export async function saveEmailMailbox(
+  data: Partial<EmailMailbox> & { email: string; displayName: string; channel?: string }
+): Promise<EmailMailbox> {
+  const cleanEmail = data.email.toLowerCase().trim();
+  const channel = (data.channel || cleanEmail.split('@')[0] || 'mailbox').toLowerCase().replace(/[^a-z0-9_-]/g, '');
+  const id = data.id || `mailbox-${channel}`;
+  const nowISO = new Date().toISOString();
+
+  const record: EmailMailbox = {
+    id,
+    email: cleanEmail,
+    displayName: data.displayName.trim(),
+    department: data.department || 'General',
+    channel: channel as InboxMailbox,
+    active: data.active ?? true,
+    createdAt: data.createdAt || nowISO,
+    updatedAt: nowISO,
+  };
+
+  // 1. Update local JSON fallback
+  const local = readLocalMailboxes();
+  const idx = local.findIndex(m => m.id === id || m.channel === channel || m.email.toLowerCase() === cleanEmail);
+  if (idx !== -1) {
+    local[idx] = { ...local[idx], ...record };
+  } else {
+    local.push(record);
+  }
+  writeLocalMailboxes(local);
+
+  // 2. Update MongoDB
+  try {
+    const col = await getEmailMailboxesCollection();
+    await col.replaceOne({ _id: id }, { ...record, _id: id } as any, { upsert: true });
+    await logActivityToMongo('admin@barakahalrizquae.com', 'MAILBOX_SAVED', id);
+  } catch (err) {}
+
+  return record;
+}
+
+// ==========================================
+// ADMIN INCOMING EMAIL INBOX MESSAGES
+// ==========================================
+
+export async function getInboxMessagesCollection(): Promise<Collection<InboxMessage & { _id: string }>> {
+  const db = await getDb();
+  const col = db.collection<InboxMessage & { _id: string }>("inbox_messages");
+  try {
+    await col.createIndex({ messageId: 1 }, { unique: true, background: true });
+    await col.createIndex({ mailbox: 1, status: 1, receivedAt: -1 }, { background: true });
+  } catch {}
+  return col;
+}
+
+function getLocalInboxMessagesFilePath(): string {
+  return path.join(process.cwd(), "data", "barakah", "inbox_messages.json");
+}
+
+export function readLocalInboxMessages(): InboxMessage[] {
+  try {
+    const fp = getLocalInboxMessagesFilePath();
+    if (fs.existsSync(fp)) {
+      const raw = fs.readFileSync(fp, "utf-8");
+      return JSON.parse(raw);
+    }
+  } catch {}
+  return [];
+}
+
+export function writeLocalInboxMessages(messages: InboxMessage[]): void {
+  try {
+    const fp = getLocalInboxMessagesFilePath();
+    fs.mkdirSync(path.dirname(fp), { recursive: true });
+    fs.writeFileSync(fp, JSON.stringify(messages, null, 2), "utf-8");
+  } catch {}
+}
+
+export async function getInboxMessages(filter?: {
+  mailbox?: string;
+  status?: string;
+  search?: string;
+}): Promise<InboxMessage[]> {
+  const localMessages = readLocalInboxMessages();
+  let mongoMessages: InboxMessage[] = [];
+
+  try {
+    const col = await getInboxMessagesCollection();
+    mongoMessages = await col.find({}).sort({ receivedAt: -1 }).toArray();
+  } catch (err) {
+    // Mongo fallback
+  }
+
+  const map = new Map<string, InboxMessage>();
+  for (const m of mongoMessages) {
+    map.set(m.messageId || m.id, m);
+  }
+  for (const m of localMessages) {
+    const key = m.messageId || m.id;
+    const existing = map.get(key);
+    if (!existing || new Date(m.updatedAt || m.createdAt).getTime() >= new Date(existing.updatedAt || existing.createdAt).getTime()) {
+      map.set(key, m);
+    }
+  }
+
+  let list = Array.from(map.values()).sort(
+    (a, b) => new Date(b.receivedAt).getTime() - new Date(a.receivedAt).getTime()
+  );
+
+  // Apply filters
+  if (filter?.mailbox && filter.mailbox !== 'ALL' && filter.mailbox !== 'all') {
+    const mbox = filter.mailbox.toLowerCase().trim();
+    list = list.filter(m => m.mailbox.toLowerCase() === mbox);
+  }
+
+  if (filter?.status && filter.status !== 'ALL') {
+    list = list.filter(m => m.status === filter.status);
+  } else {
+    // By default, exclude TRASH unless explicitly requested
+    list = list.filter(m => m.status !== 'TRASH');
+  }
+
+  if (filter?.search) {
+    const s = filter.search.toLowerCase().trim();
+    list = list.filter(m =>
+      m.subject.toLowerCase().includes(s) ||
+      m.fromEmail.toLowerCase().includes(s) ||
+      m.fromName.toLowerCase().includes(s) ||
+      m.toEmail.toLowerCase().includes(s) ||
+      m.previewText.toLowerCase().includes(s) ||
+      m.textBody.toLowerCase().includes(s)
+    );
+  }
+
+  return list;
+}
+
+export async function getInboxMessageById(id: string): Promise<InboxMessage | null> {
+  const local = readLocalInboxMessages();
+  const localMatch = local.find(m => m.id === id || m.messageId === id);
+
+  try {
+    const col = await getInboxMessagesCollection();
+    const mongoMatch = await col.findOne({ $or: [{ _id: id }, { id }, { messageId: id }] });
+    if (mongoMatch) return mongoMatch;
+  } catch {}
+
+  return localMatch || null;
+}
+
+export async function getInboxMessageByMessageId(messageId: string): Promise<InboxMessage | null> {
+  const local = readLocalInboxMessages();
+  const localMatch = local.find(m => m.messageId === messageId);
+
+  try {
+    const col = await getInboxMessagesCollection();
+    const mongoMatch = await col.findOne({ messageId });
+    if (mongoMatch) return mongoMatch;
+  } catch {}
+
+  return localMatch || null;
+}
+
+export async function saveIncomingInboxMessage(
+  data: Omit<InboxMessage, 'id' | 'createdAt' | 'updatedAt' | 'status' | 'isSpam'> & {
+    id?: string;
+    status?: InboxMessageStatus;
+    isSpam?: boolean;
+  }
+): Promise<{ message: InboxMessage; isDuplicate: boolean }> {
+  // Check Idempotency by messageId
+  if (data.messageId) {
+    const existing = await getInboxMessageByMessageId(data.messageId);
+    if (existing) {
+      return { message: existing, isDuplicate: true };
+    }
+  }
+
+  const id = data.id || `msg-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+  const nowISO = new Date().toISOString();
+
+  const newRecord: InboxMessage = {
+    ...data,
+    id,
+    status: data.status || 'UNREAD',
+    isSpam: data.isSpam ?? false,
+    createdAt: nowISO,
+    updatedAt: nowISO,
+  };
+
+  // 1. Save to local JSON fallback immediately
+  const local = readLocalInboxMessages();
+  local.unshift(newRecord);
+  writeLocalInboxMessages(local);
+
+  // 2. Try MongoDB insertion
+  try {
+    const col = await getInboxMessagesCollection();
+    await col.insertOne({ ...newRecord, _id: id } as any);
+    await logActivityToMongo('system', 'INBOX_MESSAGE_RECEIVED', id);
+  } catch (err) {
+    console.warn("MongoDB saveIncomingInboxMessage fallback to JSON:", (err as Error).message);
+  }
+
+  return { message: newRecord, isDuplicate: false };
+}
+
+export async function updateInboxMessageStatus(
+  id: string,
+  targetStatus: InboxMessageStatus
+): Promise<InboxMessage | null> {
+  const nowISO = new Date().toISOString();
+  let updatedRecord: InboxMessage | null = null;
+
+  const updates: Partial<InboxMessage> = {
+    status: targetStatus,
+    updatedAt: nowISO,
+  };
+
+  if (targetStatus === 'READ') {
+    updates.readAt = nowISO;
+    updates.deletedAt = undefined;
+  } else if (targetStatus === 'UNREAD') {
+    updates.readAt = undefined;
+    updates.deletedAt = undefined;
+  } else if (targetStatus === 'TRASH') {
+    updates.deletedAt = nowISO;
+  } else if (targetStatus === 'REPLIED') {
+    updates.repliedAt = nowISO;
+    updates.deletedAt = undefined;
+  }
+
+  // 1. Update in MongoDB
+  try {
+    const col = await getInboxMessagesCollection();
+    const existing = await col.findOne({ $or: [{ _id: id }, { id }, { messageId: id }] });
+    if (existing) {
+      const merged: InboxMessage & { _id: string } = {
+        ...existing,
+        ...updates,
+        _id: existing._id,
+        id: existing.id,
+      };
+      await col.replaceOne({ _id: existing._id }, merged, { upsert: true });
+      updatedRecord = merged;
+      await logActivityToMongo('admin@barakahalrizquae.com', 'INBOX_STATUS_UPDATED', id);
+    }
+  } catch (err) {}
+
+  // 2. Update local JSON fallback
+  const local = readLocalInboxMessages();
+  const idx = local.findIndex(m => m.id === id || m.messageId === id);
+  if (idx !== -1) {
+    local[idx] = {
+      ...local[idx],
+      ...updates,
+    };
+    writeLocalInboxMessages(local);
+    if (!updatedRecord) updatedRecord = local[idx];
+  }
+
+  return updatedRecord;
+}
+
+export async function getInboxStats(): Promise<{
+  totalCount: number;
+  unreadCount: number;
+  readCount: number;
+  repliedCount: number;
+  trashCount: number;
+  byMailbox: Record<string, { total: number; unread: number }>;
+}> {
+  const all = await (async () => {
+    const local = readLocalInboxMessages();
+    let mongo: InboxMessage[] = [];
+    try {
+      const col = await getInboxMessagesCollection();
+      mongo = await col.find({}).toArray();
+    } catch {}
+    const map = new Map<string, InboxMessage>();
+    for (const m of mongo) map.set(m.messageId || m.id, m);
+    for (const m of local) map.set(m.messageId || m.id, m);
+    return Array.from(map.values());
+  })();
+
+  const stats = {
+    totalCount: all.filter(m => m.status !== 'TRASH').length,
+    unreadCount: all.filter(m => m.status === 'UNREAD').length,
+    readCount: all.filter(m => m.status === 'READ').length,
+    repliedCount: all.filter(m => m.status === 'REPLIED').length,
+    trashCount: all.filter(m => m.status === 'TRASH').length,
+    byMailbox: {} as Record<string, { total: number; unread: number }>,
+  };
+
+  const mailboxes = await getEmailMailboxes();
+  for (const mbox of mailboxes) {
+    stats.byMailbox[mbox.channel] = {
+      total: all.filter(m => m.mailbox.toLowerCase() === mbox.channel.toLowerCase() && m.status !== 'TRASH').length,
+      unread: all.filter(m => m.mailbox.toLowerCase() === mbox.channel.toLowerCase() && m.status === 'UNREAD').length,
+    };
+  }
+
+  return stats;
 }

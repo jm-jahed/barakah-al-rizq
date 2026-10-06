@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createWholesaleOrder, getWholesaleOrders } from '@/lib/mongodb';
 import { WholesaleOrderItem } from '@/lib/db/types';
+import { sendOrderNotificationAndConfirmation } from '@/lib/email';
 
 export async function POST(req: Request) {
   try {
@@ -124,10 +125,20 @@ export async function POST(req: Request) {
       status: 'PENDING',
     });
 
+    // 5. Send order notification and customer confirmation via orders@
+    let emailDispatched = false;
+    try {
+      const emailRes = await sendOrderNotificationAndConfirmation(order);
+      emailDispatched = emailRes.success;
+    } catch (mailErr: any) {
+      console.error('[ORDER EMAIL DISPATCH ERROR]:', mailErr?.message || mailErr);
+    }
+
     return NextResponse.json({
       success: true,
       orderId: order.id,
       order,
+      emailDispatched,
       message: 'Wholesale order registered successfully for store pickup.',
     });
   } catch (err: any) {
