@@ -115,10 +115,17 @@ const mongoOptions = {
   maxIdleTimeMS: 45000,
 };
 
+let lastMongoErrorTime = 0;
+const MONGO_COOLDOWN_MS = 30000;
+
 export async function getMongoClient(): Promise<MongoClient> {
   const activeUri = getActiveUri();
   if (!activeUri) {
     throw new Error("MONGODB_URI is not configured in environment variables.");
+  }
+
+  if (Date.now() - lastMongoErrorTime < MONGO_COOLDOWN_MS) {
+    throw new Error("MongoDB Atlas temporarily in cooldown after recent connection failure; using instant local persistence.");
   }
 
   if (!global._mongoClientPromise) {
@@ -129,6 +136,7 @@ export async function getMongoClient(): Promise<MongoClient> {
     const c = await global._mongoClientPromise;
     return c;
   } catch (err) {
+    lastMongoErrorTime = Date.now();
     global._mongoClientPromise = undefined;
     throw err;
   }
@@ -327,7 +335,7 @@ export async function getFoodstuffProducts(): Promise<FoodstuffProduct[]> {
       result = [];
     }
   }
-  setCachedData('foodstuff_products', result, 30);
+  setCachedData('foodstuff_products', result, 60);
   return result;
 }
 
@@ -666,7 +674,7 @@ export async function getFoodstuffContainerPrices(): Promise<FoodstuffContainerP
       result = [];
     }
   }
-  setCachedData('foodstuff_container_prices', result, 30);
+  setCachedData('foodstuff_container_prices', result, 60);
   return result;
 }
 
@@ -690,7 +698,7 @@ export async function getFoodstuffMarketPrices(): Promise<FoodstuffMarketPrice[]
       result = [];
     }
   }
-  setCachedData('foodstuff_market_prices', result, 30);
+  setCachedData('foodstuff_market_prices', result, 60);
   return result;
 }
 
@@ -740,6 +748,22 @@ export async function getFoodstuffPriceHistory(limit: number = 100): Promise<Foo
   try {
     const { readDB } = await import('@/lib/db/index');
     return (readDB().foodstuffPriceHistory || []).slice(-limit).reverse();
+  } catch {
+    return [];
+  }
+}
+
+export async function getActivityLogs(limit: number = 50): Promise<ActivityLog[]> {
+  try {
+    const col = await getActivityLogsCollection();
+    const logs = await col.find({}).sort({ timestamp: -1 }).limit(limit).toArray();
+    if (logs && logs.length > 0) return logs;
+  } catch (err) {
+    console.warn('MongoDB getActivityLogs fallback:', (err as Error).message);
+  }
+  try {
+    const { readDB } = await import('@/lib/db/index');
+    return (readDB().activityLogs || []).slice(-limit).reverse();
   } catch {
     return [];
   }
