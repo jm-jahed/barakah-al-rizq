@@ -174,6 +174,12 @@ export function invalidateFoodstuffCache(): void {
   memoryCache.delete('foodstuff_schedule');
 }
 
+export function invalidateWholesaleCache(): void {
+  memoryCache.delete('wholesale_orders');
+  memoryCache.delete('wholesale_customers');
+  memoryCache.delete('wholesale_payments');
+}
+
 let indexesInitialized = false;
 export async function ensureMongoDbIndexes(): Promise<void> {
   if (indexesInitialized) return;
@@ -1404,6 +1410,9 @@ export function writeLocalOrders(orders: WholesaleOrder[]): void {
 }
 
 export async function getWholesaleOrders(): Promise<WholesaleOrder[]> {
+  const cached = getCachedData<WholesaleOrder[]>('wholesale_orders');
+  if (cached) return cached;
+
   const localOrders = readLocalOrders();
   let mongoOrders: WholesaleOrder[] = [];
   try {
@@ -1429,6 +1438,7 @@ export async function getWholesaleOrders(): Promise<WholesaleOrder[]> {
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 
+  setCachedData('wholesale_orders', merged, 60);
   return merged;
 }
 
@@ -1476,6 +1486,7 @@ export async function createWholesaleOrder(
     logActivityToMongo('system', 'WHOLESALE_ORDER_CREATED', id)
   ]).catch(() => {});
 
+  invalidateWholesaleCache();
   return newOrder;
 }
 
@@ -1523,6 +1534,7 @@ export async function updateWholesaleOrderStatus(
   if (updatedOrder) {
     await logActivityToMongo('admin@barakahalrizquae.com', 'WHOLESALE_ORDER_UPDATED', id);
   }
+  invalidateWholesaleCache();
   return updatedOrder;
 }
 
@@ -1669,6 +1681,7 @@ export async function getWholesaleCustomers(): Promise<WholesaleCustomer[]> {
     return timeB - timeA;
   });
 
+  setCachedData('wholesale_customers', list, 60);
   return list;
 }
 
@@ -1718,6 +1731,7 @@ export async function saveWholesaleCustomer(
   }
 
   await logActivityToMongo(adminEmail, 'CUSTOMER_UPDATED', id);
+  invalidateWholesaleCache();
   return savedRecord;
 }
 
@@ -1757,6 +1771,9 @@ export async function getWholesalePaymentsCollection(): Promise<Collection<Whole
 }
 
 export async function getWholesalePayments(): Promise<WholesalePayment[]> {
+  const cached = getCachedData<WholesalePayment[]>('wholesale_payments');
+  if (cached) return cached;
+
   const localPayments = readLocalPayments();
   let mongoPayments: WholesalePayment[] = [];
   try {
@@ -1778,9 +1795,12 @@ export async function getWholesalePayments(): Promise<WholesalePayment[]> {
     }
   }
 
-  return Array.from(map.values()).sort(
+  const list = Array.from(map.values()).sort(
     (a, b) => new Date(b.paymentDate || b.createdAt).getTime() - new Date(a.paymentDate || a.createdAt).getTime()
   );
+
+  setCachedData('wholesale_payments', list, 60);
+  return list;
 }
 
 export async function getOrderPaymentSummary(orderId: string): Promise<OrderPaymentSummary | null> {
@@ -1946,6 +1966,7 @@ export async function recordWholesalePayment(
   }
 
   await logActivityToMongo(adminEmail, 'PAYMENT_RECORDED', paymentId);
+  invalidateWholesaleCache();
 
   // 8. Re-calculate Summary
   const updatedSummary = (await getOrderPaymentSummary(order.id))!;
@@ -2003,6 +2024,7 @@ export async function reverseOrRefundPayment(
   }
 
   await logActivityToMongo(adminEmail, `PAYMENT_${action}`, paymentId);
+  invalidateWholesaleCache();
 
   const updatedSummary = (await getOrderPaymentSummary(payment.orderId))!;
   return { payment, summary: updatedSummary };
