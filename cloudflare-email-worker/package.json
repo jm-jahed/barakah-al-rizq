@@ -1,14 +1,12 @@
 {
   "name": "barakah-email-worker",
   "version": "1.0.0",
+  "type": "module",
   "description": "Cloudflare Email Routing Worker for Barakah Al Rizq Foodstuff Trading L.L.C",
   "main": "src/index.js",
   "scripts": {
     "deploy": "wrangler deploy",
     "dev": "wrangler dev"
-  },
-  "dependencies": {
-    "postal-mime": "^2.3.0"
   },
   "devDependencies": {
     "wrangler": "^3.109.2"
