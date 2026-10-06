@@ -1,5 +1,6 @@
 // scripts/test-admin-e2e-suite.mjs
 import https from 'https';
+import http from 'http';
 
 const BASE_URL = process.env.BASE_URL || 'https://barakahalrizquae.com';
 const ADMIN_USER = process.env.ADMIN_USER || 'admin@barakahalrizquae.com';
@@ -25,17 +26,19 @@ function makeRequest(urlStr, options = {}, postData = null) {
       );
     }
 
+    const isHttps = url.protocol === 'https:';
     const reqOptions = {
       hostname: url.hostname,
-      port: url.port || 443,
+      port: url.port || (isHttps ? 443 : 80),
       path: url.pathname + url.search,
       method: options.method || 'GET',
       headers,
       timeout: 15000,
     };
 
+    const client = isHttps ? https : http;
     const start = performance.now();
-    const req = https.request(reqOptions, (res) => {
+    const req = client.request(reqOptions, (res) => {
       let data = '';
       res.on('data', (chunk) => {
         data += chunk;
