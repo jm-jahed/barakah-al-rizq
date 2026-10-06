@@ -28,8 +28,8 @@ const vpsEnvB64 = Buffer.from(vpsEnv).toString('base64');
 console.log('📦 1. Creating local source bundle...');
 if (fs.existsSync(bundleFile)) fs.unlinkSync(bundleFile);
 
-// Create tarball of src, package.json, package-lock.json, data/barakah/mailboxes.json
-execSync('tar -czf scripts/barakah/bundle.tar.gz src package.json package-lock.json data/barakah/mailboxes.json', {
+// Create tarball of src, scripts, package.json, package-lock.json, data/barakah/mailboxes.json
+execSync('tar --exclude=scripts/barakah/bundle.tar.gz -czf scripts/barakah/bundle.tar.gz src scripts package.json package-lock.json data/barakah/mailboxes.json', {
   stdio: 'inherit',
 });
 
