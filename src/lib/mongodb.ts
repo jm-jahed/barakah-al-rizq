@@ -1147,19 +1147,17 @@ export async function createLead(
     updatedAt: nowISO,
   };
 
-  // 1. Always sync to local JSON fallback immediately
+  // 1. Immediate Core Persistence: Local JSON fallback (< 2ms)
   const local = readLocalLeads();
   local.unshift(newLead);
   writeLocalLeads(local);
 
-  // 2. Try MongoDB persistence
-  try {
-    const col = await getLeadsCollection();
-    await col.insertOne(newLead as any);
-    await logActivityToMongo('system', 'LEAD_CREATED', newLead.id);
-  } catch (err) {
-    console.warn("MongoDB createLead fallback:", (err as Error).message);
-  }
+  // 2. Background Persistence & Telemetry: MongoDB & Activity log
+  Promise.allSettled([
+    getLeadsCollection().then(col => col.insertOne(newLead as any)),
+    logActivityToMongo('system', 'LEAD_CREATED', newLead.id)
+  ]).catch(() => {});
+
   return newLead;
 }
 
@@ -1396,25 +1394,18 @@ export async function createWholesaleOrder(
     updatedAt: nowISO,
   };
 
-  // 1. Always sync to local JSON fallback immediately
+  // 1. Immediate Core Persistence: Local JSON fallback (< 2ms, guarantees order safety)
   const existing = readLocalOrders();
   existing.unshift(newOrder);
   writeLocalOrders(existing);
 
-  // 2. Try MongoDB persistence
-  try {
-    const col = await getWholesaleOrdersCollection();
-    await col.insertOne({ ...newOrder, _id: id } as any);
-  } catch (err) {
-    console.warn("MongoDB createWholesaleOrder fallback to JSON:", (err as Error).message);
-  }
-
-  // 3. Mirror to Leads pipeline and activity log in background (non-blocking)
+  // 2. Background Persistence & Telemetry: MongoDB insertion, Leads pipeline mirroring, Activity log
   const itemSummary = newOrder.items
     .map(i => `${i.productName} (${i.orderType === 'CONTAINER' ? 'Container Wholesale' : 'Dubai Wholesale'}): ${i.quantityCtn} CTN @ AED ${i.pricePerCtn.toFixed(2)} = AED ${i.lineTotalAED.toFixed(2)}`)
     .join('\n');
 
   Promise.allSettled([
+    getWholesaleOrdersCollection().then(col => col.insertOne({ ...newOrder, _id: id } as any)),
     createLead({
       name: newOrder.customerName,
       email: newOrder.email,

@@ -163,7 +163,7 @@ export async function sendGeneralInquiryEmail(lead: {
   // Internal notification
   const adminResult = await sendBarakahEmail({
     channel: 'info',
-    to: adminEmail,
+    to: channels.info.address,
     replyTo: lead.email,
     subject: `[General Inquiry] ${lead.name} — ${lead.company || 'Barakah Portal'}`,
     html: adminHtml,
@@ -248,7 +248,7 @@ export async function sendSalesQuotationEmail(quote: {
   // Internal Sales notification
   const adminResult = await sendBarakahEmail({
     channel: 'sales',
-    to: adminEmail,
+    to: channels.sales.address,
     replyTo: quote.email,
     subject: `[Quotation Request] ${quote.productName || 'Wholesale'} — ${quote.company || quote.name}`,
     html: adminHtml,
@@ -375,7 +375,7 @@ export async function sendOrderNotificationAndConfirmation(order: {
   // Internal Orders notification
   const adminResult = await sendBarakahEmail({
     channel: 'orders',
-    to: adminEmail,
+    to: channels.orders.address,
     replyTo: order.email,
     subject: `[New Order ${order.id}] ${order.customerName} — ${order.totalAED.toFixed(2)} Dhs (${order.totalCtn} CTN)`,
     html: adminHtml,
