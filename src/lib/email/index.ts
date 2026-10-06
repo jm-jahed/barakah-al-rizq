@@ -57,6 +57,12 @@ export function getTransporter(): Transporter | null {
       port,
       secure: port === 465,
       auth: { user, pass },
+      pool: true,
+      maxConnections: 5,
+      maxMessages: 100,
+      connectionTimeout: 8000,
+      greetingTimeout: 5000,
+      socketTimeout: 10000,
       tls: {
         rejectUnauthorized: true,
       },
@@ -181,9 +187,10 @@ export async function sendGeneralInquiryEmail(lead: {
           <h3 style="color: #063d24; font-size: 16px; margin-top: 0;">Thank You for Reaching Out, ${lead.name}</h3>
           <p style="font-size: 14px; line-height: 1.6; color: #374151;">We have received your message regarding <strong>${lead.service || 'Wholesale Produce'}</strong>. Our trade desk team at Al Aweer Central Market will review your request and get in touch with you shortly.</p>
           <div style="padding: 14px; background: #ecfdf5; border-left: 4px solid #10b981; border-radius: 6px; font-size: 13px; color: #065f46; margin: 18px 0;">
-            <strong>Direct Sales Hotline:</strong> +971 56 944 8850<br/>
-            <strong>WhatsApp Trade Desk:</strong> +971 50 252 6750<br/>
-            <strong>Central Market Address:</strong> Stand 19, Fresh Produce Block B, Al Aweer Market, Ras Al Khor, Dubai, UAE
+            <strong>Commercial Sales Desk:</strong> +971 56 944 8850 (Direct / WhatsApp)<br/>
+            <strong>Sales Line:</strong> +971 56 953 8741<br/>
+            <strong>Landline Office:</strong> +971 4 576 4169<br/>
+            <strong>Central Market Address:</strong> Stand 19, Fresh Produce Block B, Al Aweer Central Market, Ras Al Khor, Dubai, UAE
           </div>
         </div>
         <div style="text-align: center; font-size: 11px; color: #9ca3af; padding-top: 14px; border-top: 1px solid #e5e7eb;">
@@ -267,9 +274,10 @@ export async function sendSalesQuotationEmail(quote: {
           <p style="font-size: 14px; line-height: 1.6; color: #374151;">Dear ${quote.name},</p>
           <p style="font-size: 14px; line-height: 1.6; color: #374151;">We have received your commercial wholesale inquiry for <strong>${quote.productName || 'Fresh Produce'}</strong> (${quote.quantity || 'Wholesale Volume'}). Our sales desk is compiling the active session spot rate and direct importer pricing for you.</p>
           <div style="padding: 14px; background: #ecfdf5; border-left: 4px solid #10b981; border-radius: 6px; font-size: 13px; color: #065f46; margin: 18px 0;">
-            <strong>Direct Sales Representative:</strong> +971 56 944 8850<br/>
-            <strong>Email:</strong> sales@barakahalrizquae.com<br/>
-            <strong>Daily Spot Feed:</strong> Real-time container pricing updated every morning at 06:00 GST.
+            <strong>Commercial Sales Desk:</strong> +971 56 944 8850 (Direct / WhatsApp)<br/>
+            <strong>Sales Line:</strong> +971 56 953 8741<br/>
+            <strong>Landline Office:</strong> +971 4 576 4169<br/>
+            <strong>Central Market Address:</strong> Stand 19, Fresh Produce Block B, Al Aweer Central Market, Ras Al Khor, Dubai, UAE
           </div>
         </div>
         <div style="text-align: center; font-size: 11px; color: #9ca3af; padding-top: 14px; border-top: 1px solid #e5e7eb;">
@@ -419,8 +427,9 @@ export async function sendOrderNotificationAndConfirmation(order: {
             </tbody>
           </table>
 
-          <div style="margin-top: 20px; font-size: 12px; color: #6b7280; line-height: 1.5;">
-            Need help or need to modify your pickup time? Contact our Orders Desk directly at <a href="tel:+971569448850" style="color: #065f46; font-weight: bold;">+971 56 944 8850</a> or email <a href="mailto:${channels.orders.address}" style="color: #065f46;">${channels.orders.address}</a>.
+          <div style="margin-top: 20px; font-size: 12px; color: #6b7280; line-height: 1.6;">
+            Need help or need to modify your pickup time? Contact our Orders Desk directly at <a href="tel:+971569448850" style="color: #065f46; font-weight: bold;">+971 56 944 8850</a> (Direct / WhatsApp) or email <a href="mailto:${channels.orders.address}" style="color: #065f46;">${channels.orders.address}</a>.<br/>
+            Commercial Sales: +971 56 953 8741 | Landline Office: +971 4 576 4169
           </div>
         </div>
         <div style="text-align: center; font-size: 11px; color: #9ca3af; padding-top: 14px; border-top: 1px solid #e5e7eb;">

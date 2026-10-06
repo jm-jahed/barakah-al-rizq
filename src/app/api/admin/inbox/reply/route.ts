@@ -92,7 +92,8 @@ export async function POST(req: Request) {
     <div style="background: #f8fafc; padding: 16px 24px; border-top: 1px solid #e2e8f0; font-size: 11px; color: #64748b; line-height: 1.5;">
       <p style="margin: 0; font-weight: 600; color: #334155;">Barakah Al Rizq Foodstuff Trading L.L.C</p>
       <p style="margin: 2px 0 0 0;">Stand 19, Fresh Produce Block B, Al Aweer Central Market, Ras Al Khor, Dubai, UAE</p>
-      <p style="margin: 2px 0 0 0;">Direct Tel: +971 56 944 8850 &bull; Email: ${channelConfig.address}</p>
+      <p style="margin: 2px 0 0 0;">Commercial Desk: +971 56 944 8850 (Direct / WhatsApp)</p>
+      <p style="margin: 2px 0 0 0; color: #94a3b8; font-size: 10px;">Sales Line: +971 56 953 8741 &bull; Landline Office: +971 4 576 4169 &bull; Email: ${channelConfig.address}</p>
     </div>
   </div>
 </body>

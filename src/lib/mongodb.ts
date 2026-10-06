@@ -2280,11 +2280,18 @@ export function writeLocalInboxMessages(messages: InboxMessage[]): void {
   } catch {}
 }
 
-export async function getInboxMessages(filter?: {
-  mailbox?: string;
-  status?: string;
-  search?: string;
-}): Promise<InboxMessage[]> {
+let cachedInboxMessages: { list: InboxMessage[]; expiresAt: number } | null = null;
+
+export function invalidateInboxCache(): void {
+  cachedInboxMessages = null;
+}
+
+export async function getAllInboxMessagesList(): Promise<InboxMessage[]> {
+  const now = Date.now();
+  if (cachedInboxMessages && cachedInboxMessages.expiresAt > now) {
+    return cachedInboxMessages.list;
+  }
+
   const localMessages = readLocalInboxMessages();
   let mongoMessages: InboxMessage[] = [];
 
@@ -2307,9 +2314,21 @@ export async function getInboxMessages(filter?: {
     }
   }
 
-  let list = Array.from(map.values()).sort(
+  const list = Array.from(map.values()).sort(
     (a, b) => new Date(b.receivedAt).getTime() - new Date(a.receivedAt).getTime()
   );
+
+  cachedInboxMessages = { list, expiresAt: now + 5000 };
+  return list;
+}
+
+export async function getInboxMessages(filter?: {
+  mailbox?: string;
+  status?: string;
+  search?: string;
+}): Promise<InboxMessage[]> {
+  const all = await getAllInboxMessagesList();
+  let list = [...all];
 
   // Apply filters
   if (filter?.mailbox && filter.mailbox !== 'ALL' && filter.mailbox !== 'all') {
@@ -2406,6 +2425,7 @@ export async function saveIncomingInboxMessage(
     console.warn("MongoDB saveIncomingInboxMessage fallback to JSON:", (err as Error).message);
   }
 
+  invalidateInboxCache();
   return { message: newRecord, isDuplicate: false };
 }
 
@@ -2502,6 +2522,7 @@ export async function updateInboxMessageStatus(
     updatedRecord = fallbackMessage;
   }
 
+  invalidateInboxCache();
   return updatedRecord;
 }
 
@@ -2513,18 +2534,7 @@ export async function getInboxStats(): Promise<{
   trashCount: number;
   byMailbox: Record<string, { total: number; unread: number }>;
 }> {
-  const all = await (async () => {
-    const local = readLocalInboxMessages();
-    let mongo: InboxMessage[] = [];
-    try {
-      const col = await getInboxMessagesCollection();
-      mongo = await col.find({}).toArray();
-    } catch {}
-    const map = new Map<string, InboxMessage>();
-    for (const m of mongo) map.set(m.messageId || m.id, m);
-    for (const m of local) map.set(m.messageId || m.id, m);
-    return Array.from(map.values());
-  })();
+  const all = await getAllInboxMessagesList();
 
   const stats = {
     totalCount: all.filter(m => m.status !== 'TRASH').length,

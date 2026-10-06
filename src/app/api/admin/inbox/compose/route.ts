@@ -83,8 +83,9 @@ export async function POST(req: Request) {
       </div>
 
       <div style="margin-top: 32px; padding: 16px; background-color: #f0fdf4; border-left: 4px solid #10b981; border-radius: 6px; font-size: 12px; color: #065f46;">
-        <strong>Commercial Trade Desk:</strong> +971 56 944 8850<br/>
-        <strong>WhatsApp Orders:</strong> +971 50 252 6750<br/>
+        <strong>Commercial Sales Desk:</strong> +971 56 944 8850 (Direct / WhatsApp)<br/>
+        <strong>Sales Desk Line:</strong> +971 56 953 8741<br/>
+        <strong>Landline Office:</strong> +971 4 576 4169<br/>
         <strong>Location:</strong> Stand 19, Fresh Produce Block B, Al Aweer Central Market, Ras Al Khor, Dubai, UAE<br/>
         <strong>Sender Desk:</strong> ${channelConfig.address}
       </div>
