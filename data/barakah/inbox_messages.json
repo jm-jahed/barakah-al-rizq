@@ -1,5 +1,94 @@
 [
   {
+    "messageId": "<e2e-habeeb-1791258313464@dubai-trader.ae>",
+    "mailbox": "habeeb",
+    "fromEmail": "trader@dubai-trader.ae",
+    "fromName": "Dubai Fresh Food Trader",
+    "toEmail": "habeeb@barakahalrizquae.com",
+    "replyTo": "trader@dubai-trader.ae",
+    "subject": "Direct Management Consultation",
+    "previewText": "Inquiry message to habeeb@barakahalrizquae.com",
+    "textBody": "Inquiry message to habeeb@barakahalrizquae.com",
+    "htmlBody": "<p>Inquiry message to <b>habeeb@barakahalrizquae.com</b></p>",
+    "rawHtml": "<p>Inquiry message to <b>habeeb@barakahalrizquae.com</b></p>",
+    "hasAttachments": false,
+    "attachmentsCount": 0,
+    "receivedAt": "2026-10-06T03:45:13.565Z",
+    "id": "msg-1791258316430-e5p8i",
+    "status": "REPLIED",
+    "isSpam": false,
+    "createdAt": "2026-10-06T03:45:16.430Z",
+    "updatedAt": "2026-10-06T03:46:24.247Z",
+    "repliedAt": "2026-10-06T03:46:24.247Z"
+  },
+  {
+    "messageId": "<e2e-orders-1791258307639@dubai-trader.ae>",
+    "mailbox": "orders",
+    "fromEmail": "trader@dubai-trader.ae",
+    "fromName": "Dubai Fresh Food Trader",
+    "toEmail": "orders@barakahalrizquae.com",
+    "replyTo": "trader@dubai-trader.ae",
+    "subject": "Pallet Collection Verification",
+    "previewText": "Inquiry message to orders@barakahalrizquae.com",
+    "textBody": "Inquiry message to orders@barakahalrizquae.com",
+    "htmlBody": "<p>Inquiry message to <b>orders@barakahalrizquae.com</b></p>",
+    "rawHtml": "<p>Inquiry message to <b>orders@barakahalrizquae.com</b></p>",
+    "hasAttachments": false,
+    "attachmentsCount": 0,
+    "receivedAt": "2026-10-06T03:45:07.858Z",
+    "id": "msg-1791258310706-lachj",
+    "status": "REPLIED",
+    "isSpam": false,
+    "createdAt": "2026-10-06T03:45:10.706Z",
+    "updatedAt": "2026-10-06T03:46:14.076Z",
+    "repliedAt": "2026-10-06T03:46:14.076Z"
+  },
+  {
+    "messageId": "<e2e-sales-1791258300255@dubai-trader.ae>",
+    "mailbox": "sales",
+    "fromEmail": "trader@dubai-trader.ae",
+    "fromName": "Dubai Fresh Food Trader",
+    "toEmail": "sales@barakahalrizquae.com",
+    "replyTo": "trader@dubai-trader.ae",
+    "subject": "Fresh Garlic 40ft Reefer RFQ",
+    "previewText": "Inquiry message to sales@barakahalrizquae.com",
+    "textBody": "Inquiry message to sales@barakahalrizquae.com",
+    "htmlBody": "<p>Inquiry message to <b>sales@barakahalrizquae.com</b></p>",
+    "rawHtml": "<p>Inquiry message to <b>sales@barakahalrizquae.com</b></p>",
+    "hasAttachments": false,
+    "attachmentsCount": 0,
+    "receivedAt": "2026-10-06T03:45:00.688Z",
+    "id": "msg-1791258304659-mo7sw",
+    "status": "REPLIED",
+    "isSpam": false,
+    "createdAt": "2026-10-06T03:45:04.659Z",
+    "updatedAt": "2026-10-06T03:45:54.494Z",
+    "repliedAt": "2026-10-06T03:45:54.494Z"
+  },
+  {
+    "messageId": "<e2e-info-1791258291320@dubai-trader.ae>",
+    "mailbox": "info",
+    "fromEmail": "trader@dubai-trader.ae",
+    "fromName": "Dubai Fresh Food Trader",
+    "toEmail": "info@barakahalrizquae.com",
+    "replyTo": "trader@dubai-trader.ae",
+    "subject": "Corporate Partner Inquiry",
+    "previewText": "Inquiry message to info@barakahalrizquae.com",
+    "textBody": "Inquiry message to info@barakahalrizquae.com",
+    "htmlBody": "<p>Inquiry message to <b>info@barakahalrizquae.com</b></p>",
+    "rawHtml": "<p>Inquiry message to <b>info@barakahalrizquae.com</b></p>",
+    "hasAttachments": false,
+    "attachmentsCount": 0,
+    "receivedAt": "2026-10-06T03:44:51.583Z",
+    "id": "msg-1791258294204-y80v0",
+    "status": "READ",
+    "isSpam": false,
+    "createdAt": "2026-10-06T03:44:54.204Z",
+    "updatedAt": "2026-10-06T03:46:36.424Z",
+    "repliedAt": "2026-10-06T03:45:40.285Z",
+    "readAt": "2026-10-06T03:46:36.424Z"
+  },
+  {
     "messageId": "<mailportal-test-habeeb-1791256572820@uaebusiness.ae>",
     "mailbox": "habeeb",
     "fromEmail": "client@uaebusiness.ae",
@@ -84,8 +173,8 @@
     "status": "READ",
     "isSpam": false,
     "createdAt": "2026-10-06T03:15:59.167Z",
-    "updatedAt": "2026-10-06T03:16:52.920Z",
-    "readAt": "2026-10-06T03:16:52.920Z"
+    "updatedAt": "2026-10-06T03:40:36.723Z",
+    "readAt": "2026-10-06T03:40:36.723Z"
   },
   {
     "messageId": "<mailportal-test-habeeb-1791256544940@uaebusiness.ae>",
@@ -125,10 +214,11 @@
     "attachmentsCount": 0,
     "receivedAt": "2026-10-06T03:15:38.948Z",
     "id": "msg-1791256541642-875wq",
-    "status": "UNREAD",
+    "status": "READ",
     "isSpam": false,
     "createdAt": "2026-10-06T03:15:41.646Z",
-    "updatedAt": "2026-10-06T03:15:41.646Z"
+    "updatedAt": "2026-10-06T03:42:17.788Z",
+    "readAt": "2026-10-06T03:42:17.788Z"
   },
   {
     "messageId": "<mailportal-test-sales-1791256533634@uaebusiness.ae>",
@@ -256,10 +346,11 @@
     "attachmentsCount": 1,
     "receivedAt": "2026-10-06T03:06:31.129Z",
     "id": "msg-1791255993715-70q9v",
-    "status": "UNREAD",
+    "status": "READ",
     "isSpam": false,
     "createdAt": "2026-10-06T03:06:33.715Z",
-    "updatedAt": "2026-10-06T03:06:33.715Z"
+    "updatedAt": "2026-10-06T03:39:11.894Z",
+    "readAt": "2026-10-06T03:39:11.894Z"
   },
   {
     "messageId": "<phase2-test-1791255887770@dubaihotelier.ae>",
@@ -541,10 +632,11 @@
     "attachmentsCount": 1,
     "receivedAt": "2026-10-06T02:53:06.908Z",
     "id": "msg-1791255189511-pwucj",
-    "status": "UNREAD",
+    "status": "READ",
     "isSpam": false,
     "createdAt": "2026-10-06T02:53:09.511Z",
-    "updatedAt": "2026-10-06T02:53:09.511Z"
+    "updatedAt": "2026-10-06T03:39:20.832Z",
+    "readAt": "2026-10-06T03:39:20.832Z"
   },
   {
     "messageId": "<msg-test-1791255181717-info-yejx@buyer.ae>",
@@ -562,9 +654,10 @@
     "attachmentsCount": 1,
     "receivedAt": "2026-10-06T02:53:01.717Z",
     "id": "msg-1791255184330-fmulm",
-    "status": "UNREAD",
+    "status": "READ",
     "isSpam": false,
     "createdAt": "2026-10-06T02:53:04.330Z",
-    "updatedAt": "2026-10-06T02:53:04.330Z"
+    "updatedAt": "2026-10-06T03:39:14.847Z",
+    "readAt": "2026-10-06T03:39:14.847Z"
   }
 ]

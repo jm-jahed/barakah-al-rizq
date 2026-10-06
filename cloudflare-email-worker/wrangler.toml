@@ -1,0 +1,8 @@
+name = "barakah-email-worker"
+main = "src/index.js"
+compatibility_date = "2024-09-23"
+
+[vars]
+WEBHOOK_URL = "https://barakahalrizquae.com/api/webhooks/incoming-email"
+GMAIL_BACKUP_EMAIL = "barakahalrizquae@gmail.com"
+INCOMING_EMAIL_WEBHOOK_SECRET = "barakah_incoming_webhook_sec_2026_x89"
