@@ -1067,14 +1067,14 @@ export default function AdminInboxPage() {
               </div>
 
               {/* Email Content Body */}
-              <div className="flex-1 p-6 overflow-y-auto custom-scrollbar bg-slate-950/50">
+              <div className="flex-1 p-2 sm:p-6 overflow-y-auto custom-scrollbar bg-slate-950/50">
                 {selectedMessage.htmlBody ? (
                   <div
-                    className="prose prose-invert max-w-none text-slate-200 text-sm leading-relaxed overflow-x-auto break-words bg-slate-900/40 p-5 rounded-2xl border border-white/[0.06] shadow-sm"
+                    className="prose prose-invert max-w-none text-slate-200 text-sm leading-relaxed overflow-x-auto break-words bg-transparent sm:bg-slate-900/40 p-0 sm:p-5 rounded-xl sm:rounded-2xl border-0 sm:border border-white/[0.06] shadow-sm [&_.email-card]:w-full [&_.email-card]:max-w-full"
                     dangerouslySetInnerHTML={{ __html: selectedMessage.htmlBody }}
                   />
                 ) : (
-                  <div className="whitespace-pre-wrap font-sans text-sm text-slate-200 leading-relaxed break-words bg-slate-900/40 p-5 rounded-2xl border border-white/[0.06] shadow-sm">
+                  <div className="whitespace-pre-wrap font-sans text-sm text-slate-200 leading-relaxed break-words bg-slate-900/40 p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border border-white/[0.06] shadow-sm">
                     {selectedMessage.textBody || selectedMessage.previewText || 'Empty email content.'}
                   </div>
                 )}

@@ -93,41 +93,93 @@ export async function POST(req: Request) {
     const channelInfo = config.channels[selectedChannel];
 
     // 4. Construct Branded HTML Email Template
+    const deskTitle = channelInfo.name
+      .replace(/^BARAKAH\s+AL\s+RIZQ\s+FOODSTUFF\s+TRADING\s+L\.L\.C\s*[—–-]\s*/i, '')
+      .trim() || channelInfo.description;
+
     const formattedHtml = `
-      <div style="font-family: Arial, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 620px; margin: 0 auto; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
-        <!-- Header -->
-        <div style="background-color: #063d24; padding: 24px; text-align: center; color: #ffffff;">
-          <h1 style="margin: 0; font-size: 20px; font-weight: 800; color: #fef08a; letter-spacing: 0.5px;">
-            BARAKAH AL RIZQ FOODSTUFF TRADING L.L.C
-          </h1>
-          <p style="margin: 4px 0 0 0; font-size: 11px; color: #a7f3d0; letter-spacing: 1px; text-transform: uppercase;">
-            ${channelInfo.description} • Al Aweer Central Market, Dubai, UAE
-          </p>
-        </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="format-detection" content="telephone=no">
+  <title>${cleanSubject}</title>
+  <style>
+    body { margin: 0 !important; padding: 12px 6px !important; -webkit-text-size-adjust: 100% !important; }
+    @media only screen and (max-width: 600px) {
+      body { padding: 4px 0 !important; }
+      .email-card { border-radius: 8px !important; width: 100% !important; max-width: 100% !important; }
+      .email-header { padding: 14px 12px !important; }
+      .brand-title { font-size: 14px !important; }
+      .email-body { padding: 16px 12px !important; font-size: 13.5px !important; }
+      .card-footer { padding: 14px 12px !important; }
+    }
+  </style>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f1f5f9; margin: 0; padding: 16px 8px; color: #1e293b;">
+  <div class="email-card" style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.04);">
+    <!-- Header -->
+    <div class="email-header" style="background: linear-gradient(135deg, #022c22 0%, #064e3b 100%); padding: 18px 20px; border-bottom: 2px solid #10b981;">
+      <div style="margin-bottom: 5px;">
+        <span style="display: inline-block; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(110, 231, 183, 0.3); color: #6ee7b7; font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 2px 8px; border-radius: 9999px;">
+          DUBAI, UAE &bull; AL AWEER
+        </span>
+      </div>
+      <h1 class="brand-title" style="color: #ffffff; margin: 0; font-size: 15.5px; font-weight: 800; letter-spacing: 0.4px; line-height: 1.35;">
+        BARAKAH AL RIZQ FOODSTUFF TRADING L.L.C
+      </h1>
+      <p style="color: #a7f3d0; margin: 4px 0 0 0; font-size: 11px; font-weight: 600; letter-spacing: 0.2px;">
+        ${deskTitle} &bull; Dubai, UAE
+      </p>
+    </div>
 
-        <!-- Body Content -->
-        <div style="padding: 28px 24px; color: #1e293b; background-color: #ffffff;">
-          ${customerName ? `<p style="font-size: 14px; font-weight: 600; margin-top: 0; color: #063d24;">Dear ${customerName},</p>` : ''}
-          
-          <div style="font-size: 14px; line-height: 1.7; color: #334155; white-space: pre-wrap; margin: 16px 0;">
+    <!-- Body Content -->
+    <div class="email-body" style="padding: 22px 20px; color: #1e293b; background-color: #ffffff;">
+      ${customerName ? `<p style="font-size: 14px; font-weight: 700; margin-top: 0; margin-bottom: 14px; color: #022c22;">Dear ${customerName},</p>` : ''}
+      
+      <div style="font-size: 14px; line-height: 1.65; color: #334155; white-space: pre-wrap; word-break: break-word; margin: 12px 0;">
 ${cleanMessage}
-          </div>
+      </div>
+    </div>
 
-          <!-- Trade Desk Badge -->
-          <div style="margin-top: 28px; padding: 16px; background-color: #f0fdf4; border-left: 4px solid #10b981; border-radius: 6px; font-size: 12px; color: #065f46;">
-            <strong>Commercial Sales Desk:</strong> +971 56 944 8850 (Direct / WhatsApp)<br/>
-            <strong>Sales Line:</strong> +971 56 953 8741<br/>
-            <strong>Landline Office:</strong> +971 4 576 4169<br/>
-            <strong>Location:</strong> Stand 19, Fresh Produce Block B, Al Aweer Central Market, Ras Al Khor, Dubai, UAE
-          </div>
+    <!-- Executive Footer -->
+    <div class="card-footer" style="background: #f8fafc; padding: 16px 20px; border-top: 1px solid #e2e8f0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+      <div style="margin-bottom: 8px;">
+        <div style="font-size: 12.5px; font-weight: 800; color: #022c22; letter-spacing: 0.3px;">
+          BARAKAH AL RIZQ FOODSTUFF TRADING L.L.C
         </div>
-
-        <!-- Footer -->
-        <div style="padding: 16px 24px; background-color: #f1f5f9; text-align: center; font-size: 11px; color: #64748b; border-top: 1px solid #e2e8f0;">
-          Sent by <strong>${channelInfo.name}</strong> (&lt;${channelInfo.address}&gt;)<br/>
-          &copy; ${new Date().getFullYear()} BARAKAH AL RIZQ FOODSTUFF TRADING L.L.C. All rights reserved.
+        <div style="font-size: 10px; color: #64748b; line-height: 1.45; margin-top: 2px;">
+          Stand 19, Fresh Produce Block B, Al Aweer Central Fruit &amp; Vegetable Market, Ras Al Khor, Dubai, UAE
         </div>
       </div>
+
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 8px;">
+        <tr>
+          <td style="padding: 2.5px 0; color: #334155;">
+            <span style="color: #64748b;">Direct / WhatsApp:</span>
+            <a href="https://wa.me/971569448850" style="color: #059669; font-weight: 700; text-decoration: none; margin-left: 4px;">+971 56 944 8850</a>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 2.5px 0; color: #334155;">
+            <span style="color: #64748b;">Sales Line:</span>
+            <a href="tel:+971569538741" style="color: #0f172a; font-weight: 600; text-decoration: none; margin-left: 4px;">+971 56 953 8741</a>
+            <span style="color: #cbd5e1; margin: 0 4px;">&bull;</span>
+            <span style="color: #64748b;">Landline:</span>
+            <a href="tel:+97145764169" style="color: #0f172a; font-weight: 600; text-decoration: none; margin-left: 4px;">+971 4 576 4169</a>
+          </td>
+        </tr>
+      </table>
+
+      <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #e2e8f0; font-size: 9.5px; color: #94a3b8; text-align: center;">
+        Quality You Can Trust, Service You Can Rely On &bull; Dubai, UAE
+      </div>
+    </div>
+  </div>
+</body>
+</html>
     `;
 
     // 5. Send Server-Side via Brevo SMTP

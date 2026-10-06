@@ -42,14 +42,6 @@ import {
 } from "@/lib/db/types";
 import { getDynamicUAESession, calculatePricePerKg, DEFAULT_FOODSTUFF_CATEGORIES } from "@/lib/foodstuff/utils";
 
-try {
-  if (typeof dns.setServers === "function") {
-    dns.setServers(["8.8.8.8", "1.1.1.1"]);
-  }
-} catch {
-  // Ignore in environments where setting DNS servers is restricted
-}
-
 import fs from "node:fs";
 import path from "node:path";
 
@@ -110,17 +102,17 @@ declare global {
 
 const dbName = cleanEnvString(process.env.MONGODB_DB) || "barakah_al_rizq";
 
-let client: MongoClient;
-let clientPromise: Promise<MongoClient> | null = null;
-
 export function isMongoConfigured(): boolean {
   const uri = getActiveUri();
   return Boolean(uri && uri.trim().length > 0);
 }
 
 const mongoOptions = {
-  serverSelectionTimeoutMS: 2500,
-  connectTimeoutMS: 2500,
+  serverSelectionTimeoutMS: 2000,
+  connectTimeoutMS: 2000,
+  maxPoolSize: 20,
+  minPoolSize: 2,
+  maxIdleTimeMS: 45000,
 };
 
 export async function getMongoClient(): Promise<MongoClient> {
@@ -129,29 +121,16 @@ export async function getMongoClient(): Promise<MongoClient> {
     throw new Error("MONGODB_URI is not configured in environment variables.");
   }
 
-  if (process.env.NODE_ENV === "development") {
-    if (!global._mongoClientPromise) {
-      client = new MongoClient(activeUri, mongoOptions);
-      global._mongoClientPromise = client.connect();
-    }
-    try {
-      const c = await global._mongoClientPromise;
-      return c;
-    } catch (err) {
-      global._mongoClientPromise = undefined;
-      throw err;
-    }
-  } else {
-    if (!clientPromise) {
-      client = new MongoClient(activeUri, mongoOptions);
-      clientPromise = client.connect();
-    }
-    try {
-      return await clientPromise;
-    } catch (err) {
-      clientPromise = null;
-      throw err;
-    }
+  if (!global._mongoClientPromise) {
+    const client = new MongoClient(activeUri, mongoOptions);
+    global._mongoClientPromise = client.connect();
+  }
+  try {
+    const c = await global._mongoClientPromise;
+    return c;
+  } catch (err) {
+    global._mongoClientPromise = undefined;
+    throw err;
   }
 }
 
@@ -161,7 +140,7 @@ export async function getDb(): Promise<Db> {
 }
 
 // ==========================================
-// IN-MEMORY PERFORMANCE CACHE (TTL: 30s)
+// IN-MEMORY PERFORMANCE CACHE (TTL: 300s)
 // ==========================================
 interface CacheEntry<T> {
   data: T;
@@ -180,7 +159,7 @@ export function getCachedData<T>(key: string): T | null {
   return entry.data;
 }
 
-export function setCachedData<T>(key: string, data: T, ttlSeconds: number = 30): void {
+export function setCachedData<T>(key: string, data: T, ttlSeconds: number = 300): void {
   memoryCache.set(key, {
     data,
     expiresAt: Date.now() + ttlSeconds * 1000,
@@ -205,14 +184,25 @@ export async function ensureMongoDbIndexes(): Promise<void> {
       db.collection('wholesale_orders').createIndex({ id: 1 }, { unique: true, background: true }),
       db.collection('wholesale_orders').createIndex({ createdAt: -1 }, { background: true }),
       db.collection('wholesale_orders').createIndex({ status: 1, createdAt: -1 }, { background: true }),
+      db.collection('wholesale_orders').createIndex({ phone: 1 }, { background: true }),
+      db.collection('wholesale_orders').createIndex({ email: 1 }, { background: true }),
       db.collection('leads').createIndex({ id: 1 }, { unique: true, background: true }),
       db.collection('leads').createIndex({ createdAt: -1 }, { background: true }),
+      db.collection('leads').createIndex({ status: 1 }, { background: true }),
       db.collection('foodstuff_products').createIndex({ id: 1 }, { unique: true, background: true }),
-      db.collection('foodstuff_products').createIndex({ published: 1 }, { background: true }),
+      db.collection('foodstuff_products').createIndex({ published: 1, displayOrder: 1 }, { background: true }),
+      db.collection('foodstuff_products').createIndex({ category: 1, published: 1 }, { background: true }),
       db.collection('foodstuff_container_prices').createIndex({ productId: 1 }, { background: true }),
+      db.collection('foodstuff_container_prices').createIndex({ businessStatus: 1 }, { background: true }),
       db.collection('foodstuff_market_prices').createIndex({ productId: 1 }, { background: true }),
+      db.collection('foodstuff_market_prices').createIndex({ businessStatus: 1 }, { background: true }),
       db.collection('inbox_messages').createIndex({ messageId: 1 }, { unique: true, background: true }),
       db.collection('inbox_messages').createIndex({ mailbox: 1, status: 1, receivedAt: -1 }, { background: true }),
+      db.collection('inbox_messages').createIndex({ receivedAt: -1 }, { background: true }),
+      db.collection('activity_logs').createIndex({ timestamp: -1 }, { background: true }),
+      db.collection('activity_logs').createIndex({ adminEmail: 1 }, { background: true }),
+      db.collection('customers').createIndex({ id: 1 }, { unique: true, background: true }),
+      db.collection('customers').createIndex({ phone: 1 }, { background: true }),
     ]);
   } catch {
     // Background non-fatal
@@ -540,49 +530,114 @@ export async function activateFoodstuffProduct(id: string, adminEmail: string = 
 }
 
 export async function deleteFoodstuffProduct(id: string, adminEmail: string = 'admin@barakahalrizquae.com'): Promise<{ success: boolean; reason?: string; message: string }> {
-  // 1. Check if product is referenced in any wholesale order
-  const orders = await getWholesaleOrders();
-  const hasOrders = orders.some(o => o.items && o.items.some(item => item.productId === id));
-  if (hasOrders) {
-    await archiveFoodstuffProduct(id, adminEmail);
-    return {
-      success: false,
-      reason: 'ORDER_HISTORY_EXISTS',
-      message: 'Product has historical wholesale order records. To protect order history and audit compliance, the product has been Archived instead of permanently deleted.'
-    };
+  const cleanId = (id || '').trim();
+  if (!cleanId) {
+    return { success: false, message: 'Invalid product ID' };
   }
+  const cleanIdLower = cleanId.toLowerCase();
 
-  // 2. Safe to delete
+  // Permanent deletion requested: completely remove product and its pricing from all databases and files
   try {
     const col = await getFoodstuffProductsCollection();
-    await col.deleteOne({ $or: [{ _id: id }, { id }] });
-  } catch {}
+    await col.deleteMany({
+      $or: [
+        { _id: cleanId as any },
+        { id: cleanId },
+        { id: cleanIdLower },
+        { slug: cleanId },
+        { slug: cleanIdLower },
+      ],
+    });
+  } catch (err) {
+    console.warn('MongoDB deleteFoodstuffProduct products error:', (err as Error).message);
+  }
 
   try {
     const cpCol = await getFoodstuffContainerPricesCollection();
-    await cpCol.deleteMany({ productId: id });
+    await cpCol.deleteMany({
+      $or: [
+        { productId: cleanId },
+        { productId: cleanIdLower },
+      ],
+    });
+  } catch (err) {
+    console.warn('MongoDB deleteFoodstuffProduct container prices error:', (err as Error).message);
+  }
+
+  try {
     const mpCol = await getFoodstuffMarketPricesCollection();
-    await mpCol.deleteMany({ productId: id });
+    await mpCol.deleteMany({
+      $or: [
+        { productId: cleanId },
+        { productId: cleanIdLower },
+      ],
+    });
+  } catch (err) {
+    console.warn('MongoDB deleteFoodstuffProduct market prices error:', (err as Error).message);
+  }
+
+  try {
+    const db = await getDb();
+    await db.collection('foodstuff_price_history').deleteMany({
+      $or: [
+        { productId: cleanId },
+        { productId: cleanIdLower },
+      ],
+    });
   } catch {}
 
+  // Clean up from local JSON storage & in-memory DB
   try {
     const { readDB, writeDB } = await import('@/lib/db/index');
     const data = readDB();
-    data.foodstuffProducts = (data.foodstuffProducts || []).filter(p => p.id !== id);
-    data.foodstuffContainerPrices = (data.foodstuffContainerPrices || []).filter(c => c.productId !== id);
-    data.foodstuffMarketPrices = (data.foodstuffMarketPrices || []).filter(m => m.productId !== id);
+    const isTarget = (pId?: string, pSlug?: string) => {
+      const pidL = (pId || '').toLowerCase();
+      const pslugL = (pSlug || '').toLowerCase();
+      return pidL === cleanIdLower || pslugL === cleanIdLower;
+    };
+    data.foodstuffProducts = (data.foodstuffProducts || []).filter(p => !isTarget(p.id, p.slug));
+    data.foodstuffContainerPrices = (data.foodstuffContainerPrices || []).filter(c => (c.productId || '').toLowerCase() !== cleanIdLower);
+    data.foodstuffMarketPrices = (data.foodstuffMarketPrices || []).filter(m => (m.productId || '').toLowerCase() !== cleanIdLower);
+    if (data.foodstuffPriceHistory) {
+      data.foodstuffPriceHistory = data.foodstuffPriceHistory.filter(h => (h.productId || '').toLowerCase() !== cleanIdLower);
+    }
     writeDB(data);
+  } catch {}
 
+  try {
     const fp = path.join(process.cwd(), 'data', 'barakah', 'foodstuff-products.json');
     if (fs.existsSync(fp)) {
       const list: FoodstuffProduct[] = JSON.parse(fs.readFileSync(fp, 'utf-8'));
-      fs.writeFileSync(fp, JSON.stringify(list.filter(p => p.id !== id), null, 2), 'utf-8');
+      fs.writeFileSync(fp, JSON.stringify(list.filter(p => (p.id || '').toLowerCase() !== cleanIdLower && (p.slug || '').toLowerCase() !== cleanIdLower), null, 2), 'utf-8');
     }
   } catch {}
 
-  await logActivityToMongo(adminEmail, 'PRODUCT_DELETED', id);
+  try {
+    const cpPath = path.join(process.cwd(), 'data', 'barakah', 'container-prices.json');
+    if (fs.existsSync(cpPath)) {
+      const list = JSON.parse(fs.readFileSync(cpPath, 'utf-8'));
+      if (Array.isArray(list)) {
+        fs.writeFileSync(cpPath, JSON.stringify(list.filter((c: any) => (c.productId || '').toLowerCase() !== cleanIdLower), null, 2), 'utf-8');
+      }
+    }
+  } catch {}
+
+  try {
+    const mpPath = path.join(process.cwd(), 'data', 'barakah', 'market-prices.json');
+    if (fs.existsSync(mpPath)) {
+      const list = JSON.parse(fs.readFileSync(mpPath, 'utf-8'));
+      if (Array.isArray(list)) {
+        fs.writeFileSync(mpPath, JSON.stringify(list.filter((m: any) => (m.productId || '').toLowerCase() !== cleanIdLower), null, 2), 'utf-8');
+      }
+    }
+  } catch {}
+
+  try {
+    await logActivityToMongo(adminEmail, 'PRODUCT_PERMANENTLY_DELETED', cleanId);
+  } catch {}
+
   invalidateFoodstuffCache();
-  return { success: true, message: 'Product successfully removed from database.' };
+  return { success: true, message: 'Product permanently deleted from database and catalog.' };
 }
 
 export async function getFoodstuffContainerPrices(): Promise<FoodstuffContainerPrice[]> {

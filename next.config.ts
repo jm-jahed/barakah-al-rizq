@@ -62,13 +62,9 @@ try {
   // Ignore
 }
 
-try {
-  dns.setServers(["8.8.8.8", "1.1.1.1"]);
-} catch {
-  // Ignore in restricted environments
-}
-
 const nextConfig: NextConfig = {
+  compress: true,
+  poweredByHeader: false,
   outputFileTracingIncludes: {
     "/api/pos": ["./backend/**/*"],
     "/api/pos/*": ["./backend/**/*"],

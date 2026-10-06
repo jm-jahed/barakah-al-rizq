@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import crypto from 'node:crypto';
 import { resolveMailboxByRecipient, saveIncomingInboxMessage } from '@/lib/mongodb';
-import { sanitizeHtml, extractPreviewText } from '@/lib/email/sanitize';
+import { sanitizeHtml, extractPreviewText, stripMimeHeaders } from '@/lib/email/sanitize';
 
 function isValidEmail(email: string): boolean {
   if (!email || typeof email !== 'string') return false;
@@ -130,7 +130,7 @@ export async function POST(req: Request) {
       replyTo: replyTo && isValidEmail(replyTo) ? replyTo.trim().toLowerCase() : fromEmail.trim().toLowerCase(),
       subject: (subject && typeof subject === 'string' ? subject.trim() : '(No Subject)') || '(No Subject)',
       previewText: cleanPreview,
-      textBody: rawText,
+      textBody: stripMimeHeaders(rawText),
       htmlBody: cleanHtml,
       rawHtml: rawHtml || undefined,
       hasAttachments: typeof attachmentsCount === 'number' ? attachmentsCount > 0 : false,

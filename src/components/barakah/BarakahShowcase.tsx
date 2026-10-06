@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { BarakahNav } from './BarakahNav';
 import { BarakahHero } from './BarakahHero';
 import { TrustStrip } from './TrustStrip';
@@ -8,17 +9,25 @@ import { LivePriceTicker } from './LivePriceTicker';
 import { ContainerPriceItem } from './ContainerWholesaleDashboard';
 import { MarketPriceItem } from './MarketPriceDashboard';
 import { UnifiedProductPriceGrid } from './UnifiedProductPriceGrid';
-import { ProductDetailModal } from './ProductDetailModal';
 import { ImportExportSection } from './ImportExportSection';
 import { WhyChooseUs } from './WhyChooseUs';
 import { AboutSection } from './AboutSection';
 import { ContactSection } from './ContactSection';
-import { QuoteModal } from './QuoteModal';
 import { BarakahFAQ } from './BarakahFAQ';
 import { BarakahFinalCTA } from './BarakahFinalCTA';
 import { BarakahFooter } from './BarakahFooter';
 import { FloatingWhatsApp } from './FloatingWhatsApp';
 import { INITIAL_PRODUCTS, BarakahProduct } from '@/data/barakahData';
+
+const ProductDetailModal = dynamic(
+  () => import('./ProductDetailModal').then((m) => m.ProductDetailModal),
+  { ssr: false }
+);
+
+const QuoteModal = dynamic(
+  () => import('./QuoteModal').then((m) => m.QuoteModal),
+  { ssr: false }
+);
 
 interface BarakahShowcaseProps {
   standalone?: boolean;

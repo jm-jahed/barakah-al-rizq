@@ -50,9 +50,30 @@ export function sanitizeHtml(rawHtml: string): string {
   return sanitized.trim();
 }
 
+export function stripMimeHeaders(rawText: string): string {
+  if (!rawText || typeof rawText !== 'string') return '';
+  const lines = rawText.split(/\r?\n/);
+  const cleanLines: string[] = [];
+
+  for (const rawLine of lines) {
+    const trimmed = rawLine.trim();
+    if (!trimmed && cleanLines.length === 0) continue;
+    // Strip technical headers that sometimes leak into body
+    if (/^Content-(Type|Transfer-Encoding|Disposition|ID):/i.test(trimmed)) continue;
+    if (/^charset\s*=/i.test(trimmed)) continue;
+    if (/^MIME-Version:/i.test(trimmed)) continue;
+    if (/^--[a-zA-Z0-9_-]+--?$/.test(trimmed)) continue;
+    if (/^(Received|X-[a-zA-Z0-9-]+|DKIM-Signature):/i.test(trimmed)) continue;
+    cleanLines.push(rawLine);
+  }
+
+  return cleanLines.join('\n').trim();
+}
+
 export function extractPreviewText(textBody: string, htmlBody?: string, maxLength: number = 160): string {
-  if (textBody && typeof textBody === 'string' && textBody.trim()) {
-    const clean = textBody.replace(/\s+/g, ' ').trim();
+  const cleanedText = stripMimeHeaders(textBody);
+  if (cleanedText && cleanedText.trim()) {
+    const clean = cleanedText.replace(/\s+/g, ' ').trim();
     return clean.length > maxLength ? `${clean.slice(0, maxLength).trim()}...` : clean;
   }
 

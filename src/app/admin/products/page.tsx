@@ -390,19 +390,27 @@ export default function AdminProductsPage() {
         });
         if (!res.ok) throw new Error('Failed to activate product');
       } else if (confirmModal.type === 'DELETE') {
-        const res = await fetch(`/api/admin/foodstuff/products?id=${confirmModal.product.id}`, {
+        const prodId = confirmModal.product.id;
+        // Optimistically remove from state immediately so UI updates with zero lag
+        setProducts((prev) => prev.filter((p) => p.id !== prodId));
+        setConfirmModal({ open: false, type: 'ARCHIVE', product: null });
+
+        const res = await fetch(`/api/admin/foodstuff/products?id=${encodeURIComponent(prodId)}`, {
           method: 'DELETE',
         });
         const data = await res.json();
-        if (!data.success && data.reason === 'ORDER_HISTORY_EXISTS') {
-          alert(data.message);
+        if (!res.ok || data.success === false) {
+          throw new Error(data.error || data.message || 'Failed to permanently delete product');
         }
+        await fetchProductsData();
+        return;
       }
 
       setConfirmModal({ open: false, type: 'ARCHIVE', product: null });
       await fetchProductsData();
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : 'Action failed');
+      await fetchProductsData();
     } finally {
       setActionLoading(false);
     }
@@ -746,7 +754,7 @@ export default function AdminProductsPage() {
                           <button
                             onClick={() => setConfirmModal({ open: true, type: 'DELETE', product: prod })}
                             className="p-1.5 bg-slate-900 border border-slate-800 hover:border-red-500/40 hover:text-red-400 text-slate-400 rounded-lg transition"
-                            title="Delete / Archive Safeguard"
+                            title="Permanently Delete Product"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -1217,7 +1225,7 @@ export default function AdminProductsPage() {
                 </h3>
                 <p className="text-[11px] text-slate-400">
                   {confirmModal.type === 'DELETE'
-                    ? 'Permanent deletion is safeguarded: if this product has historical orders, it will be safely archived instead.'
+                    ? 'This commodity and all its wholesale pricing records will be permanently deleted from the catalog. This action cannot be undone.'
                     : confirmModal.type === 'ARCHIVE'
                     ? 'Archiving hides this product from the live public wholesale grid. Historical orders remain intact.'
                     : 'Activating will immediately restore this commodity to the live public catalog.'}
@@ -1249,7 +1257,7 @@ export default function AdminProductsPage() {
                 {actionLoading && <span className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />}
                 <span>
                   {confirmModal.type === 'DELETE'
-                    ? 'Confirm Delete'
+                    ? 'Permanently Delete'
                     : confirmModal.type === 'ARCHIVE'
                     ? 'Confirm Archive'
                     : 'Confirm Activate'}
