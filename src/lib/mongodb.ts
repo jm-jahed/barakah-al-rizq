@@ -180,6 +180,8 @@ export function invalidateFoodstuffCache(): void {
   memoryCache.delete('foodstuff_market_prices');
   memoryCache.delete('foodstuff_categories');
   memoryCache.delete('foodstuff_schedule');
+  memoryCache.delete('price_history_50');
+  memoryCache.delete('price_history_100');
 }
 
 export function invalidateWholesaleCache(): void {
@@ -739,18 +741,27 @@ export async function getFoodstuffSchedule(): Promise<FoodstuffUpdateSchedule> {
 }
 
 export async function getFoodstuffPriceHistory(limit: number = 100): Promise<FoodstuffPriceHistory[]> {
+  const cacheKey = `price_history_${limit}`;
+  const cached = getCachedData<FoodstuffPriceHistory[]>(cacheKey);
+  if (cached) return cached;
+
+  let result: FoodstuffPriceHistory[] = [];
   try {
     const col = await getFoodstuffPriceHistoryCollection();
-    return await col.find({}).sort({ timestamp: -1 }).limit(limit).toArray();
+    result = await col.find({}).sort({ timestamp: -1 }).limit(limit).toArray();
   } catch (err) {
     console.warn('MongoDB getFoodstuffPriceHistory fallback:', (err as Error).message);
   }
-  try {
-    const { readDB } = await import('@/lib/db/index');
-    return (readDB().foodstuffPriceHistory || []).slice(-limit).reverse();
-  } catch {
-    return [];
+  if (!result || result.length === 0) {
+    try {
+      const { readDB } = await import('@/lib/db/index');
+      result = (readDB().foodstuffPriceHistory || []).slice(-limit).reverse();
+    } catch {
+      result = [];
+    }
   }
+  setCachedData(cacheKey, result, 60);
+  return result;
 }
 
 
