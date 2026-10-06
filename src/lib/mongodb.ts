@@ -2312,15 +2312,20 @@ export async function saveEmailMailbox(
 // ADMIN INCOMING EMAIL INBOX MESSAGES (OPTIMIZED & PROJECTED)
 // ==========================================
 
+let inboxIndexesCreated = false;
+
 export async function getInboxMessagesCollection(): Promise<Collection<InboxMessage & { _id: string }>> {
   const db = await getDb();
   const col = db.collection<InboxMessage & { _id: string }>("inbox_messages");
-  try {
-    await col.createIndex({ messageId: 1 }, { unique: true, background: true });
-    await col.createIndex({ id: 1 }, { background: true });
-    await col.createIndex({ mailbox: 1, status: 1, receivedAt: -1 }, { background: true });
-    await col.createIndex({ receivedAt: -1 }, { background: true });
-  } catch {}
+  if (!inboxIndexesCreated) {
+    inboxIndexesCreated = true;
+    Promise.all([
+      col.createIndex({ messageId: 1 }, { unique: true, background: true }),
+      col.createIndex({ id: 1 }, { background: true }),
+      col.createIndex({ mailbox: 1, status: 1, receivedAt: -1 }, { background: true }),
+      col.createIndex({ receivedAt: -1 }, { background: true }),
+    ]).catch(() => {});
+  }
   return col;
 }
 
@@ -2492,12 +2497,20 @@ export async function getInboxMessageById(id: string): Promise<InboxMessage | nu
   const local = readLocalInboxMessages();
   const localMatch = local.find(m => m.id === cleanId || m.messageId === cleanId || m.id === id || m.messageId === id);
 
-  // 3. Check MongoDB collection with indexed lookup
+  // 3. Check MongoDB collection with direct fast index lookup
   try {
     const col = await getInboxMessagesCollection();
-    const mongoMatch = await col.findOne({
-      $or: [{ _id: cleanId }, { id: cleanId }, { messageId: cleanId }, { _id: id }, { id }, { messageId: id }],
-    });
+    let mongoMatch = await col.findOne({ id: cleanId });
+    if (!mongoMatch && cleanId.includes('@')) {
+      mongoMatch = await col.findOne({ messageId: cleanId });
+    }
+    if (!mongoMatch) {
+      mongoMatch = await col.findOne({ _id: cleanId });
+    }
+    if (!mongoMatch) {
+      mongoMatch = await col.findOne({ $or: [{ id: cleanId }, { messageId: cleanId }, { _id: cleanId }] });
+    }
+
     if (mongoMatch) {
       cachedFullMessagesMap.set(cleanId, { msg: mongoMatch, expiresAt: now + 600000 });
       cachedFullMessagesMap.set(mongoMatch.id, { msg: mongoMatch, expiresAt: now + 600000 });
@@ -2613,17 +2626,10 @@ export async function updateInboxMessageStatus(
   // 2. Update in MongoDB via fast updateOne
   try {
     const col = await getInboxMessagesCollection();
-    const query = {
-      $or: [{ _id: cleanId }, { id: cleanId }, { messageId: cleanId }, { _id: id }, { id }, { messageId: id }],
-    };
-    const mongoRes = await col.findOneAndUpdate(
-      query,
-      { $set: updates },
-      { returnDocument: 'after' }
-    );
-    if (mongoRes) {
-      updatedRecord = mongoRes;
-    }
+    col.updateOne(
+      { $or: [{ id: cleanId }, { messageId: cleanId }, { _id: cleanId }] },
+      { $set: updates }
+    ).catch(() => {});
   } catch (err) {}
 
   // 3. Fallback creation if not found
@@ -2651,7 +2657,7 @@ export async function updateInboxMessageStatus(
     };
     try {
       const col = await getInboxMessagesCollection();
-      await col.insertOne({ ...fallbackMessage, _id: fallbackMessage.id });
+      col.insertOne({ ...fallbackMessage, _id: fallbackMessage.id }).catch(() => {});
     } catch {}
     local.unshift(fallbackMessage);
     writeLocalInboxMessages(local);
