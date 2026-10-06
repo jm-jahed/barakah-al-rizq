@@ -273,7 +273,7 @@ export default {
   async email(message, env, ctx) {
     const backupEmail = env?.GMAIL_BACKUP_EMAIL || 'barakahalrizquae@gmail.com';
     const webhookUrl = env?.WEBHOOK_URL || 'https://barakahalrizquae.com/api/webhooks/incoming-email';
-    const webhookSecret = env?.INCOMING_EMAIL_WEBHOOK_SECRET || 'barakah_incoming_webhook_sec_2026_x89';
+    const webhookSecret = env?.INCOMING_EMAIL_WEBHOOK_SECRET;
 
     console.log(`[EMAIL WORKER] Inbound email event received from <${message.from}> to <${message.to}>`);
 

@@ -100,6 +100,8 @@ export default function AdminInboxPage() {
 
   // Modals & Action States
   const [showTrashConfirm, setShowTrashConfirm] = useState(false);
+  const [isTrashing, setIsTrashing] = useState(false);
+  const [trashError, setTrashError] = useState<string | null>(null);
   const [showReplyModal, setShowReplyModal] = useState(false);
   const [replySubject, setReplySubject] = useState('');
   const [replyBody, setReplyBody] = useState('');
@@ -216,20 +218,23 @@ export default function AdminInboxPage() {
   // Move message to Trash
   const handleMoveToTrash = async () => {
     if (!selectedMessage) return;
+    setIsTrashing(true);
+    setTrashError(null);
     try {
       const res = await fetch('/api/admin/inbox', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: selectedMessage.id, status: 'TRASH' }),
+        body: JSON.stringify({ id: selectedMessage.id || selectedMessage.messageId, status: 'TRASH' }),
       });
 
+      const data = await res.json().catch(() => ({}));
+
       if (res.ok) {
-        const data = await res.json();
         if (data.stats) setStats(data.stats);
         setShowTrashConfirm(false);
         // Remove from list if in active inbox view
         if (activeFolder !== 'TRASH') {
-          setMessages((prev) => prev.filter((m) => m.id !== selectedMessage.id));
+          setMessages((prev) => prev.filter((m) => m.id !== selectedMessage.id && m.messageId !== selectedMessage.messageId));
           setSelectedMessage(null);
           setMobileView('list');
         } else {
@@ -238,9 +243,14 @@ export default function AdminInboxPage() {
           );
           setSelectedMessage((prev) => (prev ? { ...prev, status: 'TRASH' } : null));
         }
+      } else {
+        setTrashError(data.error || data.message || 'Failed to move message to trash.');
       }
     } catch (err) {
       console.error('Failed to move message to trash', err);
+      setTrashError('Network error while moving to trash. Please try again.');
+    } finally {
+      setIsTrashing(false);
     }
   };
 
@@ -839,22 +849,40 @@ export default function AdminInboxPage() {
               </div>
             </div>
 
+            {trashError && (
+              <div className="p-3 rounded-xl bg-rose-950/60 border border-rose-800 text-rose-300 text-xs flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                <span>{trashError}</span>
+              </div>
+            )}
+
             <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-3 rounded-xl border border-slate-800">
               This moves the message to your Admin Inbox Trash. Your original Gmail / Cloudflare copies remain completely untouched. You can restore it anytime.
             </p>
 
             <div className="flex items-center justify-end gap-2.5 pt-2">
               <button
+                type="button"
                 onClick={() => setShowTrashConfirm(false)}
-                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-xl text-xs font-semibold"
+                disabled={isTrashing}
+                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-slate-300 rounded-xl text-xs font-semibold"
               >
                 Cancel
               </button>
               <button
+                type="button"
                 onClick={handleMoveToTrash}
-                className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-rose-950"
+                disabled={isTrashing}
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white rounded-xl text-xs font-semibold shadow-lg shadow-rose-950 flex items-center gap-2"
               >
-                Confirm Move to Trash
+                {isTrashing ? (
+                  <>
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    <span>Moving to Trash...</span>
+                  </>
+                ) : (
+                  <span>Confirm Move to Trash</span>
+                )}
               </button>
             </div>
           </div>
