@@ -26,6 +26,8 @@ import {
   Layers,
   ChevronRight,
   ExternalLink,
+  Plus,
+  PenSquare,
 } from 'lucide-react';
 import { InboxMessage, InboxMailbox, InboxMessageStatus } from '@/lib/db/types';
 
@@ -108,6 +110,18 @@ export default function AdminInboxPage() {
   const [sendingReply, setSendingReply] = useState(false);
   const [replySuccess, setReplySuccess] = useState<string | null>(null);
   const [replyError, setReplyError] = useState<string | null>(null);
+
+  // Compose New Email Modal State
+  const [showComposeModal, setShowComposeModal] = useState(false);
+  const [composeFrom, setComposeFrom] = useState<InboxMailbox>('info');
+  const [composeTo, setComposeTo] = useState('');
+  const [composeName, setComposeName] = useState('');
+  const [composeCc, setComposeCc] = useState('');
+  const [composeSubject, setComposeSubject] = useState('');
+  const [composeBody, setComposeBody] = useState('');
+  const [sendingCompose, setSendingCompose] = useState(false);
+  const [composeSuccess, setComposeSuccess] = useState<string | null>(null);
+  const [composeError, setComposeError] = useState<string | null>(null);
 
   // Mobile View Toggle
   const [mobileView, setMobileView] = useState<'list' | 'detail'>('list');
@@ -350,6 +364,77 @@ export default function AdminInboxPage() {
     }
   };
 
+  // Open Compose Modal
+  const handleOpenCompose = (defaultFrom?: InboxMailbox) => {
+    if (defaultFrom) {
+      setComposeFrom(defaultFrom);
+    } else if (activeFolder !== 'ALL' && activeFolder !== 'TRASH') {
+      setComposeFrom(activeFolder);
+    } else {
+      setComposeFrom('info');
+    }
+    setComposeTo('');
+    setComposeName('');
+    setComposeCc('');
+    setComposeSubject('');
+    setComposeBody('');
+    setComposeError(null);
+    setComposeSuccess(null);
+    setShowComposeModal(true);
+  };
+
+  // Submit Compose Email
+  const handleSendCompose = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!composeTo.trim() || !composeSubject.trim() || !composeBody.trim()) {
+      setComposeError('Recipient email, subject, and message body are required.');
+      return;
+    }
+
+    setSendingCompose(true);
+    setComposeError(null);
+    setComposeSuccess(null);
+
+    try {
+      const res = await fetch('/api/admin/inbox/compose', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fromMailbox: composeFrom,
+          toEmail: composeTo.trim(),
+          recipientName: composeName.trim() || undefined,
+          cc: composeCc.trim() || undefined,
+          subject: composeSubject.trim(),
+          messageBody: composeBody.trim(),
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Failed to dispatch email.');
+      }
+
+      setComposeSuccess(
+        data.simulated
+          ? `Email dispatched (Development Simulation Mode).`
+          : `Email sent successfully to ${composeTo.trim()} via Brevo SMTP!`
+      );
+
+      setTimeout(() => {
+        fetchInbox(true);
+      }, 500);
+
+      setTimeout(() => {
+        setShowComposeModal(false);
+      }, 1600);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error sending email';
+      setComposeError(msg);
+    } finally {
+      setSendingCompose(false);
+    }
+  };
+
   // Format Date cleanly
   const formatDate = (isoStr: string) => {
     try {
@@ -409,6 +494,15 @@ export default function AdminInboxPage() {
         {/* ========================================================= */}
         <aside className="w-full md:w-64 lg:w-72 bg-[#0B1120] border-b md:border-b-0 md:border-r border-slate-800/90 p-3.5 flex flex-col justify-between shrink-0">
           <div className="space-y-4">
+            {/* Primary Action: Compose New Email */}
+            <button
+              onClick={() => handleOpenCompose()}
+              className="w-full py-2.5 px-3 bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-emerald-950/60 flex items-center justify-center gap-2 border border-emerald-400/40 transition-all hover:scale-[1.02] active:scale-[0.98] group"
+            >
+              <PenSquare className="w-3.5 h-3.5 group-hover:rotate-12 transition-transform" />
+              <span>Compose New Email</span>
+            </button>
+
             {/* Folders List */}
             <div>
               <div className="px-2.5 py-1 text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
@@ -1026,6 +1120,213 @@ export default function AdminInboxPage() {
                     <>
                       <Send className="w-3.5 h-3.5" />
                       <span>Dispatch Official Reply</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================= */}
+      {/* MODAL 3: Compose New Email Modal (Send to Anyone)        */}
+      {/* ========================================================= */}
+      {showComposeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-[#0F172A] border border-slate-800 rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+            {/* Modal Header */}
+            <div className="p-4 border-b border-slate-800 bg-slate-900/70 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                  <PenSquare className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <span>Compose New Email</span>
+                    <span className="text-[10px] font-mono text-emerald-400 px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-600/40">
+                      Brevo SMTP Outbound
+                    </span>
+                  </h3>
+                  <p className="text-[11px] text-slate-400">
+                    Send official email to any client, partner, or supplier
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowComposeModal(false)}
+                disabled={sendingCompose}
+                className="text-slate-400 hover:text-white text-xs px-2 py-1 rounded hover:bg-slate-800"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Form */}
+            <form onSubmit={handleSendCompose} className="p-5 overflow-y-auto space-y-4 text-xs">
+              {/* Alert Banners */}
+              {composeError && (
+                <div className="p-3 rounded-xl bg-rose-950/50 border border-rose-800 text-rose-300 flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                  <span>{composeError}</span>
+                </div>
+              )}
+              {composeSuccess && (
+                <div className="p-3 rounded-xl bg-emerald-950/60 border border-emerald-700 text-emerald-200 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>{composeSuccess}</span>
+                </div>
+              )}
+
+              {/* FROM (Sender Desk Selector) */}
+              <div>
+                <label className="block text-slate-400 font-mono text-[10px] uppercase font-bold mb-1">
+                  FROM DESK (OFFICIAL SENDER)
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {(['info', 'sales', 'orders', 'habeeb'] as InboxMailbox[]).map((boxKey) => {
+                    const meta = MAILBOX_META[boxKey];
+                    const isSelected = composeFrom === boxKey;
+                    return (
+                      <button
+                        type="button"
+                        key={boxKey}
+                        onClick={() => setComposeFrom(boxKey)}
+                        className={`p-2 rounded-xl border text-left transition-all ${
+                          isSelected
+                            ? 'bg-emerald-950/50 border-emerald-500/80 text-white shadow-sm ring-1 ring-emerald-500/40'
+                            : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                        }`}
+                      >
+                        <div className="flex items-center gap-1.5 font-semibold text-[11px] truncate text-white">
+                          <span className={`w-1.5 h-1.5 rounded-full ${meta.color.replace('text-', 'bg-')}`} />
+                          <span className="truncate">{meta.label}</span>
+                        </div>
+                        <div className="text-[9.5px] font-mono text-slate-400 truncate mt-0.5">
+                          {boxKey}@
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* TO & RECIPIENT NAME */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-400 font-mono text-[10px] uppercase font-bold mb-1">
+                    TO EMAIL ADDRESS <span className="text-emerald-400">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={composeTo}
+                    onChange={(e) => setComposeTo(e.target.value)}
+                    placeholder="e.g. client@gmail.com, buyer@hypermarket.ae"
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono text-xs"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-400 font-mono text-[10px] uppercase font-bold mb-1">
+                    RECIPIENT NAME (OPTIONAL)
+                  </label>
+                  <input
+                    type="text"
+                    value={composeName}
+                    onChange={(e) => setComposeName(e.target.value)}
+                    placeholder="e.g. Mr. Tariq Al Marzooqi"
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-sans text-xs"
+                  />
+                </div>
+              </div>
+
+              {/* CC & SUBJECT */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="sm:col-span-2">
+                  <label className="block text-slate-400 font-mono text-[10px] uppercase font-bold mb-1">
+                    SUBJECT <span className="text-emerald-400">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={composeSubject}
+                    onChange={(e) => setComposeSubject(e.target.value)}
+                    placeholder="e.g. Commercial Trade Quotation & Supply Terms"
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-sans text-xs"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-400 font-mono text-[10px] uppercase font-bold mb-1">
+                    CC (OPTIONAL)
+                  </label>
+                  <input
+                    type="email"
+                    value={composeCc}
+                    onChange={(e) => setComposeCc(e.target.value)}
+                    placeholder="accounts@client.ae"
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono text-xs"
+                  />
+                </div>
+              </div>
+
+              {/* MESSAGE BODY */}
+              <div>
+                <label className="block text-slate-400 font-mono text-[10px] uppercase font-bold mb-1">
+                  EMAIL MESSAGE BODY <span className="text-emerald-400">*</span>
+                </label>
+                <textarea
+                  rows={8}
+                  required
+                  value={composeBody}
+                  onChange={(e) => setComposeBody(e.target.value)}
+                  placeholder="Type your official email message here...
+
+(The official UAE Barakah Al Rizq signature, commercial contact numbers, and trade license details will be attached automatically.)"
+                  className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-sans text-xs resize-none"
+                />
+              </div>
+
+              {/* Signature Preview */}
+              <div className="p-3 bg-slate-950/80 rounded-xl border border-slate-800/80 space-y-1">
+                <div className="text-[10px] font-mono text-emerald-400 font-bold uppercase flex items-center justify-between">
+                  <span>ATTACHED OFFICIAL UAE SIGNATURE</span>
+                  <span className="text-slate-500 font-normal">Auto-Appended</span>
+                </div>
+                <div className="text-[11px] text-slate-400 font-sans leading-relaxed">
+                  <strong>BARAKAH AL RIZQ FOODSTUFF TRADING L.L.C</strong> &bull; {MAILBOX_META[composeFrom].label}
+                  <br />
+                  <span className="text-slate-500">Stand 19, Fresh Produce Block B, Al Aweer Central Market, Ras Al Khor, Dubai, UAE</span>
+                  <br />
+                  <span className="text-slate-500">Commercial Desk: +971 56 944 8850 | WhatsApp Orders: +971 50 252 6750</span>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="pt-2 flex items-center justify-end gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setShowComposeModal(false)}
+                  disabled={sendingCompose}
+                  className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-xl text-xs font-semibold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={sendingCompose}
+                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white rounded-xl text-xs font-semibold shadow-lg shadow-emerald-950 flex items-center gap-2"
+                >
+                  {sendingCompose ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>Dispatching Email...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-3.5 h-3.5" />
+                      <span>Send Official Email</span>
                     </>
                   )}
                 </button>
