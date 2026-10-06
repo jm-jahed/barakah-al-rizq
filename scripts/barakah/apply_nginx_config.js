@@ -11,7 +11,44 @@ const config = {
 const nginxConf = `server {
     server_name barakahalrizquae.com www.barakahalrizquae.com inbox.barakahalrizquae.com;
 
+    # Gzip Compression for Fast Loading
+    gzip on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_min_length 256;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml text/javascript image/svg+xml;
+
+    # Direct Next.js Static Asset Serving (Zero Node.js Proxy Overhead)
+    location /_next/static/ {
+        alias /var/www/barakah-al-rizq/.next/static/;
+        expires 365d;
+        access_log off;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+    }
+
+    # Public Directory Static Cache
+    location /public/ {
+        alias /var/www/barakah-al-rizq/public/;
+        expires 30d;
+        access_log off;
+        add_header Cache-Control "public, max-age=2592000";
+    }
+
+    # Favicon and Apple Icons Cache
+    location ~* \\.(ico|png|jpg|jpeg|gif|svg|webp)$ {
+        root /var/www/barakah-al-rizq/public;
+        expires 30d;
+        access_log off;
+        add_header Cache-Control "public, max-age=2592000";
+        try_files $uri @proxy;
+    }
+
     location / {
+        try_files $uri @proxy;
+    }
+
+    location @proxy {
         proxy_pass http://127.0.0.1:3003;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
@@ -21,6 +58,9 @@ const nginxConf = `server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_cache_bypass $http_upgrade;
+        proxy_buffer_size 128k;
+        proxy_buffers 4 256k;
+        proxy_busy_buffers_size 256k;
     }
 
     listen [::]:443 ssl;

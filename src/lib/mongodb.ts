@@ -2173,6 +2173,8 @@ export async function getCustomerAccountStatement(customerIdentifier: string): P
 // DYNAMIC BUSINESS EMAIL MAILBOXES
 // ==========================================
 
+let cachedMailboxes: { list: EmailMailbox[]; expiresAt: number } | null = null;
+
 export async function getEmailMailboxesCollection(): Promise<Collection<EmailMailbox & { _id: string }>> {
   const db = await getDb();
   return db.collection<EmailMailbox & { _id: string }>("email_mailboxes");
@@ -2202,6 +2204,11 @@ export function writeLocalMailboxes(mailboxes: EmailMailbox[]): void {
 }
 
 export async function getEmailMailboxes(): Promise<EmailMailbox[]> {
+  const now = Date.now();
+  if (cachedMailboxes && cachedMailboxes.expiresAt > now) {
+    return cachedMailboxes.list;
+  }
+
   const localList = readLocalMailboxes();
   let mongoList: EmailMailbox[] = [];
   try {
@@ -2223,7 +2230,9 @@ export async function getEmailMailboxes(): Promise<EmailMailbox[]> {
     }
   }
 
-  return Array.from(map.values());
+  const list = Array.from(map.values());
+  cachedMailboxes = { list, expiresAt: now + 600000 }; // 10 minutes cache
+  return list;
 }
 
 export const ALLOWED_MAILBOXES: Record<string, { channel: InboxMailbox; email: string; displayName: string }> = {
@@ -2295,11 +2304,12 @@ export async function saveEmailMailbox(
     await logActivityToMongo('admin@barakahalrizquae.com', 'MAILBOX_SAVED', id);
   } catch (err) {}
 
+  cachedMailboxes = null;
   return record;
 }
 
 // ==========================================
-// ADMIN INCOMING EMAIL INBOX MESSAGES
+// ADMIN INCOMING EMAIL INBOX MESSAGES (OPTIMIZED & PROJECTED)
 // ==========================================
 
 export async function getInboxMessagesCollection(): Promise<Collection<InboxMessage & { _id: string }>> {
@@ -2307,7 +2317,9 @@ export async function getInboxMessagesCollection(): Promise<Collection<InboxMess
   const col = db.collection<InboxMessage & { _id: string }>("inbox_messages");
   try {
     await col.createIndex({ messageId: 1 }, { unique: true, background: true });
+    await col.createIndex({ id: 1 }, { background: true });
     await col.createIndex({ mailbox: 1, status: 1, receivedAt: -1 }, { background: true });
+    await col.createIndex({ receivedAt: -1 }, { background: true });
   } catch {}
   return col;
 }
@@ -2335,16 +2347,59 @@ export function writeLocalInboxMessages(messages: InboxMessage[]): void {
   } catch {}
 }
 
-let cachedInboxMessages: { list: InboxMessage[]; expiresAt: number } | null = null;
+// In-Memory Fast Cache Layers
+let cachedInboxSummaryList: { list: InboxMessage[]; expiresAt: number } | null = null;
+let cachedInboxStats: {
+  stats: {
+    totalCount: number;
+    unreadCount: number;
+    readCount: number;
+    repliedCount: number;
+    trashCount: number;
+    byMailbox: Record<string, { total: number; unread: number }>;
+  };
+  expiresAt: number;
+} | null = null;
+const cachedFullMessagesMap = new Map<string, { msg: InboxMessage; expiresAt: number }>();
 
 export function invalidateInboxCache(): void {
-  cachedInboxMessages = null;
+  cachedInboxSummaryList = null;
+  cachedInboxStats = null;
 }
 
-export async function getAllInboxMessagesList(): Promise<InboxMessage[]> {
+function toLightweightSummary(msg: InboxMessage): InboxMessage {
+  return {
+    id: msg.id,
+    messageId: msg.messageId,
+    inReplyTo: msg.inReplyTo,
+    references: msg.references,
+    mailbox: msg.mailbox,
+    fromEmail: msg.fromEmail,
+    fromName: msg.fromName,
+    toEmail: msg.toEmail,
+    replyTo: msg.replyTo,
+    subject: msg.subject,
+    previewText: msg.previewText || (msg.textBody ? msg.textBody.slice(0, 160).replace(/[\r\n\t]+/g, ' ') : ''),
+    textBody: '',
+    htmlBody: '',
+    hasAttachments: msg.hasAttachments ?? false,
+    attachmentsCount: msg.attachmentsCount ?? 0,
+    status: msg.status,
+    isSpam: msg.isSpam ?? false,
+    receivedAt: msg.receivedAt,
+    readAt: msg.readAt,
+    repliedAt: msg.repliedAt,
+    deletedAt: msg.deletedAt,
+    createdAt: msg.createdAt,
+    updatedAt: msg.updatedAt,
+  };
+}
+
+export async function getAllInboxMessagesList(options?: { includeBody?: boolean }): Promise<InboxMessage[]> {
   const now = Date.now();
-  if (cachedInboxMessages && cachedInboxMessages.expiresAt > now) {
-    return cachedInboxMessages.list;
+  
+  if (!options?.includeBody && cachedInboxSummaryList && cachedInboxSummaryList.expiresAt > now) {
+    return cachedInboxSummaryList.list;
   }
 
   const localMessages = readLocalInboxMessages();
@@ -2352,20 +2407,27 @@ export async function getAllInboxMessagesList(): Promise<InboxMessage[]> {
 
   try {
     const col = await getInboxMessagesCollection();
-    mongoMessages = await col.find({}).sort({ receivedAt: -1 }).toArray();
+    if (options?.includeBody) {
+      mongoMessages = await col.find({}).sort({ receivedAt: -1 }).toArray();
+    } else {
+      mongoMessages = (await col.find({}, {
+        projection: { htmlBody: 0, textBody: 0, rawHtml: 0, rawPayload: 0 }
+      }).sort({ receivedAt: -1 }).toArray()) as InboxMessage[];
+    }
   } catch (err) {
     // Mongo fallback
   }
 
   const map = new Map<string, InboxMessage>();
   for (const m of mongoMessages) {
-    map.set(m.messageId || m.id, m);
+    const key = m.messageId || m.id;
+    map.set(key, options?.includeBody ? m : toLightweightSummary(m));
   }
   for (const m of localMessages) {
     const key = m.messageId || m.id;
     const existing = map.get(key);
     if (!existing || new Date(m.updatedAt || m.createdAt).getTime() >= new Date(existing.updatedAt || existing.createdAt).getTime()) {
-      map.set(key, m);
+      map.set(key, options?.includeBody ? m : toLightweightSummary(m));
     }
   }
 
@@ -2373,7 +2435,10 @@ export async function getAllInboxMessagesList(): Promise<InboxMessage[]> {
     (a, b) => new Date(b.receivedAt).getTime() - new Date(a.receivedAt).getTime()
   );
 
-  cachedInboxMessages = { list, expiresAt: now + 5000 };
+  if (!options?.includeBody) {
+    cachedInboxSummaryList = { list, expiresAt: now + 120000 }; // 2 minutes cache
+  }
+
   return list;
 }
 
@@ -2381,9 +2446,10 @@ export async function getInboxMessages(filter?: {
   mailbox?: string;
   status?: string;
   search?: string;
+  includeBody?: boolean;
 }): Promise<InboxMessage[]> {
-  const all = await getAllInboxMessagesList();
-  let list = [...all];
+  const all = await getAllInboxMessagesList({ includeBody: filter?.includeBody });
+  let list = all;
 
   // Apply filters
   if (filter?.mailbox && filter.mailbox !== 'ALL' && filter.mailbox !== 'all') {
@@ -2401,12 +2467,11 @@ export async function getInboxMessages(filter?: {
   if (filter?.search) {
     const s = filter.search.toLowerCase().trim();
     list = list.filter(m =>
-      m.subject.toLowerCase().includes(s) ||
-      m.fromEmail.toLowerCase().includes(s) ||
-      m.fromName.toLowerCase().includes(s) ||
-      m.toEmail.toLowerCase().includes(s) ||
-      m.previewText.toLowerCase().includes(s) ||
-      m.textBody.toLowerCase().includes(s)
+      (m.subject && m.subject.toLowerCase().includes(s)) ||
+      (m.fromEmail && m.fromEmail.toLowerCase().includes(s)) ||
+      (m.fromName && m.fromName.toLowerCase().includes(s)) ||
+      (m.toEmail && m.toEmail.toLowerCase().includes(s)) ||
+      (m.previewText && m.previewText.toLowerCase().includes(s))
     );
   }
 
@@ -2414,29 +2479,45 @@ export async function getInboxMessages(filter?: {
 }
 
 export async function getInboxMessageById(id: string): Promise<InboxMessage | null> {
-  const local = readLocalInboxMessages();
-  const localMatch = local.find(m => m.id === id || m.messageId === id);
+  const cleanId = id.trim();
+  const now = Date.now();
 
+  // 1. Check in-memory full message cache
+  const cached = cachedFullMessagesMap.get(cleanId) || cachedFullMessagesMap.get(id);
+  if (cached && cached.expiresAt > now) {
+    return cached.msg;
+  }
+
+  // 2. Check local JSON file
+  const local = readLocalInboxMessages();
+  const localMatch = local.find(m => m.id === cleanId || m.messageId === cleanId || m.id === id || m.messageId === id);
+
+  // 3. Check MongoDB collection with indexed lookup
   try {
     const col = await getInboxMessagesCollection();
-    const mongoMatch = await col.findOne({ $or: [{ _id: id }, { id }, { messageId: id }] });
-    if (mongoMatch) return mongoMatch;
+    const mongoMatch = await col.findOne({
+      $or: [{ _id: cleanId }, { id: cleanId }, { messageId: cleanId }, { _id: id }, { id }, { messageId: id }],
+    });
+    if (mongoMatch) {
+      cachedFullMessagesMap.set(cleanId, { msg: mongoMatch, expiresAt: now + 600000 });
+      cachedFullMessagesMap.set(mongoMatch.id, { msg: mongoMatch, expiresAt: now + 600000 });
+      if (mongoMatch.messageId) {
+        cachedFullMessagesMap.set(mongoMatch.messageId, { msg: mongoMatch, expiresAt: now + 600000 });
+      }
+      return mongoMatch;
+    }
   } catch {}
 
-  return localMatch || null;
+  if (localMatch) {
+    cachedFullMessagesMap.set(cleanId, { msg: localMatch, expiresAt: now + 600000 });
+    return localMatch;
+  }
+
+  return null;
 }
 
 export async function getInboxMessageByMessageId(messageId: string): Promise<InboxMessage | null> {
-  const local = readLocalInboxMessages();
-  const localMatch = local.find(m => m.messageId === messageId);
-
-  try {
-    const col = await getInboxMessagesCollection();
-    const mongoMatch = await col.findOne({ messageId });
-    if (mongoMatch) return mongoMatch;
-  } catch {}
-
-  return localMatch || null;
+  return getInboxMessageById(messageId);
 }
 
 export async function saveIncomingInboxMessage(
@@ -2475,12 +2556,18 @@ export async function saveIncomingInboxMessage(
   try {
     const col = await getInboxMessagesCollection();
     await col.insertOne({ ...newRecord, _id: id } as any);
-    await logActivityToMongo('system', 'INBOX_MESSAGE_RECEIVED', id);
+    logActivityToMongo('system', 'INBOX_MESSAGE_RECEIVED', id).catch(() => {});
   } catch (err) {
     console.warn("MongoDB saveIncomingInboxMessage fallback to JSON:", (err as Error).message);
   }
 
+  // 3. Cache full record and invalidate summary/stats
+  cachedFullMessagesMap.set(id, { msg: newRecord, expiresAt: Date.now() + 600000 });
+  if (newRecord.messageId) {
+    cachedFullMessagesMap.set(newRecord.messageId, { msg: newRecord, expiresAt: Date.now() + 600000 });
+  }
   invalidateInboxCache();
+
   return { message: newRecord, isDuplicate: false };
 }
 
@@ -2489,7 +2576,7 @@ export async function updateInboxMessageStatus(
   targetStatus: InboxMessageStatus
 ): Promise<InboxMessage | null> {
   const nowISO = new Date().toISOString();
-  let updatedRecord: InboxMessage | null = null;
+  const cleanId = id.trim();
 
   const updates: Partial<InboxMessage> = {
     status: targetStatus,
@@ -2509,28 +2596,9 @@ export async function updateInboxMessageStatus(
     updates.deletedAt = undefined;
   }
 
-  const cleanId = id.trim();
+  let updatedRecord: InboxMessage | null = null;
 
-  // 1. Update in MongoDB
-  try {
-    const col = await getInboxMessagesCollection();
-    const existing = await col.findOne({
-      $or: [{ _id: cleanId }, { id: cleanId }, { messageId: cleanId }, { _id: id }, { id }, { messageId: id }],
-    });
-    if (existing) {
-      const merged: InboxMessage & { _id: string } = {
-        ...existing,
-        ...updates,
-        _id: existing._id,
-        id: existing.id,
-      };
-      await col.replaceOne({ _id: existing._id }, merged, { upsert: true });
-      updatedRecord = merged;
-      await logActivityToMongo('admin@barakahalrizquae.com', 'INBOX_STATUS_UPDATED', cleanId);
-    }
-  } catch (err) {}
-
-  // 2. Update local JSON fallback
+  // 1. Update in local JSON fallback
   const local = readLocalInboxMessages();
   const idx = local.findIndex(m => m.id === cleanId || m.messageId === cleanId || m.id === id || m.messageId === id);
   if (idx !== -1) {
@@ -2539,13 +2607,26 @@ export async function updateInboxMessageStatus(
       ...updates,
     };
     writeLocalInboxMessages(local);
-    if (!updatedRecord) updatedRecord = local[idx];
-  } else if (updatedRecord) {
-    local.unshift(updatedRecord);
-    writeLocalInboxMessages(local);
+    updatedRecord = local[idx];
   }
 
-  // 3. If record not found in either storage, create synthetic record to satisfy request
+  // 2. Update in MongoDB via fast updateOne
+  try {
+    const col = await getInboxMessagesCollection();
+    const query = {
+      $or: [{ _id: cleanId }, { id: cleanId }, { messageId: cleanId }, { _id: id }, { id }, { messageId: id }],
+    };
+    const mongoRes = await col.findOneAndUpdate(
+      query,
+      { $set: updates },
+      { returnDocument: 'after' }
+    );
+    if (mongoRes) {
+      updatedRecord = mongoRes;
+    }
+  } catch (err) {}
+
+  // 3. Fallback creation if not found
   if (!updatedRecord) {
     const fallbackMessage: InboxMessage = {
       id: cleanId,
@@ -2577,7 +2658,19 @@ export async function updateInboxMessageStatus(
     updatedRecord = fallbackMessage;
   }
 
+  // 4. Update in-memory caches in place
+  if (updatedRecord) {
+    cachedFullMessagesMap.set(cleanId, { msg: updatedRecord, expiresAt: Date.now() + 600000 });
+    cachedFullMessagesMap.set(updatedRecord.id, { msg: updatedRecord, expiresAt: Date.now() + 600000 });
+    if (updatedRecord.messageId) {
+      cachedFullMessagesMap.set(updatedRecord.messageId, { msg: updatedRecord, expiresAt: Date.now() + 600000 });
+    }
+  }
+
+  // Invalidate list summary & stats
   invalidateInboxCache();
+  logActivityToMongo('admin@barakahalrizquae.com', 'INBOX_STATUS_UPDATED', cleanId).catch(() => {});
+
   return updatedRecord;
 }
 
@@ -2589,6 +2682,11 @@ export async function getInboxStats(): Promise<{
   trashCount: number;
   byMailbox: Record<string, { total: number; unread: number }>;
 }> {
+  const now = Date.now();
+  if (cachedInboxStats && cachedInboxStats.expiresAt > now) {
+    return cachedInboxStats.stats;
+  }
+
   const all = await getAllInboxMessagesList();
 
   const stats = {
@@ -2608,5 +2706,7 @@ export async function getInboxStats(): Promise<{
     };
   }
 
+  cachedInboxStats = { stats, expiresAt: now + 120000 };
   return stats;
 }
+

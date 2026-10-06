@@ -193,6 +193,7 @@ export default function MailPortalInboxPage() {
 
   // Mobile View Toggle
   const [mobileView, setMobileView] = useState<'list' | 'detail'>('list');
+  const [loadingBody, setLoadingBody] = useState(false);
 
   // Fetch Messages from Backend API
   const fetchInbox = useCallback(
@@ -230,7 +231,7 @@ export default function MailPortalInboxPage() {
           }
           if (selectedMessage) {
             const fresh = (data.messages || []).find((m: InboxMessage) => m.id === selectedMessage.id);
-            if (fresh) setSelectedMessage(fresh);
+            if (fresh) setSelectedMessage((prev) => (prev?.htmlBody ? prev : fresh));
           }
         } else {
           throw new Error(data.error || 'Unable to retrieve messages');
@@ -249,89 +250,127 @@ export default function MailPortalInboxPage() {
     fetchInbox();
   }, [activeFolder, statusFilter, searchQuery]);
 
-  // Mark Read when selecting an unread message
+  // Mark Read & Fetch Body on-demand when selecting a message
   const handleSelectMessage = async (msg: InboxMessage) => {
     setSelectedMessage(msg);
     setMobileView('detail');
 
+    // Optimistic read status update if unread
     if (msg.status === 'UNREAD') {
-      try {
-        const res = await fetch('/api/admin/inbox', {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: msg.id, status: 'READ' }),
-        });
+      const nowISO = new Date().toISOString();
+      setMessages((prev) =>
+        prev.map((item) =>
+          item.id === msg.id ? { ...item, status: 'READ', readAt: nowISO } : item
+        )
+      );
+      setSelectedMessage((prev) =>
+        prev && prev.id === msg.id ? { ...prev, status: 'READ', readAt: nowISO } : prev
+      );
+      setStats((prev) => ({
+        ...prev,
+        unread: Math.max(0, prev.unread - 1),
+        byMailbox: {
+          ...prev.byMailbox,
+          [msg.mailbox]: {
+            ...prev.byMailbox[msg.mailbox],
+            unread: Math.max(0, (prev.byMailbox[msg.mailbox]?.unread || 1) - 1),
+          },
+        },
+      }));
 
+      // Background PATCH status
+      fetch('/api/admin/inbox', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: msg.id, status: 'READ' }),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.stats) setStats(data.stats);
+        })
+        .catch(() => {});
+    }
+
+    // If message full body not loaded yet, fetch only this single email
+    if (!msg.htmlBody && !msg.textBody) {
+      setLoadingBody(true);
+      try {
+        const res = await fetch(`/api/admin/inbox?id=${encodeURIComponent(msg.id || msg.messageId)}`);
         if (res.ok) {
           const data = await res.json();
-          if (data.stats) setStats(data.stats);
-          setMessages((prev) =>
-            prev.map((item) =>
-              item.id === msg.id ? { ...item, status: 'READ', readAt: new Date().toISOString() } : item
-            )
-          );
-          setSelectedMessage((prev) =>
-            prev && prev.id === msg.id ? { ...prev, status: 'READ', readAt: new Date().toISOString() } : prev
-          );
+          if (data.message) {
+            const fullMsg = { ...msg, ...data.message };
+            setSelectedMessage(fullMsg);
+            setMessages((prev) => prev.map((m) => (m.id === msg.id ? fullMsg : m)));
+          }
         }
       } catch (err) {
-        console.error('Failed to mark message as read', err);
+        console.error('Failed to fetch full message body', err);
+      } finally {
+        setLoadingBody(false);
       }
     }
   };
 
-  // Toggle Read / Unread manually
+  // Toggle Read / Unread with instant optimistic UI
   const handleToggleReadStatus = async (targetStatus: 'READ' | 'UNREAD') => {
     if (!selectedMessage) return;
+    const targetId = selectedMessage.id;
+    const nowISO = new Date().toISOString();
+
+    // Optimistic local state update
+    setMessages((prev) =>
+      prev.map((item) =>
+        item.id === targetId
+          ? { ...item, status: targetStatus, readAt: targetStatus === 'READ' ? nowISO : undefined }
+          : item
+      )
+    );
+    setSelectedMessage((prev) =>
+      prev ? { ...prev, status: targetStatus, readAt: targetStatus === 'READ' ? nowISO : undefined } : null
+    );
+
     try {
       const res = await fetch('/api/admin/inbox', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: selectedMessage.id, status: targetStatus }),
+        body: JSON.stringify({ id: targetId, status: targetStatus }),
       });
 
       if (res.ok) {
         const data = await res.json();
         if (data.stats) setStats(data.stats);
-        setMessages((prev) =>
-          prev.map((item) => (item.id === selectedMessage.id ? { ...item, status: targetStatus } : item))
-        );
-        setSelectedMessage((prev) => (prev ? { ...prev, status: targetStatus } : null));
       }
     } catch (err) {
       console.error('Failed to toggle read status', err);
     }
   };
 
-  // Move message to Trash
+  // Move message to Trash with instant optimistic UI
   const handleMoveToTrash = async () => {
     if (!selectedMessage) return;
+    const targetId = selectedMessage.id || selectedMessage.messageId;
     setIsTrashing(true);
     setTrashError(null);
+
+    // Optimistic removal from active list
+    setShowTrashConfirm(false);
+    if (activeFolder !== 'TRASH') {
+      setMessages((prev) => prev.filter((m) => m.id !== selectedMessage.id && m.messageId !== selectedMessage.messageId));
+      setSelectedMessage(null);
+      setMobileView('list');
+    }
+
     try {
       const res = await fetch('/api/admin/inbox', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: selectedMessage.id || selectedMessage.messageId, status: 'TRASH' }),
+        body: JSON.stringify({ id: targetId, status: 'TRASH' }),
       });
 
       const data = await res.json().catch(() => ({}));
-
       if (res.ok) {
         if (data.stats) setStats(data.stats);
-        setShowTrashConfirm(false);
-        if (activeFolder !== 'TRASH') {
-          setMessages((prev) =>
-            prev.filter((m) => m.id !== selectedMessage.id && m.messageId !== selectedMessage.messageId)
-          );
-          setSelectedMessage(null);
-          setMobileView('list');
-        } else {
-          setMessages((prev) =>
-            prev.map((item) => (item.id === selectedMessage.id ? { ...item, status: 'TRASH' } : item))
-          );
-          setSelectedMessage((prev) => (prev ? { ...prev, status: 'TRASH' } : null));
-        }
       } else {
         setTrashError(data.error || data.message || 'Failed to move message to trash.');
       }
@@ -343,31 +382,27 @@ export default function MailPortalInboxPage() {
     }
   };
 
-  // Restore from Trash
+  // Restore from Trash with instant optimistic UI
   const handleRestoreMessage = async () => {
     if (!selectedMessage) return;
+    const targetId = selectedMessage.id;
+
+    if (activeFolder === 'TRASH') {
+      setMessages((prev) => prev.filter((m) => m.id !== targetId));
+      setSelectedMessage(null);
+      setMobileView('list');
+    }
+
     try {
       const res = await fetch('/api/admin/inbox', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: selectedMessage.id, status: 'RESTORE' }),
+        body: JSON.stringify({ id: targetId, status: 'RESTORE' }),
       });
 
       if (res.ok) {
         const data = await res.json();
         if (data.stats) setStats(data.stats);
-        if (activeFolder === 'TRASH') {
-          setMessages((prev) => prev.filter((m) => m.id !== selectedMessage.id));
-          setSelectedMessage(null);
-          setMobileView('list');
-        } else {
-          setMessages((prev) =>
-            prev.map((item) =>
-              item.id === selectedMessage.id ? { ...item, status: 'READ', deletedAt: undefined } : item
-            )
-          );
-          setSelectedMessage((prev) => (prev ? { ...prev, status: 'READ', deletedAt: undefined } : null));
-        }
       }
     } catch (err) {
       console.error('Failed to restore message', err);
@@ -1069,7 +1104,14 @@ export default function MailPortalInboxPage() {
 
               {/* Email Content Body */}
               <div className="flex-1 p-2 sm:p-6 overflow-y-auto custom-scrollbar bg-slate-950/50">
-                {selectedMessage.htmlBody ? (
+                {loadingBody ? (
+                  <div className="p-4 sm:p-6 space-y-4 animate-pulse">
+                    <div className="h-4 bg-slate-800/80 rounded-lg w-3/4"></div>
+                    <div className="h-4 bg-slate-800/60 rounded-lg w-5/6"></div>
+                    <div className="h-4 bg-slate-800/70 rounded-lg w-2/3"></div>
+                    <div className="h-24 bg-slate-800/40 rounded-xl w-full mt-4"></div>
+                  </div>
+                ) : selectedMessage.htmlBody ? (
                   <div
                     className="prose prose-invert max-w-none text-slate-200 text-sm leading-relaxed overflow-x-auto break-words bg-transparent sm:bg-slate-900/40 p-0 sm:p-5 rounded-xl sm:rounded-2xl border-0 sm:border border-white/[0.06] shadow-sm [&_.email-card]:w-full [&_.email-card]:max-w-full"
                     dangerouslySetInnerHTML={{ __html: selectedMessage.htmlBody }}
