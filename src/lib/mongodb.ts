@@ -161,6 +161,68 @@ export async function getDb(): Promise<Db> {
 }
 
 // ==========================================
+// IN-MEMORY PERFORMANCE CACHE (TTL: 30s)
+// ==========================================
+interface CacheEntry<T> {
+  data: T;
+  expiresAt: number;
+}
+
+const memoryCache = new Map<string, CacheEntry<any>>();
+
+export function getCachedData<T>(key: string): T | null {
+  const entry = memoryCache.get(key);
+  if (!entry) return null;
+  if (Date.now() > entry.expiresAt) {
+    memoryCache.delete(key);
+    return null;
+  }
+  return entry.data;
+}
+
+export function setCachedData<T>(key: string, data: T, ttlSeconds: number = 30): void {
+  memoryCache.set(key, {
+    data,
+    expiresAt: Date.now() + ttlSeconds * 1000,
+  });
+}
+
+export function invalidateFoodstuffCache(): void {
+  memoryCache.delete('foodstuff_products');
+  memoryCache.delete('foodstuff_container_prices');
+  memoryCache.delete('foodstuff_market_prices');
+  memoryCache.delete('foodstuff_categories');
+  memoryCache.delete('foodstuff_schedule');
+}
+
+let indexesInitialized = false;
+export async function ensureMongoDbIndexes(): Promise<void> {
+  if (indexesInitialized) return;
+  indexesInitialized = true;
+  try {
+    const db = await getDb();
+    await Promise.allSettled([
+      db.collection('wholesale_orders').createIndex({ id: 1 }, { unique: true, background: true }),
+      db.collection('wholesale_orders').createIndex({ createdAt: -1 }, { background: true }),
+      db.collection('wholesale_orders').createIndex({ status: 1, createdAt: -1 }, { background: true }),
+      db.collection('leads').createIndex({ id: 1 }, { unique: true, background: true }),
+      db.collection('leads').createIndex({ createdAt: -1 }, { background: true }),
+      db.collection('foodstuff_products').createIndex({ id: 1 }, { unique: true, background: true }),
+      db.collection('foodstuff_products').createIndex({ published: 1 }, { background: true }),
+      db.collection('foodstuff_container_prices').createIndex({ productId: 1 }, { background: true }),
+      db.collection('foodstuff_market_prices').createIndex({ productId: 1 }, { background: true }),
+      db.collection('inbox_messages').createIndex({ messageId: 1 }, { unique: true, background: true }),
+      db.collection('inbox_messages').createIndex({ mailbox: 1, status: 1, receivedAt: -1 }, { background: true }),
+    ]);
+  } catch {
+    // Background non-fatal
+  }
+}
+
+// Trigger background indexing on startup without blocking
+ensureMongoDbIndexes().catch(() => {});
+
+// ==========================================
 // FOODSTUFF WHOLESALE LIVE PRICING COLLECTIONS
 // ==========================================
 
@@ -195,19 +257,29 @@ export async function getFoodstuffCategoriesCollection(): Promise<Collection<Foo
 }
 
 export async function getFoodstuffCategories(): Promise<FoodstuffCategoryItem[]> {
+  const cached = getCachedData<FoodstuffCategoryItem[]>('foodstuff_categories');
+  if (cached) return cached;
+
+  let result: FoodstuffCategoryItem[] = [];
   try {
     const col = await getFoodstuffCategoriesCollection();
     const items = await col.find({}).sort({ displayOrder: 1 }).toArray();
-    if (items && items.length > 0) return items;
+    if (items && items.length > 0) result = items;
   } catch (err) {
     console.warn('MongoDB getFoodstuffCategories fallback:', (err as Error).message);
   }
-  try {
-    const { readDB } = await import('@/lib/db/index');
-    const cats = readDB().foodstuffCategories;
-    if (cats && cats.length > 0) return cats;
-  } catch {}
-  return DEFAULT_FOODSTUFF_CATEGORIES;
+  if (!result || result.length === 0) {
+    try {
+      const { readDB } = await import('@/lib/db/index');
+      const cats = readDB().foodstuffCategories;
+      if (cats && cats.length > 0) result = cats;
+    } catch {}
+  }
+  if (!result || result.length === 0) {
+    result = DEFAULT_FOODSTUFF_CATEGORIES;
+  }
+  setCachedData('foodstuff_categories', result, 60);
+  return result;
 }
 
 export async function saveFoodstuffCategory(
@@ -235,23 +307,32 @@ export async function saveFoodstuffCategory(
   } catch {}
 
   await logActivityToMongo(adminEmail, 'CATEGORY_SAVED', category.id);
+  invalidateFoodstuffCache();
   return safeCat;
 }
 
 export async function getFoodstuffProducts(): Promise<FoodstuffProduct[]> {
+  const cached = getCachedData<FoodstuffProduct[]>('foodstuff_products');
+  if (cached) return cached;
+
+  let result: FoodstuffProduct[] = [];
   try {
     const col = await getFoodstuffProductsCollection();
     const items = await col.find({}).toArray();
-    if (items && items.length > 0) return items;
+    if (items && items.length > 0) result = items;
   } catch (err) {
     console.warn('MongoDB getFoodstuffProducts fallback:', (err as Error).message);
   }
-  try {
-    const { readDB } = await import('@/lib/db/index');
-    return readDB().foodstuffProducts || [];
-  } catch {
-    return [];
+  if (!result || result.length === 0) {
+    try {
+      const { readDB } = await import('@/lib/db/index');
+      result = readDB().foodstuffProducts || [];
+    } catch {
+      result = [];
+    }
   }
+  setCachedData('foodstuff_products', result, 30);
+  return result;
 }
 
 function syncProductToLocalJson(product: FoodstuffProduct): void {
@@ -389,6 +470,7 @@ export async function createFoodstuffProduct(
   } catch {}
 
   await logActivityToMongo(adminEmail, 'PRODUCT_CREATED', newProduct.id);
+  invalidateFoodstuffCache();
   return { product: newProduct, containerPrice: newContainerPrice, marketPrice: newMarketPrice };
 }
 
@@ -445,6 +527,7 @@ export async function updateFoodstuffProduct(
   }
 
   await logActivityToMongo(adminEmail, 'PRODUCT_UPDATED', id);
+  invalidateFoodstuffCache();
   return updatedProduct;
 }
 
@@ -498,65 +581,81 @@ export async function deleteFoodstuffProduct(id: string, adminEmail: string = 'a
   } catch {}
 
   await logActivityToMongo(adminEmail, 'PRODUCT_DELETED', id);
+  invalidateFoodstuffCache();
   return { success: true, message: 'Product successfully removed from database.' };
 }
 
 export async function getFoodstuffContainerPrices(): Promise<FoodstuffContainerPrice[]> {
+  const cached = getCachedData<FoodstuffContainerPrice[]>('foodstuff_container_prices');
+  if (cached) return cached;
+
+  let result: FoodstuffContainerPrice[] = [];
   try {
     const col = await getFoodstuffContainerPricesCollection();
     const items = await col.find({}).toArray();
-    if (items && items.length > 0) return items;
+    if (items && items.length > 0) result = items;
   } catch (err) {
     console.warn('MongoDB getFoodstuffContainerPrices fallback:', (err as Error).message);
   }
-  try {
-    const { readDB } = await import('@/lib/db/index');
-    return readDB().foodstuffContainerPrices || [];
-  } catch {
-    return [];
+  if (!result || result.length === 0) {
+    try {
+      const { readDB } = await import('@/lib/db/index');
+      result = readDB().foodstuffContainerPrices || [];
+    } catch {
+      result = [];
+    }
   }
+  setCachedData('foodstuff_container_prices', result, 30);
+  return result;
 }
 
 export async function getFoodstuffMarketPrices(): Promise<FoodstuffMarketPrice[]> {
+  const cached = getCachedData<FoodstuffMarketPrice[]>('foodstuff_market_prices');
+  if (cached) return cached;
+
+  let result: FoodstuffMarketPrice[] = [];
   try {
     const col = await getFoodstuffMarketPricesCollection();
     const items = await col.find({}).toArray();
-    if (items && items.length > 0) return items;
+    if (items && items.length > 0) result = items;
   } catch (err) {
     console.warn('MongoDB getFoodstuffMarketPrices fallback:', (err as Error).message);
   }
-  try {
-    const { readDB } = await import('@/lib/db/index');
-    return readDB().foodstuffMarketPrices || [];
-  } catch {
-    return [];
+  if (!result || result.length === 0) {
+    try {
+      const { readDB } = await import('@/lib/db/index');
+      result = readDB().foodstuffMarketPrices || [];
+    } catch {
+      result = [];
+    }
   }
+  setCachedData('foodstuff_market_prices', result, 30);
+  return result;
 }
 
 export async function getFoodstuffSchedule(): Promise<FoodstuffUpdateSchedule> {
+  const cached = getCachedData<FoodstuffUpdateSchedule>('foodstuff_schedule');
+  if (cached) return cached;
+
+  let result: FoodstuffUpdateSchedule | null = null;
   try {
     const col = await getFoodstuffScheduleCollection();
     const doc = await col.findOne({ _id: "schedule_config" });
     if (doc) {
       const { _id, ...rest } = doc;
-      return rest as FoodstuffUpdateSchedule;
+      result = rest as FoodstuffUpdateSchedule;
     }
   } catch (err) {
     console.warn('MongoDB getFoodstuffSchedule fallback:', (err as Error).message);
   }
-  try {
-    const { readDB } = await import('@/lib/db/index');
-    return readDB().foodstuffUpdateSchedule || {
-      morningTime: '06:30',
-      middayTime: '12:30',
-      eveningTime: '18:00',
-      timezone: 'Asia/Dubai',
-      staleThresholdHours: 8,
-      lastSyncAt: null,
-      autoFeedEnabled: false,
-    };
-  } catch {
-    return {
+  if (!result) {
+    try {
+      const { readDB } = await import('@/lib/db/index');
+      result = readDB().foodstuffUpdateSchedule || null;
+    } catch {}
+  }
+  if (!result) {
+    result = {
       morningTime: '06:30',
       middayTime: '12:30',
       eveningTime: '18:00',
@@ -566,6 +665,8 @@ export async function getFoodstuffSchedule(): Promise<FoodstuffUpdateSchedule> {
       autoFeedEnabled: false,
     };
   }
+  setCachedData('foodstuff_schedule', result, 60);
+  return result;
 }
 
 export async function getFoodstuffPriceHistory(limit: number = 100): Promise<FoodstuffPriceHistory[]> {
@@ -675,6 +776,7 @@ export async function updateFoodstuffContainerPrice(
   await schedCol.updateOne({ _id: "schedule_config" }, { $set: { lastSyncAt: nowISO } });
 
   await logActivityToMongo(updatedBy, 'CONTAINER_PRICE_UPDATED', `${existing.productId}: ${oldPrice} -> ${newPrice}`);
+  invalidateFoodstuffCache();
   return updatedRecord;
 }
 
@@ -762,6 +864,7 @@ export async function updateFoodstuffMarketPrice(
   await schedCol.updateOne({ _id: "schedule_config" }, { $set: { lastSyncAt: nowISO } });
 
   await logActivityToMongo(updatedBy, 'MARKET_PRICE_UPDATED', `${existing.productId}: ${oldPrice} -> ${newPrice}`);
+  invalidateFoodstuffCache();
   return updatedRecord;
 }
 
@@ -940,6 +1043,7 @@ export async function bulkUpdateFoodstuffPrices(
   await schedCol.updateOne({ _id: "schedule_config" }, { $set: { lastSyncAt: nowISO } });
 
   await logActivityToMongo(updatedBy, 'FOODSTUFF_BULK_UPDATE', `Updated ${updatedCount} ${type} price records via ${source}`);
+  invalidateFoodstuffCache();
   return { updatedCount, timestamp: nowISO };
 }
 
@@ -957,6 +1061,7 @@ export async function updateFoodstuffSchedule(
 
   await col.replaceOne({ _id: "schedule_config" }, updated, { upsert: true });
   await logActivityToMongo(updatedBy, 'FOODSTUFF_SCHEDULE_UPDATED', 'foodstuffUpdateSchedule');
+  invalidateFoodstuffCache();
   return updated;
 }
 
@@ -1304,13 +1409,13 @@ export async function createWholesaleOrder(
     console.warn("MongoDB createWholesaleOrder fallback to JSON:", (err as Error).message);
   }
 
-  // 3. Mirror to Leads pipeline so general sales admin also tracks it (non-blocking)
-  try {
-    const itemSummary = newOrder.items
-      .map(i => `${i.productName} (${i.orderType === 'CONTAINER' ? 'Container Wholesale' : 'Dubai Wholesale'}): ${i.quantityCtn} CTN @ AED ${i.pricePerCtn.toFixed(2)} = AED ${i.lineTotalAED.toFixed(2)}`)
-      .join('\n');
+  // 3. Mirror to Leads pipeline and activity log in background (non-blocking)
+  const itemSummary = newOrder.items
+    .map(i => `${i.productName} (${i.orderType === 'CONTAINER' ? 'Container Wholesale' : 'Dubai Wholesale'}): ${i.quantityCtn} CTN @ AED ${i.pricePerCtn.toFixed(2)} = AED ${i.lineTotalAED.toFixed(2)}`)
+    .join('\n');
 
-    await createLead({
+  Promise.allSettled([
+    createLead({
       name: newOrder.customerName,
       email: newOrder.email,
       phone: newOrder.phone,
@@ -1321,16 +1426,9 @@ export async function createWholesaleOrder(
       source: 'wholesale_cart',
       status: 'NEW',
       notes: `Order ID: ${newOrder.id} | Status: ${newOrder.status} | Total: AED ${newOrder.totalAED}`,
-    });
-  } catch (leadErr) {
-    // Non-fatal
-  }
-
-  try {
-    await logActivityToMongo('system', 'WHOLESALE_ORDER_CREATED', id);
-  } catch {
-    // Non-fatal
-  }
+    }),
+    logActivityToMongo('system', 'WHOLESALE_ORDER_CREATED', id)
+  ]).catch(() => {});
 
   return newOrder;
 }

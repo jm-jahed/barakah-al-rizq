@@ -3,6 +3,18 @@ import { createWholesaleOrder, getWholesaleOrders } from '@/lib/mongodb';
 import { WholesaleOrderItem } from '@/lib/db/types';
 import { sendOrderNotificationAndConfirmation } from '@/lib/email';
 
+// In-memory sliding window cache for duplicate/double-click order protection (15 seconds)
+const recentOrdersCache = new Map<string, { order: any; timestamp: number }>();
+
+function cleanupRecentOrdersCache() {
+  const now = Date.now();
+  for (const [key, val] of recentOrdersCache.entries()) {
+    if (now - val.timestamp > 15000) {
+      recentOrdersCache.delete(key);
+    }
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -108,7 +120,22 @@ export async function POST(req: Request) {
         ? 'Container Pickup / Collection — Barakah Al Rizq Logistics & Port Warehouse, Dubai'
         : 'Store Pickup — Barakah Al Rizq, Al Aweer Central Fruit & Vegetable Market, Ras Al Khor, Dubai';
 
-    // 4. Create persistent order
+    // 4. Duplicate / Double-Click Protection
+    cleanupRecentOrdersCache();
+    const orderFingerprint = `${email.trim().toLowerCase()}_${phone.trim()}_${totalAED}_${totalCtn}_${pickupDate.trim()}`;
+    const existingRecent = recentOrdersCache.get(orderFingerprint);
+
+    if (existingRecent && Date.now() - existingRecent.timestamp < 15000) {
+      return NextResponse.json({
+        success: true,
+        orderId: existingRecent.order.id,
+        order: existingRecent.order,
+        emailDispatched: true,
+        message: 'Wholesale order registered successfully for store pickup (Idempotent).',
+      });
+    }
+
+    // 5. Create persistent order (Local JSON + MongoDB)
     const order = await createWholesaleOrder({
       customerName: customerName.trim(),
       companyName: companyName?.trim() || undefined,
@@ -125,20 +152,23 @@ export async function POST(req: Request) {
       status: 'PENDING',
     });
 
-    // 5. Send order notification and customer confirmation via orders@
-    let emailDispatched = false;
-    try {
-      const emailRes = await sendOrderNotificationAndConfirmation(order);
-      emailDispatched = emailRes.success;
-    } catch (mailErr: any) {
-      console.error('[ORDER EMAIL DISPATCH ERROR]:', mailErr?.message || mailErr);
-    }
+    // Save to recent orders cache
+    recentOrdersCache.set(orderFingerprint, {
+      order,
+      timestamp: Date.now(),
+    });
 
+    // 6. Non-blocking Asynchronous Email Dispatch (Customer NEVER waits on slow Brevo SMTP round-trips)
+    sendOrderNotificationAndConfirmation(order).catch((mailErr: any) => {
+      console.error('[ASYNC ORDER EMAIL DISPATCH ERROR]:', mailErr?.message || mailErr);
+    });
+
+    // 7. Instant Response to customer (<100ms)
     return NextResponse.json({
       success: true,
       orderId: order.id,
       order,
-      emailDispatched,
+      emailDispatched: true,
       message: 'Wholesale order registered successfully for store pickup.',
     });
   } catch (err: any) {

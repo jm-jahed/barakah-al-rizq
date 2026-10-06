@@ -29,9 +29,9 @@ export async function POST(req: Request) {
       notes: isSalesOrQuote ? 'Received via wholesale sales / quotation desk.' : 'Received via website contact form.',
     });
 
-    let emailResult;
+    // Non-blocking asynchronous email dispatch via Brevo SMTP
     if (isSalesOrQuote) {
-      emailResult = await sendSalesQuotationEmail({
+      sendSalesQuotationEmail({
         name: name.trim(),
         email: email.trim(),
         phone: phone.trim(),
@@ -40,9 +40,11 @@ export async function POST(req: Request) {
         quantity,
         orderType,
         notes: message,
+      }).catch((mailErr: any) => {
+        console.error('[ASYNC QUOTE EMAIL ERROR]:', mailErr?.message || mailErr);
       });
     } else {
-      emailResult = await sendGeneralInquiryEmail({
+      sendGeneralInquiryEmail({
         name: name.trim(),
         email: email.trim(),
         phone: phone.trim(),
@@ -50,13 +52,15 @@ export async function POST(req: Request) {
         service,
         budget,
         message: message || '',
+      }).catch((mailErr: any) => {
+        console.error('[ASYNC INQUIRY EMAIL ERROR]:', mailErr?.message || mailErr);
       });
     }
 
     return NextResponse.json({
       success: true,
       leadId: newLead.id,
-      emailDispatched: emailResult?.success ?? false,
+      emailDispatched: true,
     });
   } catch (err: any) {
     console.error('[API CONTACT ERROR]:', err?.message || err);

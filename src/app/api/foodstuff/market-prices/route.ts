@@ -91,15 +91,22 @@ export async function GET(req: Request) {
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      market: 'Al Aweer Central Fruit & Vegetable Market, Ras Al Khor, Dubai',
-      activeSession: dynamicSessionInfo.session,
-      currentTimeUAE: dynamicSessionInfo.currentTimeUAE,
-      lastSyncUAE: formatUAEDateTime(schedule.lastSyncAt),
-      totalCount: filteredItems.length,
-      items: filteredItems,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        market: 'Al Aweer Central Fruit & Vegetable Market, Ras Al Khor, Dubai',
+        activeSession: dynamicSessionInfo.session,
+        currentTimeUAE: dynamicSessionInfo.currentTimeUAE,
+        lastSyncUAE: formatUAEDateTime(schedule.lastSyncAt),
+        totalCount: filteredItems.length,
+        items: filteredItems,
+      },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60',
+        },
+      }
+    );
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Failed to fetch market prices';
     return NextResponse.json({ error: message }, { status: 500 });

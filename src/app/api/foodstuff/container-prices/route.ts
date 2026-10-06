@@ -97,14 +97,21 @@ export async function GET(req: Request) {
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      lastSyncUAE: formatUAEDateTime(schedule.lastSyncAt),
-      activeSession: dynamicSessionInfo.session,
-      currentTimeUAE: dynamicSessionInfo.currentTimeUAE,
-      totalCount: filteredItems.length,
-      items: filteredItems,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        lastSyncUAE: formatUAEDateTime(schedule.lastSyncAt),
+        activeSession: dynamicSessionInfo.session,
+        currentTimeUAE: dynamicSessionInfo.currentTimeUAE,
+        totalCount: filteredItems.length,
+        items: filteredItems,
+      },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60',
+        },
+      }
+    );
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Failed to fetch container prices';
     return NextResponse.json({ error: message }, { status: 500 });
