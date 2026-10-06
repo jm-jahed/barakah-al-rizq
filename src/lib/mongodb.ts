@@ -753,21 +753,6 @@ export async function getFoodstuffPriceHistory(limit: number = 100): Promise<Foo
   }
 }
 
-export async function getActivityLogs(limit: number = 50): Promise<ActivityLog[]> {
-  try {
-    const col = await getActivityLogsCollection();
-    const logs = await col.find({}).sort({ timestamp: -1 }).limit(limit).toArray();
-    if (logs && logs.length > 0) return logs;
-  } catch (err) {
-    console.warn('MongoDB getActivityLogs fallback:', (err as Error).message);
-  }
-  try {
-    const { readDB } = await import('@/lib/db/index');
-    return (readDB().activityLogs || []).slice(-limit).reverse();
-  } catch {
-    return [];
-  }
-}
 
 export async function logActivityToMongo(user: string, action: string, entity: string): Promise<void> {
   try {
@@ -1304,8 +1289,19 @@ export async function deleteLead(id: string): Promise<boolean> {
 }
 
 export async function getActivityLogs(limit: number = 100): Promise<ActivityLog[]> {
-  const col = await getActivityLogsCollection();
-  return col.find({}).sort({ timestamp: -1 }).limit(limit).toArray();
+  try {
+    const col = await getActivityLogsCollection();
+    const logs = await col.find({}).sort({ timestamp: -1 }).limit(limit).toArray();
+    if (logs && logs.length > 0) return logs;
+  } catch (err) {
+    console.warn('MongoDB getActivityLogs fallback:', (err as Error).message);
+  }
+  try {
+    const { readDB } = await import('@/lib/db/index');
+    return (readDB().activityLogs || []).slice(-limit).reverse();
+  } catch {
+    return [];
+  }
 }
 
 export async function getAdminUserByEmail(email: string): Promise<AdminUser | null> {
