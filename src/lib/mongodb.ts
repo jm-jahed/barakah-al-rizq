@@ -2493,11 +2493,15 @@ export async function getInboxMessageById(id: string): Promise<InboxMessage | nu
     return cached.msg;
   }
 
-  // 2. Check local JSON file
+  // 2. Check local JSON file (instant 0.2ms disk read)
   const local = readLocalInboxMessages();
   const localMatch = local.find(m => m.id === cleanId || m.messageId === cleanId || m.id === id || m.messageId === id);
+  if (localMatch && (localMatch.htmlBody || localMatch.textBody || localMatch.previewText)) {
+    cachedFullMessagesMap.set(cleanId, { msg: localMatch, expiresAt: now + 600000 });
+    return localMatch;
+  }
 
-  // 3. Check MongoDB collection with direct fast index lookup
+  // 3. Check MongoDB collection with direct fast index lookup if not found locally
   try {
     const col = await getInboxMessagesCollection();
     let mongoMatch = await col.findOne({ id: cleanId });
@@ -2574,12 +2578,16 @@ export async function saveIncomingInboxMessage(
     console.warn("MongoDB saveIncomingInboxMessage fallback to JSON:", (err as Error).message);
   }
 
-  // 3. Cache full record and invalidate summary/stats
+  // 3. Cache full record and prepend to summary cache
   cachedFullMessagesMap.set(id, { msg: newRecord, expiresAt: Date.now() + 600000 });
   if (newRecord.messageId) {
     cachedFullMessagesMap.set(newRecord.messageId, { msg: newRecord, expiresAt: Date.now() + 600000 });
   }
-  invalidateInboxCache();
+
+  if (cachedInboxSummaryList) {
+    cachedInboxSummaryList.list.unshift(toLightweightSummary(newRecord));
+  }
+  cachedInboxStats = null;
 
   return { message: newRecord, isDuplicate: false };
 }
@@ -2623,14 +2631,13 @@ export async function updateInboxMessageStatus(
     updatedRecord = local[idx];
   }
 
-  // 2. Update in MongoDB via fast updateOne
-  try {
-    const col = await getInboxMessagesCollection();
+  // 2. Background MongoDB update
+  getInboxMessagesCollection().then((col) => {
     col.updateOne(
       { $or: [{ id: cleanId }, { messageId: cleanId }, { _id: cleanId }] },
       { $set: updates }
     ).catch(() => {});
-  } catch (err) {}
+  }).catch(() => {});
 
   // 3. Fallback creation if not found
   if (!updatedRecord) {
@@ -2655,16 +2662,27 @@ export async function updateInboxMessageStatus(
       updatedAt: nowISO,
       ...updates,
     };
-    try {
-      const col = await getInboxMessagesCollection();
-      col.insertOne({ ...fallbackMessage, _id: fallbackMessage.id }).catch(() => {});
-    } catch {}
     local.unshift(fallbackMessage);
     writeLocalInboxMessages(local);
     updatedRecord = fallbackMessage;
+
+    getInboxMessagesCollection().then((col) => {
+      col.insertOne({ ...fallbackMessage, _id: fallbackMessage.id }).catch(() => {});
+    }).catch(() => {});
   }
 
-  // 4. Update in-memory caches in place
+  // 4. Update in-memory summary list in place so cache stays hot
+  if (cachedInboxSummaryList) {
+    const sumIdx = cachedInboxSummaryList.list.findIndex(m => m.id === cleanId || m.messageId === cleanId);
+    if (sumIdx !== -1) {
+      cachedInboxSummaryList.list[sumIdx] = {
+        ...cachedInboxSummaryList.list[sumIdx],
+        ...updates,
+      };
+    }
+  }
+
+  // 5. Update in-memory full message cache
   if (updatedRecord) {
     cachedFullMessagesMap.set(cleanId, { msg: updatedRecord, expiresAt: Date.now() + 600000 });
     cachedFullMessagesMap.set(updatedRecord.id, { msg: updatedRecord, expiresAt: Date.now() + 600000 });
@@ -2673,8 +2691,8 @@ export async function updateInboxMessageStatus(
     }
   }
 
-  // Invalidate list summary & stats
-  invalidateInboxCache();
+  // Invalidate ONLY stats cache so it recalculates instantly from memory
+  cachedInboxStats = null;
   logActivityToMongo('admin@barakahalrizquae.com', 'INBOX_STATUS_UPDATED', cleanId).catch(() => {});
 
   return updatedRecord;
