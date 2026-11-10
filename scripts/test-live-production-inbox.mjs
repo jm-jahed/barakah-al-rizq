@@ -161,7 +161,7 @@ async function runLiveTests() {
   try {
     const res = await makeRequest(PROD_URL, '/api/admin/inbox');
     assert(
-      '8. Production GET /api/admin/inbox returns messages, stats, and 4 mailboxes',
+      '8. Production GET /api/admin/inbox returns messages, stats, and mailboxes',
       res.ok && res.data?.success && Array.isArray(res.data?.messages) && res.data?.stats !== undefined
     );
     if (!createdDbId && res.data?.messages?.length > 0) {

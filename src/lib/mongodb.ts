@@ -2293,6 +2293,7 @@ export const ALLOWED_MAILBOXES: Record<string, { channel: InboxMailbox; email: s
   'sales@barakahalrizquae.com': { channel: 'sales', email: 'sales@barakahalrizquae.com', displayName: 'Wholesale Sales & RFQ' },
   'orders@barakahalrizquae.com': { channel: 'orders', email: 'orders@barakahalrizquae.com', displayName: 'Website Orders' },
   'habeeb@barakahalrizquae.com': { channel: 'habeeb', email: 'habeeb@barakahalrizquae.com', displayName: 'Managing Director Habeeb Khan' },
+  'hr@barakahalrizquae.com': { channel: 'hr', email: 'hr@barakahalrizquae.com', displayName: 'Human Resources & Careers Desk' },
 };
 
 export async function resolveMailboxByRecipient(toEmail: string): Promise<{ channel: InboxMailbox; email: string; displayName: string } | null> {
@@ -2304,7 +2305,7 @@ export async function resolveMailboxByRecipient(toEmail: string): Promise<{ chan
     return ALLOWED_MAILBOXES[cleanTo];
   }
 
-  // 2. Match on prefix if sending to official domain (info, sales, orders, habeeb)
+  // 2. Match on prefix if sending to official domain (info, sales, orders, habeeb, hr)
   const prefix = cleanTo.split('@')[0] as InboxMailbox;
   const matchEmail = `${prefix}@barakahalrizquae.com`;
   if (ALLOWED_MAILBOXES[matchEmail]) {
@@ -2314,7 +2315,7 @@ export async function resolveMailboxByRecipient(toEmail: string): Promise<{ chan
   // 3. Match against stored mailboxes
   const mailboxes = await getEmailMailboxes();
   const match = mailboxes.find(m => m.active && (m.email.toLowerCase() === cleanTo || m.channel.toLowerCase() === prefix));
-  if (match && ['info', 'sales', 'orders', 'habeeb'].includes(match.channel)) {
+  if (match && ['info', 'sales', 'orders', 'habeeb', 'hr'].includes(match.channel)) {
     return { channel: match.channel as InboxMailbox, email: match.email, displayName: match.displayName };
   }
 

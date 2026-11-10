@@ -62,6 +62,7 @@ export const BARAKAH_BRAND = {
     sales: "sales@barakahalrizquae.com",
     orders: "orders@barakahalrizquae.com",
     habeeb: "habeeb@barakahalrizquae.com",
+    hr: "hr@barakahalrizquae.com",
   },
   website: "barakahalrizquae.com",
   logo: "/images/barakah-logo.png",

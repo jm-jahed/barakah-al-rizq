@@ -62,11 +62,12 @@ Configure the following under **Worker Settings** → **Variables & Secrets**:
 
 ### Step C: Attach Worker to Email Routing Rules
 1. Go to **Email Routing** → **Routing rules**.
-2. For each of the 4 official mailboxes:
+2. For each of the 5 official mailboxes:
    - `info@barakahalrizquae.com` → Action: **Send to Worker** (`barakah-email-worker`)
    - `sales@barakahalrizquae.com` → Action: **Send to Worker** (`barakah-email-worker`)
    - `orders@barakahalrizquae.com` → Action: **Send to Worker** (`barakah-email-worker`)
    - `habeeb@barakahalrizquae.com` → Action: **Send to Worker** (`barakah-email-worker`)
+   - `hr@barakahalrizquae.com` → Action: **Send to Worker** (`barakah-email-worker`)
    *(Alternatively: Set **Catch-all rule** → Action: **Send to Worker** `barakah-email-worker`)*
 3. Save changes.
 

@@ -1,6 +1,6 @@
 import nodemailer, { type Transporter } from 'nodemailer';
 
-export type EmailChannel = 'info' | 'sales' | 'orders' | 'habeeb';
+export type EmailChannel = 'info' | 'sales' | 'orders' | 'habeeb' | 'hr';
 
 export function getEmailConfig() {
   const brandName = process.env.MAIL_FROM_NAME || process.env.SMTP_FROM_NAME || 'BARAKAH AL RIZQ FOODSTUFF TRADING L.L.C';
@@ -8,6 +8,7 @@ export function getEmailConfig() {
   const salesEmail = process.env.MAIL_FROM_SALES || process.env.EMAIL_SALES || 'sales@barakahalrizquae.com';
   const ordersEmail = process.env.MAIL_FROM_ORDERS || process.env.EMAIL_ORDERS || 'orders@barakahalrizquae.com';
   const habeebEmail = process.env.MAIL_FROM_HABEEB || process.env.EMAIL_HABEEB || 'habeeb@barakahalrizquae.com';
+  const hrEmail = process.env.MAIL_FROM_HR || process.env.EMAIL_HR || 'hr@barakahalrizquae.com';
   const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || 'barakahalrizquae@gmail.com';
 
   return {
@@ -33,6 +34,11 @@ export function getEmailConfig() {
         address: habeebEmail,
         name: `${brandName} — Managing Director Habeeb Khan`,
         description: 'Direct & Management Desk',
+      },
+      hr: {
+        address: hrEmail,
+        name: `${brandName} — Human Resources & Careers Desk`,
+        description: 'Talent Acquisition, Recruitment & HR Operations',
       },
     },
   };

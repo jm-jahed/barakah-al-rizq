@@ -25,6 +25,7 @@ import {
   ShoppingBag,
   TrendingUp,
   Crown,
+  Users,
   Copy,
   Check,
   ExternalLink,
@@ -33,7 +34,7 @@ import {
 } from 'lucide-react';
 import { InboxMessage, InboxMailbox } from '@/lib/db/types';
 
-type FolderFilter = 'ALL' | 'info' | 'sales' | 'orders' | 'habeeb' | 'TRASH';
+type FolderFilter = 'ALL' | 'info' | 'sales' | 'orders' | 'habeeb' | 'hr' | 'TRASH';
 type StatusFilter = 'ALL' | 'UNREAD' | 'READ' | 'REPLIED';
 
 interface InboxStats {
@@ -96,6 +97,16 @@ const MAILBOX_META: Record<
     icon: Crown,
     accentGlow: 'from-purple-500/20 via-fuchsia-500/10 to-transparent',
   },
+  hr: {
+    label: 'HR & Careers',
+    email: 'hr@barakahalrizquae.com',
+    color: 'text-rose-400',
+    badgeBg: 'bg-rose-500/10 text-rose-300 border-rose-500/30 shadow-[0_0_10px_rgba(244,63,94,0.15)]',
+    border: 'border-rose-500/50',
+    desc: 'Talent Acquisition, Recruitment & HR Operations',
+    icon: Users,
+    accentGlow: 'from-rose-500/20 via-pink-500/10 to-transparent',
+  },
 };
 
 function getInitials(name?: string, email?: string): string {
@@ -137,6 +148,12 @@ function getAvatarStyle(mailbox?: string) {
         text: 'text-purple-300',
         ring: 'ring-1 ring-purple-400/30',
       };
+    case 'hr':
+      return {
+        bg: 'bg-gradient-to-br from-rose-500/25 via-pink-600/15 to-rose-700/10',
+        text: 'text-rose-300',
+        ring: 'ring-1 ring-rose-400/30',
+      };
     default:
       return {
         bg: 'bg-gradient-to-br from-slate-700/30 via-slate-800/30 to-slate-900/20',
@@ -156,6 +173,7 @@ export default function MailPortalInboxPage() {
       sales: { total: 0, unread: 0 },
       orders: { total: 0, unread: 0 },
       habeeb: { total: 0, unread: 0 },
+      hr: { total: 0, unread: 0 },
     },
     trash: 0,
   });
@@ -645,8 +663,8 @@ export default function MailPortalInboxPage() {
                 </div>
               </button>
 
-              {/* 4 OFFICIAL EXECUTIVE DESKS */}
-              {(['orders', 'sales', 'info', 'habeeb'] as InboxMailbox[]).map((boxKey) => {
+              {/* 5 OFFICIAL EXECUTIVE DESKS */}
+              {(['orders', 'sales', 'info', 'habeeb', 'hr'] as InboxMailbox[]).map((boxKey) => {
                 const meta = MAILBOX_META[boxKey];
                 const boxStat = stats.byMailbox?.[boxKey] || { total: 0, unread: 0 };
                 const isActive = activeFolder === boxKey;
@@ -1461,8 +1479,8 @@ export default function MailPortalInboxPage() {
                 <label className="block text-slate-300 font-mono text-[10px] uppercase font-bold mb-1.5 tracking-wider">
                   FROM DESK (OFFICIAL SENDER)
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {(['orders', 'sales', 'info', 'habeeb'] as InboxMailbox[]).map((boxKey) => {
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+                  {(['orders', 'sales', 'info', 'habeeb', 'hr'] as InboxMailbox[]).map((boxKey) => {
                     const meta = MAILBOX_META[boxKey];
                     const isSelected = composeFrom === boxKey;
                     const IconComponent = meta.icon;
@@ -1474,7 +1492,9 @@ export default function MailPortalInboxPage() {
                         ? 'bg-gradient-to-br from-emerald-500/20 via-emerald-950/40 to-[#070D19] border-emerald-400/80 shadow-[0_0_15px_rgba(16,185,129,0.25)] ring-1 ring-emerald-400/50'
                         : boxKey === 'info'
                         ? 'bg-gradient-to-br from-cyan-500/20 via-cyan-950/40 to-[#070D19] border-cyan-400/80 shadow-[0_0_15px_rgba(6,182,212,0.25)] ring-1 ring-cyan-400/50'
-                        : 'bg-gradient-to-br from-purple-500/20 via-purple-950/40 to-[#070D19] border-purple-400/80 shadow-[0_0_15px_rgba(168,85,247,0.25)] ring-1 ring-purple-400/50';
+                        : boxKey === 'habeeb'
+                        ? 'bg-gradient-to-br from-purple-500/20 via-purple-950/40 to-[#070D19] border-purple-400/80 shadow-[0_0_15px_rgba(168,85,247,0.25)] ring-1 ring-purple-400/50'
+                        : 'bg-gradient-to-br from-rose-500/20 via-rose-950/40 to-[#070D19] border-rose-400/80 shadow-[0_0_15px_rgba(244,63,94,0.25)] ring-1 ring-rose-400/50';
 
                     return (
                       <button

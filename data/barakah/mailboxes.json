@@ -38,5 +38,15 @@
     "active": true,
     "createdAt": "2026-10-06T00:00:00.000Z",
     "updatedAt": "2026-10-06T00:00:00.000Z"
+  },
+  {
+    "id": "mailbox-hr",
+    "email": "hr@barakahalrizquae.com",
+    "displayName": "Human Resources & Careers Desk",
+    "department": "Human Resources",
+    "channel": "hr",
+    "active": true,
+    "createdAt": "2026-11-10T00:00:00.000Z",
+    "updatedAt": "2026-11-10T00:00:00.000Z"
   }
 ]

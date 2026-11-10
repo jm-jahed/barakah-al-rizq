@@ -133,12 +133,13 @@ async function runTests() {
     assert('5. Authenticated /mail loads Email Portal inbox UI', false, err.message);
   }
 
-  // 6. Test Email Injection for All 4 Mailboxes
+  // 6. Test Email Injection for All 5 Mailboxes
   const testMailboxes = [
     { mailbox: 'info', email: 'info@barakahalrizquae.com', subject: 'General Enterprise Inquiry' },
     { mailbox: 'sales', email: 'sales@barakahalrizquae.com', subject: 'Container Spot Price RFQ' },
     { mailbox: 'orders', email: 'orders@barakahalrizquae.com', subject: 'Pallet Delivery Schedule' },
     { mailbox: 'habeeb', email: 'habeeb@barakahalrizquae.com', subject: 'Managing Director Partnership Request' },
+    { mailbox: 'hr', email: 'hr@barakahalrizquae.com', subject: 'Resume & HR Inquiry' },
   ];
 
   let injectedIds = {};
@@ -167,15 +168,15 @@ async function runTests() {
     }
   }
 
-  // 7. Verify All Inboxes contains all 4 mailboxes
+  // 7. Verify All Inboxes contains all 5 mailboxes
   try {
     const res = await makeRequest('/api/admin/inbox');
-    const mailboxesPresent = ['info', 'sales', 'orders', 'habeeb'].every((box) =>
+    const mailboxesPresent = ['info', 'sales', 'orders', 'habeeb', 'hr'].every((box) =>
       res.data?.messages?.some((msg) => msg.mailbox === box)
     );
-    assert('7. All Inboxes feed aggregates all 4 business mailboxes', res.ok && mailboxesPresent);
+    assert('7. All Inboxes feed aggregates all 5 business mailboxes', res.ok && mailboxesPresent);
   } catch (err) {
-    assert('7. All Inboxes feed aggregates all 4 business mailboxes', false, err.message);
+    assert('7. All Inboxes feed aggregates all 5 business mailboxes', false, err.message);
   }
 
   // 8. Test Search across Email Portal

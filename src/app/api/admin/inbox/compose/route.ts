@@ -4,7 +4,7 @@ import { sendBarakahEmail, getEmailConfig, type EmailChannel } from '@/lib/email
 import { saveIncomingInboxMessage } from '@/lib/mongodb';
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-const VALID_CHANNELS: EmailChannel[] = ['info', 'sales', 'orders', 'habeeb'];
+const VALID_CHANNELS: EmailChannel[] = ['info', 'sales', 'orders', 'habeeb', 'hr'];
 
 export async function POST(req: Request) {
   const session = await getAdminSession();

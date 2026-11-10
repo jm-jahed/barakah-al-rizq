@@ -426,7 +426,7 @@ export interface CustomerStatementItem {
 // ADMIN INCOMING EMAIL INBOX & MAILBOXES
 // ==========================================
 
-export type InboxMailbox = 'info' | 'sales' | 'orders' | 'habeeb';
+export type InboxMailbox = 'info' | 'sales' | 'orders' | 'habeeb' | 'hr';
 export type InboxMessageStatus = 'UNREAD' | 'READ' | 'REPLIED' | 'TRASH';
 
 export interface EmailMailbox {
